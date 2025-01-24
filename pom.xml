@@ -1,41 +1,70 @@
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-  xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+<?xml version="1.0" encoding="UTF-8"?><project xmlns="http://maven.apache.org/POM/4.0.0"
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" 
+        xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+		
     <modelVersion>4.0.0</modelVersion>
     <groupId>jets.projects</groupId>
     <artifactId>ChatApplication</artifactId>
     <version>1.0.0</version>
-    
+    <packaging>pom</packaging>
+  
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <maven.compiler.release>23</maven.compiler.release>
         <javafx.version>23.0.1</javafx.version>
+        <mysql.connectorj.version>9.1.0</mysql.connectorj.version>
     </properties>
-    
-    <dependencies>
-		<!-- https://mvnrepository.com/artifact/org.openjfx/javafx-controls -->
-		<dependency>
-		    <groupId>org.openjfx</groupId>
-		    <artifactId>javafx-controls</artifactId>
-		    <version>${javafx.version}</version>
-		</dependency>
-    </dependencies>
-    
+  
     <build>
         <plugins>
-			<plugin>
-				<artifactId>maven-compiler-plugin</artifactId>
-				<version>3.13.0</version>
-			</plugin>
-			            
-			<!-- https://mvnrepository.com/artifact/org.openjfx/javafx-plugin -->
-		    <plugin>
-		        <groupId>org.openjfx</groupId>
-		        <artifactId>javafx-maven-plugin</artifactId>
-		        <version>0.0.8</version>
-		        <configuration>
-		            <mainClass>jets.projects/jets.projects.App</mainClass>
-		        </configuration>
-		    </plugin>
+            <plugin>
+                <artifactId>maven-compiler-plugin</artifactId>
+                <version>3.13.0</version>
+            </plugin>
         </plugins>
+	
+        <pluginManagement>
+            <plugins>
+            	<plugin>
+					<groupId>org.codehaus.mojo</groupId>
+					<artifactId>exec-maven-plugin</artifactId>
+					<version>3.5.0</version>
+				</plugin>
+            
+                <plugin>
+                    <groupId>org.openjfx</groupId>
+                    <artifactId>javafx-maven-plugin</artifactId>
+                    <version>0.0.8</version>
+                </plugin>
+            </plugins>
+        </pluginManagement>
     </build>
+  
+    <dependencyManagement>
+        <dependencies>
+            <dependency>
+                <groupId>com.mysql</groupId>
+                <artifactId>mysql-connector-j</artifactId>
+                <version>${mysql.connectorj.version}</version>
+            </dependency>
+			
+            <dependency>
+                <groupId>org.openjfx</groupId>
+                <artifactId>javafx-controls</artifactId>
+                <version>${javafx.version}</version>
+            </dependency>
+			
+            <dependency>
+                <groupId>org.openjfx</groupId>
+                <artifactId>javafx-fxml</artifactId>
+                <version>${javafx.version}</version>
+            </dependency>
+        </dependencies>
+    </dependencyManagement>
+  
+    <modules>
+        <module>client-side</module>
+        <module>admin-side</module>
+        <module>server-side</module>
+    </modules>
 </project>
