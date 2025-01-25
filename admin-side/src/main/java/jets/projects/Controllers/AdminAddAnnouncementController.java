@@ -1,4 +1,4 @@
-package jets.projects.fxmlcontrollers;
+package jets.projects.Controllers;
 
 import java.net.URL;
 import java.util.ResourceBundle;
