@@ -1,6 +1,8 @@
 package jets.projects.topcontrollers;
 
 import java.util.List;
+import java.util.Map;
+
 import jets.projects.classes.AdminSessionData;
 import jets.projects.classes.AdminToken;
 import jets.projects.classes.RequestResult;
@@ -96,22 +98,22 @@ public class DaoAdminManager {
         return new RequestResult<>(true, list);
     }
 
-    public RequestResult<List<Integer>> getTopCountries(AdminToken token) {
+    public RequestResult<Map<String,Integer>> getTopCountries(AdminToken token) {
         boolean isValidToken = validatorDao.checkAdminToken(token);
         if (!isValidToken) {
             return new RequestResult<>(false, null);
         }
-        List<Integer> list = statsDao.getTopCountries();
-        return new RequestResult<>(true, list);
+        Map<String,Integer> map = statsDao.getTopCountries();
+        return new RequestResult<>(true, map);
     }
 
-    public RequestResult<List<String>> getAllCountries(AdminToken token) {
+    public RequestResult<Map<String,Integer>> getAllCountries(AdminToken token) {
         boolean isValidToken = validatorDao.checkAdminToken(token);
         if (!isValidToken) {
             return new RequestResult<>(false, null);
         }
-        List<String> list = statsDao.getAllCountries();
-        return new RequestResult<>(true, list);
+        Map<String,Integer> map = statsDao.getAllCountries();
+        return new RequestResult<>(true, map);
     }
 
     public RequestResult<Integer> getCountryUsers(AdminToken token, String countryName) {

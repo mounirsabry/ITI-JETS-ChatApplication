@@ -1,6 +1,8 @@
 package jets.projects.api;
 
 import java.util.List;
+import java.util.Map;
+
 import jets.projects.classes.AdminSessionData;
 import jets.projects.classes.AdminToken;
 import jets.projects.classes.RequestResult;
@@ -94,7 +96,7 @@ public class AdminServerAPI {
         return controller.getMaleFemaleStats(token);
     }
     
-    public RequestResult<List<Integer>> getTopCountries(
+    public RequestResult<Map<String,Integer>> getTopCountries(
             AdminToken token) {
         if (!validToken(token)) {
             return new RequestResult<>(false, null);
@@ -102,7 +104,7 @@ public class AdminServerAPI {
         return controller.getTopCountries(token);
     }
     
-    public RequestResult<List<String>> getAllCountries(
+    public RequestResult<Map<String,Integer>> getAllCountries(
             AdminToken token) {
         if (!validToken(token)) {
             return new RequestResult<>(false, null);

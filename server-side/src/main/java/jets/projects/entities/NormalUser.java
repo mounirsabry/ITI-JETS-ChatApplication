@@ -75,11 +75,11 @@ public class NormalUser {
         return createdAt;
     }
 
-    public boolean isIsAdminCreated() {
+    public boolean isAdminCreated() {
         return isAdminCreated;
     }
 
-    public boolean isIsFirstTimeLogin() {
+    public boolean isFirstTimeLogin() {
         return isFirstTimeLogin;
     }
 
