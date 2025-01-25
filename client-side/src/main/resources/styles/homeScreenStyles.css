@@ -1,0 +1,59 @@
+.sideBar{
+    -fx-background-color: linear-gradient(to top, #9ad1d4, #80ced7, #007ea7);
+    -fx-border-radius: 15;
+    -fx-background-radius: 0 10 10 0;
+    -fx-padding:  10
+}
+.chatsList{
+    -fx-background-color: white; 
+    -fx-background-radius: 15; 
+    -fx-border-radius: 15; 
+    -fx-padding: 10; 
+}
+.openChatList{
+    -fx-background-color: #f1f2f6;
+    -fx-border-radius: 25px;
+    -fx-border-color: transparent #d0d1d4 transparent transparent;
+    -fx-border-width:  0 2 0 0;
+}
+#searchField{
+    -fx-border-color: #003249;
+    -fx-border-radius:12;  
+}
+.iconsButtons{
+    -fx-background-color: #ccdbdc; 
+    -fx-background-radius: 40%; 
+    -fx-min-width: 50px; 
+    -fx-min-height: 30px; 
+    -fx-max-width: 30px; 
+    -fx-max-height: 30px;
+    -fx-border-color: #003249; 
+    -fx-border-width: 1;
+    -fx-border-radius:40%; 
+    -fx-alignment: center; 
+}
+
+.iconsButtons:hover {
+    -fx-background-color: #80ced7;
+    -fx-border-color: #007ea7;
+}
+#profilePicture{
+    -fx-shape: "M 50, 50 m -50, 0 a 50,50 0 1,1 100,0 a 50,50 0 1,1 -100,0"; /* Makes it circular */
+    -fx-min-width: 30px; 
+    -fx-min-height: 30px;
+    -fx-max-width: 30px;
+    -fx-max-height: 30px;
+    -fx-background-color: transparent;
+    -fx-background-image: url("images/profile.jpg");
+    -fx-background-size: cover;
+    -fx-background-position: center;
+    -fx-background-radius: 50%; 
+}
+.title{
+    -fx-font-size: 20px;        
+    -fx-text-fill: #007ea7;     
+}
+.subtitle{
+    -fx-font-size: 16px;        
+    -fx-text-fill: #003249;     
+}
