@@ -23,6 +23,7 @@ import javafx.scene.paint.ImagePattern;
 import javafx.scene.shape.Circle;
 import javafx.scene.text.Text;
 import javafx.stage.Stage;
+import jets.projects.Director;
 import javafx.scene.input.MouseEvent;
 
 public class homeScreenController {
@@ -71,14 +72,20 @@ public class homeScreenController {
     private Button sendButton;
     @FXML
     private Button attachmentsButton;
+    private Stage stage;
+    private Director myDirector;
 
-    @FXML
-    void initialize(){
+    public void setDirector(Stage stage, Director myDirector) {
+        this.stage = stage;
+        this.myDirector = myDirector;
+    }
+    public void perform() {
         Image userprofile = new Image(getClass().getResource("/images/profile.png").toExternalForm());
         Image myprofile = new Image(getClass().getResource("/images/blank-profile.png").toExternalForm());
         chatProfile.setFill(new ImagePattern(userprofile));
         myprofilepicture.setFill(new ImagePattern(myprofile));
     }
+
     @FXML
     void handleChatProfile(MouseEvent event){
         //if currently open chat is normal chat show user profile
@@ -225,11 +232,7 @@ public class homeScreenController {
     }
     @FXML
     void handleLogOutButton(ActionEvent event) throws IOException {
-        // Node currentNode = (Node)event.getSource();
-        // Stage stage = (Stage)currentNode.getScene().getWindow();
-        // Parent root = FXMLLoader.load(getClass().getResource("/fxml/signin.fxml"));
-        // Scene scene = new Scene(root,stage.getWidth(),stage.getHeight());
-        // stage.setScene(scene);
+        myDirector.signin();
     }
 
     @FXML
