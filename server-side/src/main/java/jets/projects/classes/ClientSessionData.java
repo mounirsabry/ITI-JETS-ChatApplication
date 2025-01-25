@@ -3,12 +3,12 @@ package jets.projects.classes;
 public class ClientSessionData {
     private final int userID;
     private final String phoneNumber;
-    private String userDisplayName;
+    private String displayName;
 
-    public ClientSessionData(int userID, String phoneNumber, String userDisplayName) {
+    public ClientSessionData(int userID, String phoneNumber, String displayName) {
         this.userID = userID;
         this.phoneNumber = phoneNumber;
-        this.userDisplayName = userDisplayName;
+        this.displayName = displayName;
     }
 
     public int getUserID() {
@@ -19,11 +19,31 @@ public class ClientSessionData {
         return phoneNumber;
     }
 
-    public String getUserDisplayName() {
-        return userDisplayName;
+    public String getDisplayName() {
+        return displayName;
     }
     
-    public void setUserDisplayName(String newName) {
-        userDisplayName = newName;
+    public void setDisplayName(String newName) {
+        displayName = newName;
+    }
+    
+    @Override
+    public String toString() {
+        StringBuilder builder = new StringBuilder();
+        
+        builder.append(ClientSessionData.class.getName());
+        builder.append('{');
+        
+        builder.append("userID=");
+        builder.append(userID);
+        
+        builder.append(", phoneNumber=");
+        builder.append(phoneNumber);
+        
+        builder.append(", displayName=");
+        builder.append(displayName);
+        
+        builder.append('}');
+        return builder.toString();
     }
 }
