@@ -35,7 +35,7 @@ public class GroupMember {
     public String toString() {
         StringBuilder builder = new StringBuilder();
         
-        builder.append(Announcement.class.getName());
+        builder.append(GroupMember.class.getName());
         builder.append('{');
         
         builder.append("groupID=");

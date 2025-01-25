@@ -38,7 +38,7 @@ public class ConnectionManager {
             dbInfo.load(inputStream);
         } catch (IOException ex) {
             System.err.println("""
-                            Could not laod the properties correctly
+                            Could not load the properties correctly
                             From the properties file.""");
             return false;
         }

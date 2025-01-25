@@ -24,7 +24,7 @@ public class NormalUser {
         phoneNumber = "Not Specified";
         email = "Not Specified";
         pic = "Not Specified";
-        password = "Not Specified";
+        password = "";
         gender = Gender.MALE;
         country = "Not Specified";
         birthDate = null;
@@ -153,21 +153,6 @@ public class NormalUser {
         
         builder.append(NormalUser.class.getName());
         builder.append('{');
-        
-        userID = -1;
-        displayName = "Not Specified";
-        phoneNumber = "Not Specified";
-        email = "Not Specified";
-        pic = "Not Specified";
-        password = "";
-        gender = Gender.MALE;
-        country = "Not Specified";
-        birthDate = null;
-        createdAt = null;
-        isAdminCreated = false;
-        isFirstTimeLogin = false;
-        status = NormalUserStatus.OFFLINE;
-        bio = "";
         
         builder.append("userID=");
         builder.append(userID);

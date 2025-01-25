@@ -1,5 +1,7 @@
 package jets.projects;
 
+import jets.projects.classes.ClientToken;
+import jets.projects.dao.TokenValidatorDao;
 import jets.projects.dbconnections.ConnectionManager;
 
 public class App {
@@ -11,6 +13,11 @@ public class App {
             return;
         }
         
+        ClientToken token = new ClientToken("1", 0);
+        System.out.println(token);
+        TokenValidatorDao dao = new TokenValidatorDao();
+        boolean result = dao.checkClientToken(token);
+        System.out.println(result);
         System.out.println("Hello from server-side application.");
     }
 }
