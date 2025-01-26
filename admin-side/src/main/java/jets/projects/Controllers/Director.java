@@ -1,4 +1,4 @@
-package jets.projects.fxmlcontrollers;
+package jets.projects.Controllers;
 
 import javafx.scene.Parent;
 import javafx.scene.Scene;

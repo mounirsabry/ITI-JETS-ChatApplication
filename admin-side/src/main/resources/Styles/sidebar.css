@@ -1,0 +1,155 @@
+/* Sidebar Styles */
+.announcementBackground{
+    -fx-background-color: linear-gradient(to bottom, #fbfbfb, #c8c3c3);
+}
+
+.sideBar {
+    -fx-background-color: linear-gradient(to bottom, #91d2d5, #65afb7, #005fa7);
+    -fx-border-radius: 15;
+    -fx-background-radius: 0 10 10 0;
+    -fx-padding: 10;
+}
+
+/* Default ToggleButton Styles */
+.overviewButton {
+    -fx-background-color: transparent; /* Default background */
+    -fx-text-fill: black; /* Default text color */
+    -fx-font-size: 18px; /* Text size */
+    -fx-font-weight: 600; /* Bold font */
+
+    -fx-alignment: center-left; /* Align text and graphic to the left */
+    -fx-padding: 5 0 5 20; /* Padding for spacing */
+    -fx-cursor: hand; /* Pointer cursor on hover */
+    -fx-border-width: 0; /* No border by default */
+    -fx-border-color: transparent; /* Transparent border */
+    -fx-background-radius: 10; /* Slightly rounded corners */
+}
+
+/* Hover Effect */
+.overviewButton:hover {
+    -fx-background-color: rgba(255, 255, 255, 0.2); /* Slight highlight */
+    -fx-text-fill: black; /* Keep text color black */
+}
+
+/* Selected State */
+.overviewButton:selected {
+    -fx-background-color: #6c7b88; /* Highlight color for selected state */
+    -fx-text-fill: white; /* White text when selected */
+    -fx-border-color: #96aec142; /* Slight border for visual emphasis */
+    -fx-border-width: 2px;
+}
+
+/* Hover on Selected State */
+.overviewButton:selected:hover {
+    -fx-background-color: #79848d; /* Same as selected state */
+    -fx-text-fill: white; /* Retain white text */
+}
+
+/* ImageView Inside ToggleButton */
+.overviewButton .image-view {
+    -fx-padding: 0 5 0 0; /* Spacing between image and text */
+}
+
+/* Signout Button (Special Case for Bottom Button) */
+.signoutButton {
+    -fx-background-color: transparent;
+    -fx-text-fill: black;
+    -fx-font-size: 14px;
+    -fx-alignment: center-left;
+    -fx-padding: 5 0 5 20;
+    -fx-cursor: hand;
+}
+
+.signoutButton:hover {
+    -fx-background-color: rgba(255, 255, 255, 0.2);
+}
+
+.signoutButton:selected {
+    -fx-background-color: #e81123; /* Highlight for signout */
+    -fx-text-fill: white;
+}
+.uniform-button {
+    -fx-background-color: #cfccc5; /* Green background */
+    -fx-text-fill: rgb(0, 0, 0); /* White text */
+    -fx-font-size: 12px;
+    -fx-font-weight: 800; /* Bold font */
+    -fx-pref-width: 90px;
+    -fx-pref-height: 30px;
+    -fx-cursor: hand;
+    
+}
+
+.uniform-button:selected {
+    -fx-background-color: #6c7b88; /* Highlight color for selected state */
+    -fx-text-fill: white; /* White text when selected */
+    -fx-border-color: #96aec142; /* Slight border for visual emphasis */
+    -fx-border-width: 2px;
+    
+}
+    
+.uniform-button:hover {
+    -fx-background-color: rgba(255, 255, 255, 0.2); /* Slight highlight */
+    -fx-text-fill: black; /* Keep text color black */
+}
+.buttonBar{
+     -fx-background-color: linear-gradient(to bottom, #c8c2c2b0, #c8c3c3);
+     -fx-border-color: #5c677042;
+}
+/* Start button style */
+.start-button {
+    -fx-background-color: #4CAF50; /* Green */
+    -fx-text-fill: rgb(0, 0, 0);
+    -fx-font-size: 25px; /* Text size */
+    -fx-font-weight: bold;
+    -fx-alignment: center-left; /* Align text and graphic to the left */
+    -fx-padding: 5 0 5 20; /* Padding for spacing */
+    -fx-cursor: hand; /* Pointer cursor on hover */
+    -fx-border-width: 0; /* No border by default */
+    -fx-border-color: transparent; /* Transparent border */
+    -fx-background-radius: 20; /* Slightly rounded corners */
+}
+
+.start-button:hover {
+    -fx-background-color: #6e9370;
+}
+
+.start-button:disabled {
+    -fx-background-color: #a5d6a7;
+    -fx-text-fill: #000000;
+}
+.start-button:selected {
+    -fx-background-color: #37ff00; /* Highlight color for selected state */
+    -fx-text-fill: rgb(255, 255, 255); /* White text when selected */
+    -fx-border-color: #96aec142; /* Slight border for visual emphasis */
+    -fx-border-width: 2px;
+    /* Bold font */
+}
+
+/* Stop button style */
+.stop-button {
+    -fx-background-color: #71241e; /* Red */
+    -fx-text-fill: rgb(0, 0, 0);
+    -fx-font-size: 25px; /* Text size */
+    -fx-font-weight: bold; /* Bold font */
+    -fx-alignment: center-left; /* Align text and graphic to the left */
+    -fx-padding: 5 0 5 20; /* Padding for spacing */
+    -fx-cursor: hand; /* Pointer cursor on hover */
+    -fx-border-width: 0; /* No border by default */
+    -fx-border-color: transparent; /* Transparent border */
+    -fx-background-radius: 20; /* Slightly rounded corners */
+}
+
+.stop-button:hover {
+    -fx-background-color: #a54848;
+}
+
+.stop-button:disabled {
+    -fx-background-color: #ef9a9a;
+    -fx-text-fill: #e0e0e0;
+}
+.stop-button:selected {
+    -fx-background-color: #eb0000; /* Highlight color for selected state */
+    -fx-text-fill: white; /* White text when selected */
+    -fx-border-color: #96aec142; /* Slight border for visual emphasis */
+    -fx-border-width: 2px;
+}
