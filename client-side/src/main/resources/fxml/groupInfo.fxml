@@ -1,0 +1,63 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.control.ListView?>
+<?import javafx.scene.control.Separator?>
+<?import javafx.scene.image.Image?>
+<?import javafx.scene.image.ImageView?>
+<?import javafx.scene.layout.HBox?>
+<?import javafx.scene.layout.VBox?>
+<?import javafx.scene.shape.Circle?>
+
+<VBox alignment="TOP_CENTER" maxHeight="400.0" maxWidth="600.0" minHeight="-Infinity" minWidth="-Infinity" prefHeight="400.0" prefWidth="600.0" spacing="5.0" styleClass="popup" stylesheets="@../styles/mainStyles.css" xmlns="http://javafx.com/javafx/9.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="jets.projects.Controllers.groupInfoController">
+   <children>
+      <Circle fx:id="groupIcon" fill="WHITE" radius="50.0" stroke="BLACK" strokeType="INSIDE" />
+      <Label fx:id="groupName" styleClass="title" stylesheets="@../styles/mainStyles.css" text="A New Group" />
+      <Label fx:id="description" styleClass="smallText" stylesheets="@../styles/mainStyles.css" text="description" VBox.vgrow="ALWAYS" />
+      <Separator prefWidth="200.0" />
+      <HBox alignment="CENTER_LEFT" prefHeight="22.0" prefWidth="560.0">
+         <children>
+            <Label styleClass="subtitle" stylesheets="@../styles/mainStyles.css" text="Group Members" />
+            <Button fx:id="addmember" maxWidth="27.0" mnemonicParsing="false" onAction="#handleAddMember" prefHeight="28.0" prefWidth="27.0" style="-fx-background-color: transparent;">
+               <graphic>
+                  <ImageView>
+                     <image>
+                        <Image url="@../images/add%20contact.png" />
+                     </image>
+                  </ImageView>
+               </graphic>
+               <HBox.margin>
+                  <Insets left="250.0" />
+               </HBox.margin>
+            </Button>
+            <Button fx:id="deleteGroup" mnemonicParsing="false" onAction="#handleDeleteGroup" style="-fx-background-color: transparent;">
+               <graphic>
+                  <ImageView>
+                     <image>
+                        <Image url="@../images/delete.png" />
+                     </image>
+                  </ImageView>
+               </graphic>
+            </Button>
+            <Button fx:id="leaveGroup" maxWidth="27.0" mnemonicParsing="false" onAction="#handleLeaveGroup" prefHeight="28.0" prefWidth="27.0" style="-fx-background-color: transparent;">
+               <graphic>
+                  <ImageView>
+                     <image>
+                        <Image url="@../images/log%20out.png" />
+                     </image>
+                  </ImageView>
+               </graphic>
+            </Button>
+         </children>
+         <padding>
+            <Insets left="20.0" right="20.0" />
+         </padding>
+      </HBox>
+      <ListView fx:id="membersList" prefHeight="200.0" prefWidth="200.0" />
+   </children>
+   <padding>
+      <Insets bottom="20.0" left="20.0" right="20.0" top="20.0" />
+   </padding>
+</VBox>

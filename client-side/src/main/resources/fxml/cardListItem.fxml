@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.Cursor?>
+<?import javafx.scene.effect.DropShadow?>
+<?import javafx.scene.image.Image?>
+<?import javafx.scene.image.ImageView?>
+<?import javafx.scene.layout.HBox?>
+<?import javafx.scene.layout.VBox?>
+<?import javafx.scene.paint.Color?>
+<?import javafx.scene.text.Font?>
+<?import javafx.scene.text.Text?>
+<?import javafx.scene.text.TextFlow?>
+
+<HBox fx:id="card" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="76.0" prefWidth="270.0" styleClass="card" xmlns="http://javafx.com/javafx/19" xmlns:fx="http://javafx.com/fxml/1">
+   <children>
+      <ImageView fx:id="profile" fitHeight="30.0" fitWidth="30.0" pickOnBounds="true" preserveRatio="true" styleClass="profile">
+         <image>
+            <Image url="@../images/user.jpg" />
+         </image>
+         <HBox.margin>
+            <Insets top="10.0" />
+         </HBox.margin>
+      </ImageView>
+        <Text fx:id="name" fill="#007ea7" strokeType="OUTSIDE" strokeWidth="0.0" text="user">
+            <font>
+                <Font name="Arial Bold" size="12.0" />
+            </font>
+        </Text>
+   </children>
+</HBox>

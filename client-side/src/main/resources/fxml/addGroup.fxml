@@ -1,0 +1,111 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.control.ScrollPane?>
+<?import javafx.scene.control.TextField?>
+<?import javafx.scene.image.Image?>
+<?import javafx.scene.image.ImageView?>
+<?import javafx.scene.layout.BorderPane?>
+<?import javafx.scene.layout.ColumnConstraints?>
+<?import javafx.scene.layout.GridPane?>
+<?import javafx.scene.layout.RowConstraints?>
+<?import javafx.scene.layout.VBox?>
+<?import javafx.scene.shape.Circle?>
+<?import javafx.scene.text.Font?>
+
+
+<BorderPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="400.0" prefWidth="600.0" styleClass="popup" stylesheets="@../styles/mainStyles.css" xmlns="http://javafx.com/javafx/9.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="jets.projects.Controllers.addGroupController">
+   <center>
+      <GridPane BorderPane.alignment="CENTER">
+         <columnConstraints>
+            <ColumnConstraints halignment="CENTER" hgrow="ALWAYS" minWidth="10.0" percentWidth="30.0" prefWidth="100.0" />
+            <ColumnConstraints halignment="CENTER" hgrow="ALWAYS" minWidth="10.0" percentWidth="20.0" prefWidth="100.0" />
+            <ColumnConstraints halignment="CENTER" hgrow="ALWAYS" minWidth="10.0" percentWidth="30.0" prefWidth="100.0" />
+            <ColumnConstraints halignment="CENTER" hgrow="ALWAYS" minWidth="10.0" percentWidth="20.0" prefWidth="100.0" />
+            <ColumnConstraints halignment="CENTER" hgrow="ALWAYS" minWidth="10.0" percentWidth="20.0" prefWidth="100.0" />
+            <ColumnConstraints halignment="CENTER" hgrow="ALWAYS" minWidth="10.0" percentWidth="20.0" prefWidth="100.0" />
+         </columnConstraints>
+         <rowConstraints>
+            <RowConstraints maxHeight="111.33333079020183" minHeight="10.0" percentHeight="35.0" prefHeight="108.00001525878906" vgrow="ALWAYS" />
+            <RowConstraints maxHeight="73.66667683919269" minHeight="2.9999847412109375" percentHeight="15.0" prefHeight="2.9999847412109375" vgrow="ALWAYS" />
+            <RowConstraints maxHeight="82.33334350585938" minHeight="10.0" percentHeight="15.0" prefHeight="61.0" vgrow="ALWAYS" />
+            <RowConstraints maxHeight="82.33334350585938" minHeight="10.0" percentHeight="15.0" prefHeight="61.0" vgrow="ALWAYS" />
+            <RowConstraints maxHeight="82.33334350585938" minHeight="10.0" percentHeight="10.0" prefHeight="37.333333333333314" vgrow="ALWAYS" />
+            <RowConstraints maxHeight="82.33334350585938" minHeight="10.0" percentHeight="10.0" prefHeight="37.333333333333314" vgrow="ALWAYS" />
+            <RowConstraints maxHeight="82.33334350585938" minHeight="10.0" percentHeight="10.0" prefHeight="37.333333333333314" vgrow="ALWAYS" />
+            <RowConstraints maxHeight="82.33334350585938" minHeight="10.0" percentHeight="10.0" prefHeight="37.333333333333314" vgrow="ALWAYS" />
+            <RowConstraints maxHeight="82.33334350585938" minHeight="10.0" percentHeight="10.0" prefHeight="37.333333333333314" vgrow="ALWAYS" />
+            <RowConstraints maxHeight="82.33334350585938" minHeight="10.0" percentHeight="10.0" prefHeight="37.333333333333314" vgrow="ALWAYS" />
+            <RowConstraints maxHeight="51.0" minHeight="10.0" percentHeight="10.0" prefHeight="32.0" vgrow="ALWAYS" />
+         </rowConstraints>
+         <children>
+            <TextField prefHeight="28.0" prefWidth="283.0" promptText="Enter group name" styleClass="textField" stylesheets="@../styles/mainStyles.css" GridPane.columnIndex="1" GridPane.columnSpan="3" GridPane.rowIndex="1">
+               <GridPane.margin>
+                  <Insets left="50.0" right="50.0" />
+               </GridPane.margin>
+            </TextField>
+            <Label styleClass="subtitle" stylesheets="@../styles/mainStyles.css" text="Group Name" GridPane.rowIndex="1" />
+            <Label styleClass="subtitle" stylesheets="@../styles/mainStyles.css" text="Description" GridPane.rowIndex="2" />
+            <VBox fx:id="groupIcon" alignment="CENTER" prefHeight="107.0" prefWidth="121.0" GridPane.columnIndex="2" GridPane.halignment="CENTER" GridPane.hgrow="ALWAYS" GridPane.valignment="CENTER" GridPane.vgrow="ALWAYS">
+               <children>
+                  <Circle fx:id="groupPicture" fill="DODGERBLUE" radius="32.0" stroke="BLACK" strokeType="INSIDE">
+                     <VBox.margin>
+                        <Insets top="-10.0" />
+                     </VBox.margin>
+                  </Circle>
+                  <Button fx:id="chooseGroupIconButton" mnemonicParsing="false" onAction="#handleChooseGroupIcon" prefHeight="23.0" prefWidth="100.0" style="-fx-background-color: transparent;" text="Add Group Icon" textFill="#939191">
+                     <font>
+                        <Font size="10.0" />
+                     </font>
+                  </Button>
+               </children>
+            </VBox>
+            <TextField prefHeight="28.0" prefWidth="283.0" promptText="Enter group description" styleClass="textField" stylesheets="@../styles/mainStyles.css" GridPane.columnIndex="1" GridPane.columnSpan="3" GridPane.rowIndex="2">
+               <GridPane.margin>
+                  <Insets left="50.0" right="50.0" />
+               </GridPane.margin>
+            </TextField>
+            <Label styleClass="subtitle" stylesheets="@../styles/mainStyles.css" text="Add members" GridPane.rowIndex="3" />
+            <TextField fx:id="addmemberTextField" prefHeight="28.0" prefWidth="283.0" styleClass="textField" stylesheets="@../styles/mainStyles.css" GridPane.columnIndex="1" GridPane.columnSpan="3" GridPane.rowIndex="3">
+               <GridPane.margin>
+                  <Insets left="50.0" right="50.0" />
+               </GridPane.margin>
+            </TextField>
+            <Button fx:id="addmemberButton" mnemonicParsing="false" onAction="#handleAddMember" style="-fx-background-color: transparent;" GridPane.columnIndex="3" GridPane.rowIndex="3">
+               <GridPane.margin>
+                  <Insets left="20.0" />
+               </GridPane.margin>
+               <graphic>
+                  <ImageView>
+                     <image>
+                        <Image url="@../images/Add_Plus_navy.png" />
+                     </image>
+                  </ImageView>
+               </graphic>
+            </Button>
+            <ScrollPane hbarPolicy="NEVER" prefHeight="103.0" prefWidth="578.0" styleClass="listView" stylesheets="@../styles/mainStyles.css" vbarPolicy="NEVER" GridPane.columnSpan="3" GridPane.rowIndex="5" GridPane.rowSpan="5">
+               <content>
+                  <VBox fx:id="addedMembersVbox" prefHeight="113.0" prefWidth="330.0" scaleShape="false" style="-fx-border-radius: 15; -fx-background-radius: 15;">
+                     <children>
+                        <Label text="Added Members" textFill="#b9b6b6" />
+                     </children>
+                  </VBox>
+               </content>
+            </ScrollPane>
+         </children>
+      </GridPane>
+   </center>
+   <bottom>
+      <Button fx:id="addGroupButton" mnemonicParsing="false" onAction="#handleAddGroup" prefHeight="44.0" prefWidth="149.0" styleClass="primaryButton" stylesheets="@../styles/mainStyles.css" text="Add Group" BorderPane.alignment="CENTER">
+         <graphic>
+            <ImageView>
+               <image>
+                  <Image url="@../images/Add_Plus.png" />
+               </image>
+            </ImageView>
+         </graphic>
+      </Button>
+   </bottom>
+</BorderPane>
