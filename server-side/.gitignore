@@ -1,3 +1,7 @@
+# Ignores the configuration file that contains the URL, username and password for the database.
+src/main/resources/db_info.properties
+
+# Github generated lines.
 target/
 pom.xml.tag
 pom.xml.releaseBackup

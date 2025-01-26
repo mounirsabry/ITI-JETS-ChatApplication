@@ -1,74 +1,122 @@
 package jets.projects.api;
 
 import java.util.List;
-import java.util.Optional;
+import java.util.Map;
+
 import jets.projects.classes.AdminSessionData;
 import jets.projects.classes.AdminToken;
 import jets.projects.classes.RequestResult;
-import jets.projects.dao.DaoAdminController;
+import jets.projects.topcontrollers.DaoAdminManager;
 import jets.projects.entities.Announcement;
 
 /** 
  * @author Mounir
- * If the optional is null, then either the database is down, or
+ * If the ResultSet is null, then either the database is down, or
  * an unhandled problem happens in the server.
  */
 public class AdminServerAPI {
-    private DaoAdminController controller = new DaoAdminController();
+    private final DaoAdminManager controller = new DaoAdminManager();
     
-    public Optional<AdminSessionData> login(int userID, String password) {
-        return null;
+    private boolean validToken(AdminToken token) {
+        return !(token == null
+            ||  token.getUserID() <= 0);
     }
     
-    public Optional<RequestResult<Boolean>> logout(AdminToken token) {
-        return null;
+    public RequestResult<AdminSessionData> login(int userID, String password) {
+        if (userID <= 0 
+        || password == null || password.isBlank()) {
+            AdminSessionData invalidLoginData = new AdminSessionData
+                (-1, null);
+            return new RequestResult<>(true, invalidLoginData);
+        }
+        return controller.login(userID, password);
     }
     
-    public Optional<RequestResult<Boolean>> startService(AdminToken token) {
-        return null;
+    public RequestResult<Boolean> logout(AdminToken token) {
+        if (!validToken(token)) {
+            return new RequestResult<>(false, null);
+        }
+        return controller.logout(token);
+    }
+    
+    public RequestResult<Boolean> startService(AdminToken token) {
+        if (!validToken(token)) {
+            return new RequestResult<>(false, null);
+        }
+        return controller.startService(token);
     }
             
-    public Optional<RequestResult<Boolean>> stopService(AdminToken token) {
-        return null;
+    public RequestResult<Boolean> stopService(AdminToken token) {
+        if (!validToken(token)) {
+            return new RequestResult<>(false, null);
+        }
+        return controller.stopService(token);
     }
     
-    public Optional<RequestResult<Announcement>> getLastAnnouncement(
+    public RequestResult<Announcement> getLastAnnouncement(
             AdminToken token) {
-        return null;
+        if (!validToken(token)) {
+            return new RequestResult<>(false, null);
+        }
+        return controller.getLastAnnouncement(token);
     }
     
-    public Optional<RequestResult<List<Announcement>>> getAnnouncements(
+    public RequestResult<List<Announcement>> getAllAnnouncements(
             AdminToken token) {
-        return null;
+        if (!validToken(token)) {
+            return new RequestResult<>(false, null);
+        }
+        return controller.getAllAnnouncements(token);
     }
     
-    public Optional<RequestResult<Boolean>> submitNewAnnouncement(
+    public RequestResult<Boolean> submitNewAnnouncement(
             AdminToken token, Announcement newAnnouncement) {
-        return null;
+        if (!validToken(token)) {
+            return new RequestResult<>(false, null);
+        }
+        if (newAnnouncement == null) {
+            return new RequestResult<>(true, false);
+        }  
+        return controller.submitNewAnnouncement(token, newAnnouncement);
     }
     
-    public Optional<RequestResult<List<Integer>>> getOnlineOfflineStats(
+    public RequestResult<List<Integer>> getOnlineOfflineStats(
             AdminToken token) {
-        return null;
+        if (!validToken(token)) {
+            return new RequestResult<>(false, null);
+        }
+        return controller.getOnlineOfflineStats(token);
     }
     
-    public Optional<RequestResult<List<Integer>>> getMaleFemaleStats(
+    public RequestResult<List<Integer>> getMaleFemaleStats(
             AdminToken token) {
-        return null;
+        if (!validToken(token)) {
+            return new RequestResult<>(false, null);
+        }
+        return controller.getMaleFemaleStats(token);
     }
     
-    public Optional<RequestResult<List<Integer>>> getTopCountries(
+    public RequestResult<Map<String,Integer>> getTopCountries(
             AdminToken token) {
-        return null;
+        if (!validToken(token)) {
+            return new RequestResult<>(false, null);
+        }
+        return controller.getTopCountries(token);
     }
     
-    public Optional<RequestResult<List<String>>> getAllCountries(
+    public RequestResult<Map<String,Integer>> getAllCountries(
             AdminToken token) {
-        return null;
+        if (!validToken(token)) {
+            return new RequestResult<>(false, null);
+        }
+        return controller.getAllCountries(token);
     }
     
-    public Optional<RequestResult<Integer>> getCountryUsers(AdminToken token,
+    public RequestResult<Integer> getCountryUsers(AdminToken token,
             String countryName) {
-        return null;
+        if (!validToken(token)) {
+            return new RequestResult<>(false, null);
+        }
+        return controller.getCountryUsers(token, countryName);
     }
 }
