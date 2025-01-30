@@ -1,4 +1,4 @@
-package jets.projects.classes;
+package jets.projects.session;
 
 public class ClientToken {
     private final String phoneNumber;

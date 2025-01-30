@@ -1,19 +1,12 @@
 package jets.projects;
 
-import java.util.Date;
-import java.util.Map;
-
-import jets.projects.classes.AdminSessionData;
-import jets.projects.classes.AdminToken;
-import jets.projects.classes.ClientToken;
-import jets.projects.dao.AnnouncementDao;
-import jets.projects.dao.StatsDao;
-import jets.projects.dao.TokenValidatorDao;
-import jets.projects.dao.UsersDao;
+import io.tasks.classes.Delays;
+import io.tasks.classes.ServerCommand;
 import jets.projects.dbconnections.ConnectionManager;
-import jets.projects.entities.Announcement;
+import jets.projects.topcontrollers.AdminManager;
 
 public class App {
+    @SuppressWarnings("SleepWhileInLoop")
     public static void main(String[] args) {
         // Initialize the connection manager with the config from the file.
         boolean isBDWorking = ConnectionManager.initDeviceManager();
@@ -22,30 +15,47 @@ public class App {
             return;
         }
         
-        StatsDao statsDao = new StatsDao();
-        System.out.println(
-            "online: "+ statsDao.getOnlineOfflineStats().get(0) 
-            + "   offline: " +statsDao.getOnlineOfflineStats().get(1));
+        if (ServiceManager.startAdminService() == false) {
+            System.err.println("Could not start the admin service.");
+            System.err.println("Server will abort.");
+            return;
+        }
         
-        System.out.println(
-            "male: "+ statsDao.getMaleFemaleStats().get(0) 
-            + "   female: " +statsDao.getMaleFemaleStats().get(1));
-
-        Map<String, Integer> topCountries = statsDao.getTopCountries();
-
-        System.out.println("Top 3 Countries:");
-        for (Map.Entry<String, Integer> entry : topCountries.entrySet()) {
-            System.out.println(entry.getKey() + ": " + entry.getValue() + " users");
+        if (ServiceManager.startNormalUserService() == false) {
+            System.err.println("Could not start the normal user service.");
+            System.err.println("Server will abort.");
+            return;
         }
-
-        Map<String, Integer> allCountries = statsDao.getAllCountries();
-
-        System.out.println("All countries:");
-        for (Map.Entry<String, Integer> entry : allCountries.entrySet()) {
-            System.out.println(entry.getKey() + ": " + entry.getValue() + " users");
+        
+        ServerManager myManager = new ServerManager();
+        AdminManager.setServerManager(myManager);
+        
+        System.out.println("Server is up and running.");
+        
+        while (true) {
+            ServerCommand nextCommand = myManager.getAndSetNextCommand(
+                    ServerCommand.WAIT);
+            
+            if (nextCommand == ServerCommand.START_NORMAL_USER_SERVICE) {
+                ServiceManager.startNormalUserService();
+            }
+            
+            if (nextCommand == ServerCommand.STOP_NORMAL_USER_SERVICE) {
+                ServiceManager.stopNormalUserService();
+            }
+            
+            if (nextCommand == ServerCommand.SHUT_DOWN) {
+                ServiceManager.stopNormalUserService();
+                ServiceManager.stopAdminService();
+                break;
+            }
+            
+            try {
+                Thread.sleep(Delays.SERVER_CHECK_NEXT_COMMAND_DELAY);
+            } catch (InterruptedException ex) {
+                System.out.println("Something interrupted the main thread.");
+                return;
+            }
         }
-
-        System.out.println("USA users: "+statsDao.getCountryUsers("USA"));
-        System.out.println("Hello from server-side application.");
     }
 }

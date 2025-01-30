@@ -8,12 +8,13 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import jets.projects.classes.RequestResult;
 
 import jets.projects.dbconnections.ConnectionManager;
 
 public class StatsDao {
 
-    public List<Integer> getOnlineOfflineStats() {
+    public RequestResult<List<Integer>> getOnlineOfflineStats() {
         List<Integer> stats = new ArrayList<>();
         int onlineCount = 0;
         int offlineCount = 0;
@@ -36,15 +37,15 @@ public class StatsDao {
             stats.add(offlineCount);
 
         } catch (SQLException e) {
-            e.printStackTrace();
-            return null;
+            return new RequestResult<>(null,
+                    e.getMessage());
         }
 
-        return stats;
+        return new RequestResult<>(stats, null);
     }
 
 
-    public List<Integer> getMaleFemaleStats() {
+    public RequestResult<List<Integer>> getMaleFemaleStats() {
         List<Integer> stats = new ArrayList<>();
         int maleCount = 0;
         int femaleCount = 0;
@@ -74,14 +75,14 @@ public class StatsDao {
             stats.add(femaleCount);
 
         } catch (SQLException e) {
-            e.printStackTrace();
-            return null;
+            return new RequestResult<>(null,
+                    e.getMessage());
         }
 
-        return stats;
+        return new RequestResult<>(stats, null);
     }
 
-     public Map<String, Integer> getTopCountries() {
+     public RequestResult<Map<String, Integer>> getTopCountries() {
         Map<String, Integer> topCountries = new HashMap<>();
 
         try (Connection connection = ConnectionManager.getConnection()) {
@@ -102,14 +103,14 @@ public class StatsDao {
             }
 
         } catch (SQLException e) {
-            e.printStackTrace();
-            return null;
+            return new RequestResult<>(null,
+                    e.getMessage());
         }
 
-        return topCountries;
+        return new RequestResult<>(topCountries, null);
     }
 
-    public Map<String, Integer> getAllCountries() {
+    public RequestResult<Map<String, Integer>> getAllCountries() {
         Map<String, Integer> countries = new HashMap<>();
 
         try (Connection connection = ConnectionManager.getConnection()) {
@@ -129,14 +130,14 @@ public class StatsDao {
             }
 
         } catch (SQLException e) {
-            e.printStackTrace();
-            return null;
+            return new RequestResult<>(null,
+                    e.getMessage());
         }
 
-        return countries;
+        return new RequestResult<>(countries, null);
     }
 
-    public Integer getCountryUsers(String countryName) {
+    public RequestResult<Integer> getCountryUsers(String countryName) {
         Integer userCount = 0;
 
         try (Connection connection = ConnectionManager.getConnection()) {
@@ -155,11 +156,11 @@ public class StatsDao {
             }
 
         } catch (SQLException e) {
-            e.printStackTrace();
-            return null;
+            return new RequestResult<>(null,
+                    e.getMessage());
         }
 
-        return userCount;
+        return new RequestResult<>(userCount, null);
     }
     
 }
