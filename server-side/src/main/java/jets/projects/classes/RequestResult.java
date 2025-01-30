@@ -1,22 +1,22 @@
 package jets.projects.classes;
 
 public class RequestResult<T> {
-    private final Boolean isValid;
     private final T responseData;
-
-    public RequestResult(Boolean isValid, T responseData) {
-        this.isValid = isValid;
+    private final String errorMessage;
+    
+    public RequestResult(T responseData, String errorMessage) {
         this.responseData = responseData;
-    }
-
-    public Boolean getIsValid() {
-        return isValid;
+        this.errorMessage = errorMessage;
     }
 
     public T getResponseData() {
         return responseData;
     }
     
+    public String getErrorMessage() {
+        return errorMessage;
+    }
+
     @Override
     public String toString() {
         StringBuilder builder = new StringBuilder();
@@ -24,11 +24,11 @@ public class RequestResult<T> {
         builder.append(RequestResult.class.getName());
         builder.append('{');
         
-        builder.append("isValid=");
-        builder.append(isValid);
-        
-        builder.append(", responseData=");
+        builder.append("responseData=");
         builder.append(responseData);
+        
+        builder.append(", errorMessage=");
+        builder.append(errorMessage);
         
         builder.append('}');
         return builder.toString();

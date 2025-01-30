@@ -1,28 +1,38 @@
 package jets.projects.topcontrollers;
 
+import io.tasks.classes.ServerCommand;
+import java.rmi.RemoteException;
 import java.util.List;
 import java.util.Map;
+import jets.projects.ServerManager;
 
-import jets.projects.classes.AdminSessionData;
-import jets.projects.classes.AdminToken;
+import jets.projects.session.AdminSessionData;
+import jets.projects.session.AdminToken;
 import jets.projects.classes.RequestResult;
 import jets.projects.dao.AnnouncementDao;
-import jets.projects.dao.ServiceDao;
 import jets.projects.dao.StatsDao;
 import jets.projects.dao.UsersDao;
 import jets.projects.dao.TokenValidatorDao;
 import jets.projects.entities.Announcement;
 
-public class DaoAdminManager {
-    TokenValidatorDao validatorDao = new TokenValidatorDao();
-    UsersDao usersDao = new UsersDao();
-    ServiceDao serviceDao = new ServiceDao();
-    AnnouncementDao announcementDao = new AnnouncementDao();
-    StatsDao statsDao = new StatsDao();
+public class AdminManager {
+    private static ServerManager serverManager;
+    
+    private TokenValidatorDao validatorDao = new TokenValidatorDao();
+    private UsersDao usersDao = new UsersDao();
+    private AnnouncementDao announcementDao = new AnnouncementDao();
+    private StatsDao statsDao = new StatsDao();
+    
+    public static void setServerManager(ServerManager manager) {
+        serverManager = manager;
+    }
 
     public RequestResult<AdminSessionData> login(int userID, String password) {
-        AdminSessionData sessionData = usersDao.adminLogin(userID, password);
-        return new RequestResult<>(true, sessionData);
+        var result = usersDao.adminLogin(userID, password);
+        if (result.getErrorMessage() != null) {
+            throw new RemoteException(result.getErrorMessage());
+        }
+        return result.getResponseData();
     }
 
     public RequestResult<Boolean> logout(AdminToken token) {
@@ -30,7 +40,7 @@ public class DaoAdminManager {
         if (!isValidToken) {
             return new RequestResult<>(false, null);
         }
-        boolean result = usersDao.logout(token.getUserID());
+        boolean result = usersDao.adminLogout(token.getUserID());
         return new RequestResult<>(true, result);
     }
 
@@ -39,8 +49,9 @@ public class DaoAdminManager {
         if (!isValidToken) {
             return new RequestResult<>(false, null);
         }
-        boolean result = serviceDao.startService();
-        return new RequestResult<>(true, result);
+        serverManager.setNextCommand(
+                ServerCommand.START_NORMAL_USER_SERVICE);
+        return new RequestResult<>(true, null);
     }
 
     public RequestResult<Boolean> stopService(AdminToken token) {
@@ -48,8 +59,19 @@ public class DaoAdminManager {
         if (!isValidToken) {
             return new RequestResult<>(false, null);
         }
-        boolean result = serviceDao.stopService();
-        return new RequestResult<>(true, result);
+        serverManager.setNextCommand(
+                ServerCommand.STOP_NORMAL_USER_SERVICE);
+        return new RequestResult<>(true, null);
+    }
+    
+    public RequestResult<Boolean> shutDown(AdminToken token) {
+        boolean isValidToken = validatorDao.checkAdminToken(token);
+        if (!isValidToken) {
+            return new RequestResult<>(false, null);
+        }
+        serverManager.setNextCommand(
+                ServerCommand.SHUT_DOWN);
+        return new RequestResult<>(true, null);
     }
 
     public RequestResult<Announcement> getLastAnnouncement(AdminToken token) {

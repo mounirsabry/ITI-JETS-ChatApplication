@@ -7,13 +7,14 @@ import java.sql.SQLException;
 import java.util.List;
 import java.util.ArrayList;
 import java.util.Date;
+import jets.projects.classes.RequestResult;
 
 import jets.projects.dbconnections.ConnectionManager;
 import jets.projects.entities.Announcement;
 
 public class AnnouncementDao {
 
-    public Announcement getLastAnnouncement() {
+    public RequestResult<Announcement> getLastAnnouncement() {
         try (Connection connection = ConnectionManager.getConnection()) {
             PreparedStatement preparedStatement = connection.prepareStatement(
                 "SELECT * FROM Announcement ORDER BY announcement_ID DESC LIMIT 1"
@@ -27,18 +28,18 @@ public class AnnouncementDao {
                 String content = resultSet.getString("content");
                 Date sentAt = resultSet.getDate("sent_at");
                 Announcement announcement = new Announcement(announcementID, header, content, sentAt);
-                return announcement;
+                return new RequestResult<>(announcement, null);
             } else {
-                return null;
+                return new RequestResult<>(null, null);
             }
 
         } catch (SQLException e) {
-            e.printStackTrace();
-            return null;
+            return new RequestResult<>(null, 
+                    e.getMessage());
         }
     }
 
-     public List<Announcement> getAllAnnouncements() {
+     public RequestResult<List<Announcement>> getAllAnnouncements() {
         List<Announcement> announcements = new ArrayList<>();
 
         try (Connection connection = ConnectionManager.getConnection()) {
@@ -57,14 +58,14 @@ public class AnnouncementDao {
                 announcements.add(announcement);
             }
         } catch (SQLException e) {
-            e.printStackTrace();
-            return null;
+            return new RequestResult<>(null, 
+                    e.getMessage());
         }
 
-        return announcements;
+        return new RequestResult<>(announcements, null);
     }
 
-    public boolean submitNewAnnouncement(Announcement newAnnouncement) {
+    public RequestResult<Boolean> submitNewAnnouncement(Announcement newAnnouncement) {
         boolean isSuccess = false;
 
         try (Connection connection = ConnectionManager.getConnection()) {
@@ -80,11 +81,11 @@ public class AnnouncementDao {
                 isSuccess = true;
             }
         } catch (SQLException e) {
-            e.printStackTrace();
-            return false;
+            return new RequestResult<>(null, 
+                    e.getMessage());
         }
 
-        return isSuccess;
+        return new RequestResult<>(isSuccess, null);
     }
     
 }

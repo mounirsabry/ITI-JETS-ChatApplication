@@ -1,4 +1,4 @@
-package jets.projects.classes;
+package jets.projects.session;
 
 public class AdminToken {
     private final int userID;

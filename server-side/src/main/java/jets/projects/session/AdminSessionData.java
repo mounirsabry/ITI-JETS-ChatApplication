@@ -1,13 +1,11 @@
-package jets.projects.classes;
+package jets.projects.session;
 
-public class ClientSessionData {
+public class AdminSessionData {
     private final int userID;
-    private final String phoneNumber;
-    private String displayName;
-
-    public ClientSessionData(int userID, String phoneNumber, String displayName) {
+    private final String displayName;
+    
+    public AdminSessionData(int userID, String displayName) {
         this.userID = userID;
-        this.phoneNumber = phoneNumber;
         this.displayName = displayName;
     }
 
@@ -15,30 +13,19 @@ public class ClientSessionData {
         return userID;
     }
 
-    public String getPhoneNumber() {
-        return phoneNumber;
-    }
-
     public String getDisplayName() {
         return displayName;
-    }
-    
-    public void setDisplayName(String newName) {
-        displayName = newName;
     }
     
     @Override
     public String toString() {
         StringBuilder builder = new StringBuilder();
         
-        builder.append(ClientSessionData.class.getName());
+        builder.append(AdminSessionData.class.getName());
         builder.append('{');
         
         builder.append("userID=");
         builder.append(userID);
-        
-        builder.append(", phoneNumber=");
-        builder.append(phoneNumber);
         
         builder.append(", displayName=");
         builder.append(displayName);

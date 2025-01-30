@@ -1,15 +1,23 @@
 package jets.projects.entities;
 
-import java.util.Date;
+import java.sql.Timestamp;
 
 public class Notification {
-   private int notificationID; 
-   private int userID;
-   private String content;
-   private boolean isRead;
-   private Date sentAt;
+    private int notificationID; 
+    private int userID;
+    private String content;
+    private boolean isRead;
+    private Timestamp sentAt;
+   
+    public Notification() {
+        notificationID = -1;
+        userID = -1;
+        content = null;
+        isRead = false;
+        sentAt = null;
+    }
 
-    public Notification(int notificationID, int userID, String content, boolean isRead, Date sentAt) {
+    public Notification(int notificationID, int userID, String content, boolean isRead, Timestamp sentAt) {
         this.notificationID = notificationID;
         this.userID = userID;
         this.content = content;
@@ -33,7 +41,7 @@ public class Notification {
         return isRead;
     }
 
-    public Date getSentAt() {
+    public Timestamp getSentAt() {
         return sentAt;
     }
 
@@ -53,12 +61,33 @@ public class Notification {
         this.isRead = isRead;
     }
 
-    public void setSentAt(Date sentAt) {
+    public void setSentAt(Timestamp sentAt) {
         this.sentAt = sentAt;
     }
    
     @Override
     public String toString() {
-        return null;
+        StringBuilder builder = new StringBuilder();
+        
+        builder.append(Notification.class.getName());
+        builder.append('{');
+        
+        builder.append("notificationID=");
+        builder.append(notificationID);
+        
+        builder.append(", userID=");
+        builder.append(userID);
+        
+        builder.append(", content=");
+        builder.append(content);
+        
+        builder.append(", isRead=");
+        builder.append(isRead);
+        
+        builder.append(", sentAt=");
+        builder.append(sentAt);
+        
+        builder.append('}');
+        return builder.toString();
     }
 }
