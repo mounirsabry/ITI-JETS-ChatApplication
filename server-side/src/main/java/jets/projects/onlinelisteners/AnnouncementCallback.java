@@ -1,20 +1,35 @@
 package jets.projects.onlinelisteners;
 
+import java.rmi.RemoteException;
+import java.util.Map;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
+
+import jets.projects.dao.AnnouncementDao;
 import jets.projects.entities.Announcement;
+import jets.projects.sharedds.OnlineNormalUserInfo;
+import jets.projects.sharedds.OnlineNormalUserTable;
 
 public class AnnouncementCallback {
-    // normal executor.
-    // announcement object to hold the value based in the function.
-    
-    // constructor which defines runnable.
-    
-    public void newAnnouncementAdded(Announcement announcement) {
-        // submit runnable to executor.
+    Map<Integer, OnlineNormalUserInfo> onlineUsers;
+    private final ExecutorService executor;
+    AnnouncementDao announcementDao;
+
+    AnnouncementCallback(AnnouncementDao announcementDao){
+        this.announcementDao = announcementDao;
+        onlineUsers = OnlineNormalUserTable.getOnlineUsersTable();
+        executor = Executors.newFixedThreadPool(onlineUsers.size());
     }
     
-    // The actual function which will execute the callback action.
-    
-    // Use the sharedds.OnlineNormalUserTable.table
-    // Iterate over the whole map one by one, get the impl, call the
-    // function from the clientAPI.
+    public void newAnnouncementAdded(Announcement announcement){
+        executor.submit(() -> {
+            for (OnlineNormalUserInfo userInfo : onlineUsers.values()) {
+                try {
+                    userInfo.getImpl().newAnnouncementAdded(announcement);
+                } catch (RemoteException e) {
+                    System.err.println("Failed to send announcement to user: " + userInfo.toString());
+                }
+            }
+        });
+    }
 }

@@ -19,6 +19,7 @@ import jets.projects.entities.GroupMember;
 import jets.projects.entities.NormalUser;
 import jets.projects.entities.NormalUserStatus;
 import jets.projects.api.NormalUserAPI;
+import jets.projects.classes.ExceptionMessages;
 
 /** 
  * @author Mounir
@@ -42,11 +43,10 @@ public class NormalUserAPIImpl extends UnicastRemoteObject
     }
     
     @Override
-    public ClientSessionData login(String phoneNumber,
-            String password) throws RemoteException {
+    public ClientSessionData login(String phoneNumber, String password) throws RemoteException {
         if (phoneNumber == null || phoneNumber.isBlank()
         ||  password == null || password.isBlank()) {
-            throw new RemoteException("Invalid login data.");
+            throw new RemoteException(ExceptionMessages.INVALID_INPUT_DATA);
         }
         var result = controller.login(phoneNumber, password);
         if (result.getErrorMessage() != null) {
@@ -54,7 +54,6 @@ public class NormalUserAPIImpl extends UnicastRemoteObject
         }
         return result.getResponseData();
     }
-    
     @Override
     public boolean register(
             String displayName, String phoneNumber, String email, String pic,
@@ -67,9 +66,8 @@ public class NormalUserAPIImpl extends UnicastRemoteObject
         ||  password == null || password.isBlank()
         || gender == null
         || country == null || country.isBlank()) {
-            throw new RemoteException("Invalid register data.");
+            throw new RemoteException(ExceptionMessages.INVALID_INPUT_DATA);
         }
-        
         var result = controller.registerNormalUser(
                 displayName, phoneNumber, email, pic,
                 password, gender, country, birthDate, bio);
@@ -78,11 +76,10 @@ public class NormalUserAPIImpl extends UnicastRemoteObject
         }
         return result.getResponseData();
     }
-    
     @Override
     public boolean logout(ClientToken token) throws RemoteException {
         if (!validToken(token)) {
-            throw new RemoteException("Invalid token.");
+            throw new RemoteException(ExceptionMessages.UNREGISTERED_USER);
         }
         var result = controller.logout(token);
         if (result.getErrorMessage() != null) {
@@ -95,7 +92,7 @@ public class NormalUserAPIImpl extends UnicastRemoteObject
     @Override
     public String getProfilePic(ClientToken token) throws RemoteException {
         if (!validToken(token)) {
-            throw new RemoteException("Invalid token.");
+            throw new RemoteException(ExceptionMessages.UNREGISTERED_USER);
         }
         var result = controller.getProfilePic(token);
         if (result.getErrorMessage() != null) {
@@ -108,10 +105,10 @@ public class NormalUserAPIImpl extends UnicastRemoteObject
     public boolean setOnlineStatus(ClientToken token, 
             NormalUserStatus newStatus) throws RemoteException {
         if (!validToken(token)) {
-            throw new RemoteException("Invalid token.");
+            throw new RemoteException(ExceptionMessages.UNREGISTERED_USER);
         }
         if (newStatus == null || newStatus == NormalUserStatus.OFFLINE) {
-            throw new RemoteException("Invalid status input.");
+            throw new RemoteException(ExceptionMessages.INVALID_INPUT_DATA);
         }
         var result = controller.setOnlineStatus(token, newStatus);
         if (result.getErrorMessage() != null) {
@@ -119,12 +116,10 @@ public class NormalUserAPIImpl extends UnicastRemoteObject
         }
         return result.getResponseData();
     }
-    
     @Override
-    public List<Contact> getContacts(ClientToken token) 
-            throws RemoteException {
+    public List<Contact> getContacts(ClientToken token) throws RemoteException {
         if (!validToken(token)) {
-            throw new RemoteException("Invalid token.");
+            throw new RemoteException(ExceptionMessages.UNREGISTERED_USER);
         }
         var result = controller.getContacts(token);
         if (result.getErrorMessage() != null) {
@@ -134,49 +129,32 @@ public class NormalUserAPIImpl extends UnicastRemoteObject
     }
     
     @Override
-    public Contact getContactProfile(ClientToken token,
-            int contactID) throws RemoteException {
+    public NormalUser getContactProfile(ClientToken token,int contactID) throws RemoteException {
         if (!validToken(token)) {
-            throw new RemoteException("Invalid token.");
+            throw new RemoteException(ExceptionMessages.UNREGISTERED_USER);
         }
-        if (contactID <= 0) {
-            throw new RemoteException("Invalid contact ID.");
-        }
-        
         var result = controller.getContactProfile(token, contactID);
         if (result.getErrorMessage() != null) {
             throw new RemoteException(result.getErrorMessage());
         }
         return result.getResponseData();
     }
-    
     @Override
-    public String getContactProfilePic(ClientToken token,
-            int contactID) throws RemoteException {
+    public String getContactProfilePic(ClientToken token, int contactID) throws RemoteException {
         if (!validToken(token)) {
-            throw new RemoteException("Invalid token.");
+            throw new RemoteException(ExceptionMessages.UNREGISTERED_USER);
         }
-        if (contactID <= 0) {
-            throw new RemoteException("Invalid contact ID.");
-        }
-        
         var result = controller.getContactProfilePic(token, contactID);
         if (result.getErrorMessage() != null) {
             throw new RemoteException(result.getErrorMessage());
         }
         return result.getResponseData();
     }
-    
     @Override
-    public List<ContactMessage> getAllContactMessages(ClientToken token,
-            int contactID) throws RemoteException {
+    public List<ContactMessage> getAllContactMessages(ClientToken token,int contactID) throws RemoteException {
         if (!validToken(token)) {
-            throw new RemoteException("Invalid token.");
+            throw new RemoteException(ExceptionMessages.UNREGISTERED_USER);
         }
-        if (contactID <= 0) {
-            throw new RemoteException("Invalid contact ID.");
-        }
-        
         var result = controller.getContactMessages(token, contactID);
         if (result.getErrorMessage() != null) {
             throw new RemoteException(result.getErrorMessage());
@@ -185,15 +163,10 @@ public class NormalUserAPIImpl extends UnicastRemoteObject
     }
     
     @Override
-    public List<ContactMessage> getUnReadContactMessages(
-            ClientToken token, int contactID) throws RemoteException {
+    public List<ContactMessage> getUnReadContactMessages(ClientToken token, int contactID) throws RemoteException {
         if (!validToken(token)) {
-            throw new RemoteException("Invalid token.");
+            throw new RemoteException(ExceptionMessages.UNREGISTERED_USER);
         }
-        if (contactID <= 0) {
-            throw new RemoteException("Invalid otherID ID.");
-        }
-        
         var result = controller.getUnReadContactMessages(token, contactID);
         if (result.getErrorMessage() != null) {
             throw new RemoteException(result.getErrorMessage());
@@ -205,12 +178,11 @@ public class NormalUserAPIImpl extends UnicastRemoteObject
     public boolean sendContactMessage(ClientToken token,
             ContactMessage message) throws RemoteException {
         if (!validToken(token)) {
-            throw new RemoteException("Invalid token.");
+            throw new RemoteException(ExceptionMessages.UNREGISTERED_USER);
         }
         if (message == null) {
-            throw new RemoteException("Message cannot be null.");
+            throw new RemoteException(ExceptionMessages.INVALID_MESSAGE);
         }
-        
         var result = controller.sendContactMessage(token, message);
         if (result.getErrorMessage() != null) {
             throw new RemoteException(result.getErrorMessage());
@@ -219,69 +191,57 @@ public class NormalUserAPIImpl extends UnicastRemoteObject
     }
     
     @Override
-    public boolean sendContactFileMessage(ClientToken token,
-            String file) throws RemoteException {
+    public boolean sendContactFileMessage(ClientToken token,int receiverID,String file) throws RemoteException {
         if (!validToken(token)) {
-            throw new RemoteException("Invalid token.");
+            throw new RemoteException(ExceptionMessages.UNREGISTERED_USER);
         }
         if (file == null) {
-            throw new RemoteException("File cannot be null.");
+            throw new RemoteException(ExceptionMessages.INVALID_INPUT_DATA);
         }
         if (file.isBlank()) {
-            throw new RemoteException("File cannot be empty.");
+            throw new RemoteException(ExceptionMessages.INVALID_INPUT_DATA);
         }
-
-        var result = controller.sendContactFileMessage(token, file);
+        var result = controller.sendContactFileMessage(token, file , receiverID);
         if (result.getErrorMessage() != null) {
             throw new RemoteException(result.getErrorMessage());
         }
         return result.getResponseData();
     }
-    
     @Override
     public boolean markContactMessagesAsRead(ClientToken token,
             List<ContactMessage> messages) throws RemoteException {
         if (!validToken(token)) {
-            throw new RemoteException("Invalid token.");
+            throw new RemoteException(ExceptionMessages.UNREGISTERED_USER);
         }
         if (messages == null) {
-            throw new RemoteException("Message list cannot be null.");
+            throw new RemoteException(ExceptionMessages.INVALID_MESSAGE);
         }
         if ( messages.isEmpty()) {
-            throw new RemoteException("Message list cannot be empty.");
+            throw new RemoteException(ExceptionMessages.INVALID_MESSAGE);
         }
-        
         var result = controller.markContactMessagesAsRead(token, messages);
         if (result.getErrorMessage() != null) {
             throw new RemoteException(result.getErrorMessage());
         }
         return result.getResponseData();
     }
-    
     @Override
-    public List<Group> getGroups(ClientToken token) 
-            throws RemoteException {
+    public List<Group> getGroups(ClientToken token) throws RemoteException {
         if (!validToken(token)) {
-            throw new RemoteException("Invalid token.");
+            throw new RemoteException(ExceptionMessages.UNREGISTERED_USER);
         }
-        
-        var result = controller.getGroups(token);
+        var result = controller.getAllGroups(token);
         if (result.getErrorMessage() != null) {
             throw new RemoteException(result.getErrorMessage());
         }
         return result.getResponseData();
     }
-    
     @Override
     public String getGroupPic(ClientToken token, int groupID) 
             throws RemoteException{
         if (!validToken(token)) {
-            throw new RemoteException("Invalid token.");
+            throw new RemoteException(ExceptionMessages.UNREGISTERED_USER);
         }
-        if (groupID <= 0) {
-            throw new RemoteException("Invalid group ID.");
-        }
-        
         var result = controller.getGroupPic(token, groupID);
         if (result.getErrorMessage() != null) {
             throw new RemoteException(result.getErrorMessage());
@@ -290,15 +250,28 @@ public class NormalUserAPIImpl extends UnicastRemoteObject
     }
     
     @Override
+    public boolean setGroupPic(ClientToken token, int groupID, String pic) throws RemoteException {
+        if(!validToken(token)){
+            throw new RemoteException(ExceptionMessages.UNREGISTERED_USER);
+        }
+        if(pic.isBlank() || pic==null){
+            throw new RemoteException(ExceptionMessages.INVALID_INPUT_DATA);
+        }
+        var result =  controller.setGroupPic(token , groupID , pic);
+        if (result.getErrorMessage() != null) {
+            throw new RemoteException(result.getErrorMessage());
+        }
+        return result.getResponseData();
+    }
+    @Override
     public boolean createGroup(ClientToken token, Group newGroup) 
             throws RemoteException {
         if (!validToken(token)) {
-            throw new RemoteException("Invalid token.");
+            throw new RemoteException(ExceptionMessages.UNREGISTERED_USER);
         }
         if (newGroup == null) {
-            throw new RemoteException("New group cannot be null.");
+            throw new RemoteException(ExceptionMessages.INVALID_INPUT_DATA);
         }
-        
         var result = controller.createGroup(token, newGroup);
         if (result.getErrorMessage() != null) {
             throw new RemoteException(result.getErrorMessage());
@@ -307,15 +280,10 @@ public class NormalUserAPIImpl extends UnicastRemoteObject
     }
     
     @Override
-    public List<GroupMember> getGroupMembers(ClientToken token,
-            int groupID) throws RemoteException {
+    public List<GroupMember> getGroupMembers(ClientToken token,int groupID) throws RemoteException {
         if (!validToken(token)) {
-            throw new RemoteException("Invalid token.");
-        }
-        if (groupID <= 0) {
-            throw new RemoteException("Invalid group ID.");
-        }
-        
+            throw new RemoteException(ExceptionMessages.UNREGISTERED_USER);
+        }        
         var result = controller.getGroupMembers(token, groupID);
         if (result.getErrorMessage() != null) {
             throw new RemoteException(result.getErrorMessage());
@@ -324,40 +292,22 @@ public class NormalUserAPIImpl extends UnicastRemoteObject
     }
     
     @Override
-    public boolean addMemberToGroup(ClientToken token, 
-            int groupID, int contactID) throws RemoteException {
+    public boolean addMemberToGroup(ClientToken token, int groupID, int contactID) throws RemoteException {
         if (!validToken(token)) {
-            throw new RemoteException("Invalid token.");
+            throw new RemoteException(ExceptionMessages.UNREGISTERED_USER);
         }
-        if (groupID <= 0) {
-            throw new RemoteException("Invalid group ID.");
-        }
-        if (contactID <= 0) {
-            throw new RemoteException("Invalid contact ID.");
-        }
-        
         var result = controller.addMemberToGroup(token, groupID, contactID);
         if (result.getErrorMessage() != null) {
             throw new RemoteException(result.getErrorMessage());
         }
         return result.getResponseData();
     }
-    
     @Override
-    public boolean removeMemberFromGroup(ClientToken token, 
-            int groupID, int contactID) throws RemoteException {
+    public boolean removeMemberFromGroup(ClientToken token,int groupID, int contactID) throws RemoteException {
         if (!validToken(token)) {
-            throw new RemoteException("Invalid token.");
+            throw new RemoteException(ExceptionMessages.UNREGISTERED_USER);
         }
-        if (groupID <= 0) {
-            throw new RemoteException("Invalid group ID.");
-        }
-        if (contactID <= 0) {
-            throw new RemoteException("Invalid contact ID.");
-        }
-        
-        var result = controller.removeMemberFromGroup(token, groupID,
-                contactID);
+        var result = controller.removeMemberFromGroup(token, groupID,contactID);
         if (result.getErrorMessage() != null) {
             throw new RemoteException(result.getErrorMessage());
         }
@@ -365,15 +315,10 @@ public class NormalUserAPIImpl extends UnicastRemoteObject
     }
     
     @Override
-    public boolean leaveGroupAsMember(ClientToken token, 
-            int groupID) throws RemoteException {
+    public boolean leaveGroupAsMember(ClientToken token, int groupID) throws RemoteException {
         if (!validToken(token)) {
-            throw new RemoteException("Invalid token.");
+            throw new RemoteException(ExceptionMessages.UNREGISTERED_USER);
         }
-        if (groupID <= 0) {
-            throw new RemoteException("Invalid group ID.");
-        }
-        
         var result = controller.leaveGroupAsMember(token, groupID);
         if (result.getErrorMessage() != null) {
             throw new RemoteException(result.getErrorMessage());
@@ -382,18 +327,10 @@ public class NormalUserAPIImpl extends UnicastRemoteObject
     }
     
     @Override
-    public boolean leaveGroupAsAdmin(ClientToken token,
-            int groupID, int newAdminID) throws RemoteException {
+    public boolean leaveGroupAsAdmin(ClientToken token,int groupID, int newAdminID) throws RemoteException {
         if (!validToken(token)) {
-            throw new RemoteException("Invalid token.");
+            throw new RemoteException(ExceptionMessages.UNREGISTERED_USER);
         }
-        if (groupID <= 0) {
-            throw new RemoteException("Invalid group ID.");
-        }
-        if (newAdminID <= 0) {
-            throw new RemoteException("Invalid new admin ID.");
-        }
-        
         var result = controller.leaveGroupAsAdmin(token, groupID, newAdminID);
         if (result.getErrorMessage() != null) {
             throw new RemoteException(result.getErrorMessage());
@@ -405,46 +342,30 @@ public class NormalUserAPIImpl extends UnicastRemoteObject
     public boolean assignGroupLeadership(ClientToken token,
             int groupID, int newAdminID) throws RemoteException {
         if (!validToken(token)) {
-            throw new RemoteException("Invalid token.");
+            throw new RemoteException(ExceptionMessages.UNREGISTERED_USER);
         }
-        if (groupID <= 0) {
-            throw new RemoteException("Invalid group ID.");
-        }
-        if (newAdminID <= 0) {
-            throw new RemoteException("Invalid new admin ID.");
-        }
-        
-        var result = controller.assignGroupLeadership(token, groupID,
-                newAdminID);
+        var result = controller.assignGroupLeadership(token, groupID,newAdminID);
         if (result.getErrorMessage() != null) {
             throw new RemoteException(result.getErrorMessage());
         }
         return result.getResponseData();
     }
-    
     @Override
     public boolean deleteGroup(ClientToken token, int groupID) throws RemoteException {
         if (!validToken(token)) {
-            throw new RemoteException("Invalid token.");
+            throw new RemoteException(ExceptionMessages.UNREGISTERED_USER);
         }
-        if (groupID <= 0) {
-            throw new RemoteException("Invalid group ID.");
-        }
-        
         var result = controller.deleteGroup(token, groupID);
         if (result.getErrorMessage() != null) {
             throw new RemoteException(result.getErrorMessage());
         }
         return result.getResponseData();
     }
-    
     @Override
-    public List<GroupMessage> getGroupMessages(ClientToken token,
-            int groupID) throws RemoteException {
+    public List<GroupMessage> getGroupMessages(ClientToken token,int groupID) throws RemoteException {
         if (!validToken(token)) {
-            throw new RemoteException("Invalid token.");
+            throw new RemoteException(ExceptionMessages.UNREGISTERED_USER);
         }
-        
         var result = controller.getGroupMessages(token);
         if (result.getErrorMessage() != null) {
             throw new RemoteException(result.getErrorMessage());
@@ -453,12 +374,24 @@ public class NormalUserAPIImpl extends UnicastRemoteObject
     }
     
     @Override
-    public List<Announcement> getAllAnnouncements(ClientToken token) 
-            throws RemoteException {
+    public boolean sendGroupMessage(ClientToken token, GroupMessage message) throws RemoteException {
         if (!validToken(token)) {
-            throw new RemoteException("Invalid token.");
+            throw new RemoteException(ExceptionMessages.UNREGISTERED_USER);
         }
-        
+        if (message==null) {
+            throw new RemoteException(ExceptionMessages.INVALID_MESSAGE);            
+        }        
+        var result = controller.sendGroupMessage(token,message);
+        if (result.getErrorMessage() != null) {
+            throw new RemoteException(result.getErrorMessage());
+        }
+        return result.getResponseData();
+    }    
+    @Override
+    public List<Announcement> getAllAnnouncements(ClientToken token) throws RemoteException {
+        if (!validToken(token)) {
+            throw new RemoteException(ExceptionMessages.UNREGISTERED_USER);
+        }
         var result = controller.getAnnouncements(token);
         if (result.getErrorMessage() != null) {
             throw new RemoteException(result.getErrorMessage());
@@ -470,100 +403,135 @@ public class NormalUserAPIImpl extends UnicastRemoteObject
     public List<Announcement> getUnReadAnnouncements(
             ClientToken token) throws RemoteException {
         if (!validToken(token)) {
-            throw new RemoteException("Invalid token.");
+            throw new RemoteException(ExceptionMessages.UNREGISTERED_USER);
         }
-        
-        var result = controller.getAnnouncements(token);
+        var result = controller.getUnReadAnnouncements(token);
         if (result.getErrorMessage() != null) {
             throw new RemoteException(result.getErrorMessage());
         }
         return result.getResponseData();
     }
-    
     @Override
     public List<ContactInvitation> getContactInvitations(
             ClientToken token) throws RemoteException {
         if (!validToken(token)) {
-            throw new RemoteException("Invalid token.");
+            throw new RemoteException(ExceptionMessages.UNREGISTERED_USER);
         }
-        
         var result = controller.getContactInvitations(token);
         if (result.getErrorMessage() != null) {
             throw new RemoteException(result.getErrorMessage());
         }
         return result.getResponseData();
     }
-    
+    @Override
+    public boolean sendContactInvitation(ClientToken token, ContactInvitation invitation) throws RemoteException {
+        if (!validToken(token)) {
+            throw new RemoteException(ExceptionMessages.UNREGISTERED_USER);
+        }
+        var result = controller.sendContactInvitation(token , invitation);
+        if (result.getErrorMessage() != null) {
+            throw new RemoteException(result.getErrorMessage());
+        }
+        return result.getResponseData();
+    }
+    @Override
+    public boolean acceptContactInvitation(ClientToken token,ContactInvitation invitation) throws RemoteException {
+        if (!validToken(token)) {
+            throw new RemoteException(ExceptionMessages.UNREGISTERED_USER);
+        }
+        var result = controller.acceptContactInvitation(token , invitation);
+        if (result.getErrorMessage() != null) {
+            throw new RemoteException(result.getErrorMessage());
+        }
+        return result.getResponseData();
+    }
+    @Override
+    public boolean rejectContactInvitation(ClientToken token, ContactInvitation invitation) throws RemoteException {
+        if (!validToken(token)) {
+            throw new RemoteException(ExceptionMessages.UNREGISTERED_USER);
+        }
+        var result = controller.rejectContactInvitation(token , invitation);
+        if (result.getErrorMessage() != null) {
+            throw new RemoteException(result.getErrorMessage());
+        }
+        return result.getResponseData();
+    }
     @Override
     public List<Notification> getNotifications(ClientToken token) 
             throws RemoteException {
         if (!validToken(token)) {
-            throw new RemoteException("Invalid token.");
+            throw new RemoteException(ExceptionMessages.UNREGISTERED_USER);
         }
-        
         var result = controller.getNotifications(token);
         if (result.getErrorMessage() != null) {
             throw new RemoteException(result.getErrorMessage());
         }
         return result.getResponseData();
     }
-    
+    @Override
+    public List<Notification> getUnReadNotifications(ClientToken token) throws RemoteException {
+        if (!validToken(token)) {
+            throw new RemoteException(ExceptionMessages.UNREGISTERED_USER);
+        }
+        var result = controller.getUnReadNotifications(token);
+        if (result.getErrorMessage() != null) {
+            throw new RemoteException(result.getErrorMessage());
+        }
+        return result.getResponseData();
+    }
     @Override
     public boolean markNotificationsAsRead(ClientToken token,
             List<Notification> notifications) throws RemoteException {
         if (!validToken(token)) {
-            throw new RemoteException("Invalid token.");
+            throw new RemoteException(ExceptionMessages.UNREGISTERED_USER);
         }
-        
         var result = controller.markNotificationsAsRead(token);
         if (result.getErrorMessage() != null) {
             throw new RemoteException(result.getErrorMessage());
         }
         return result.getResponseData();
     }
-    
     @Override
-    public boolean deleteNotification(ClientToken token,
-            int notificationID) throws RemoteException {
-        return false;
-    }
-    /**
-    
-    /**
-     * Will return all the data except the password and the pic.
-     * @param token
-     * @return 
-     */
-    @Override
-    public NormalUser getMyProfile(ClientToken token) 
-            throws RemoteException {
+    public boolean deleteNotification(ClientToken token,int notificationID) throws RemoteException {
         if (!validToken(token)) {
-            throw new RemoteException("Invalid token.");
+            throw new RemoteException(ExceptionMessages.UNREGISTERED_USER);
         }
-        
+        var result = controller.deleteNotification(token , notificationID);
+        if (result.getErrorMessage() != null) {
+            throw new RemoteException(result.getErrorMessage());
+        }
+        return result.getResponseData();
+    }
+    @Override
+    public NormalUser getMyProfile(ClientToken token) throws RemoteException {
+        if (!validToken(token)) {
+            throw new RemoteException(ExceptionMessages.UNREGISTERED_USER);
+        }
         var result = controller.getMyProfile(token);
         if (result.getErrorMessage() != null) {
             throw new RemoteException(result.getErrorMessage());
         }
         return result.getResponseData();
     }
-    
     @Override
-    public boolean saveProfileChanges(ClientToken token) 
-            throws RemoteException {
+    public boolean saveProfileChanges(ClientToken token ,String newPassword ,NormalUserStatus newStatus) throws RemoteException {
         if (!validToken(token)) {
-            throw new RemoteException("Invalid token.");
+            throw new RemoteException(ExceptionMessages.UNREGISTERED_USER);
         }
-        
         var result = controller.saveProfileChanges(token);
         if (result.getErrorMessage() != null) {
             throw new RemoteException(result.getErrorMessage());
         }
         return result.getResponseData();
     }
-    
-    public boolean changePassword(ClientToken token, String oldPassword,
-            String newPassword) throws RemoteException {
-        return false;
+    public boolean changePassword(ClientToken token, String oldPassword,String newPassword) throws RemoteException {
+        if (!validToken(token)) {
+            throw new RemoteException(ExceptionMessages.UNREGISTERED_USER);
+        }
+        var result = controller.changePassword(token , oldPassword , newPassword);
+        if (result.getErrorMessage() != null) {
+            throw new RemoteException(result.getErrorMessage());
+        }
+        return result.getResponseData();
     }
 }

@@ -39,7 +39,7 @@ public class AnnouncementDao {
         }
     }
 
-     public RequestResult<List<Announcement>> getAllAnnouncements() {
+     public RequestResult<List<Announcement>> getAllSubmitedAnnouncements() {
         List<Announcement> announcements = new ArrayList<>();
 
         try (Connection connection = ConnectionManager.getConnection()) {
@@ -61,7 +61,6 @@ public class AnnouncementDao {
             return new RequestResult<>(null, 
                     e.getMessage());
         }
-
         return new RequestResult<>(announcements, null);
     }
 
@@ -86,6 +85,16 @@ public class AnnouncementDao {
         }
 
         return new RequestResult<>(isSuccess, null);
+    }
+
+    public RequestResult<List<Announcement>> getAllAnnouncements(int userID) {
+        // TODO Auto-generated method stub
+        throw new UnsupportedOperationException("Unimplemented method 'getAllAnnouncements'");
+    }
+
+    public RequestResult<List<Announcement>> getUnreadAnnouncements(int userID) {
+        // TODO Auto-generated method stub
+        throw new UnsupportedOperationException("Unimplemented method 'getUnreadAnnouncements'");
     }
     
 }
