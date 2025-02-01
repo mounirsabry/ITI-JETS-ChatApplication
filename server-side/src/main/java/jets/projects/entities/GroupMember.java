@@ -11,8 +11,13 @@ public class GroupMember {
         groupID = -1;
         memberID = -1;
         username="";
-
         picture="";
+    }
+
+    public GroupMember(int groupID, int memberID) {
+        this.groupID = groupID;
+        this.memberID = memberID;
+       
     }
 
     public GroupMember(int groupID, int memberID,String username,String picture) {
