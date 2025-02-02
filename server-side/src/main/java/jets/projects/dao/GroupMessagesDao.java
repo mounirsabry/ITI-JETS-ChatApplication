@@ -16,5 +16,10 @@ public class GroupMessagesDao {
         // TODO Auto-generated method stub
         throw new UnsupportedOperationException("Unimplemented method 'sendGroupMessage'");
     }
+
+    public RequestResult<Boolean> sendGroupFileMessage(int senderID , int groupId , String file) {
+        // TODO Auto-generated method stub
+        throw new UnsupportedOperationException("Unimplemented method 'sendGroupMessage'");
+    }
     
 }

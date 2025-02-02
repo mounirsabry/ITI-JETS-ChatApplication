@@ -12,7 +12,9 @@ public class UsersDao {
     public RequestResult<Boolean> isNormalUserExists(int userID) {
         throw new UnsupportedOperationException("Not supported yet.");
     }
-    
+    public NormalUser getUserById(int userID){
+        throw new UnsupportedOperationException("Not supported yet.");
+    }
     public RequestResult<ClientSessionData> clientLogin(String phoneNumber, String password) {
         throw new UnsupportedOperationException("Not supported yet.");
     }
@@ -40,7 +42,7 @@ public class UsersDao {
         throw new UnsupportedOperationException("Unimplemented method 'getNormalUserProfile'");
     }
 
-    public RequestResult<Boolean> saveProfileChanges(int userID) {
+    public RequestResult<Boolean> saveProfileChanges(int userID , String username , String bio) {
         // TODO Auto-generated method stub
         throw new UnsupportedOperationException("Unimplemented method 'saveProfileChanges'");
     }

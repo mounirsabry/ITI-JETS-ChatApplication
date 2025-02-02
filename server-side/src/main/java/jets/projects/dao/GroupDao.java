@@ -14,6 +14,10 @@ public class GroupDao {
         // TODO Auto-generated method stub
         throw new UnsupportedOperationException("Unimplemented method 'getGroupAdmin'");
     }
+    public RequestResult<String> getGroupName(int groupID){
+        // TODO Auto-generated method stub
+        throw new UnsupportedOperationException("Unimplemented method 'getGroupAdmin'");
+    }
     public RequestResult<Boolean> updateAdmin(int groupID, int newAdminID) {
         // TODO Auto-generated method stub
         throw new UnsupportedOperationException("Unimplemented method 'updateAdmin'");
