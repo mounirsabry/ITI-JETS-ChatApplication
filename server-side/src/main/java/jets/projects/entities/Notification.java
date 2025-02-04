@@ -1,8 +1,9 @@
 package jets.projects.entities;
 
+import java.io.Serializable;
 import java.sql.Timestamp;
 
-public class Notification {
+public class Notification implements Serializable{
     private int notificationID; 
     private int userID;
     private String content;

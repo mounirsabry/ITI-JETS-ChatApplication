@@ -1,8 +1,9 @@
 package jets.projects.entities;
 
+import java.io.Serializable;
 import java.util.Date;
 
-public class ContactInvitation {
+public class ContactInvitation implements Serializable{
     private int senderID;
     private int receiverID;
     private Date sentAt;

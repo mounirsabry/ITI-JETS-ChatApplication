@@ -1,13 +1,13 @@
 package jets.projects.dao;
 
-import java.sql.Connection;
+import java.sql.Blob;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
 import jets.projects.classes.RequestResult;
-import jets.projects.dbconnections.ConnectionManager;
+import jets.projects.dbconnections.DBConnection;
 import jets.projects.entities.Contact;
 import jets.projects.entities.ContactGroup;
 import jets.projects.entities.NormalUser;
@@ -15,81 +15,79 @@ import jets.projects.entities.NormalUserStatus;
 
 public class ContactDao {
     public RequestResult<Boolean> isContacts(int userID, int contactID) {
-        throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
-    }
-    public RequestResult<List<Contact>> getAllContacts(int userID) {
-        try (Connection connection = ConnectionManager.getConnection()) {
-
-        String query = "SELECT username, picture, category " +   // "SELECT u.username, u.picture, c.category " +"FROM contact c " +"JOIN user u ON c.contact_ID = u.ID " +  "WHERE c.user_ID = ?"
-                       "FROM contact c " +
-                       "JOIN user u ON c.user_ID = u.ID " +  
-                       "WHERE c.user_ID = ?";
-        PreparedStatement selectStatement = connection.prepareStatement(query);
-        selectStatement.setInt(1, userID);
-
-        ResultSet resultSet = selectStatement.executeQuery();
-        List<Contact> contacts = new ArrayList<>();
-
-        while (resultSet.next()) {
-            Contact contact = new Contact();
-            
-        
-            contact.setName(resultSet.getString("username"));
-            contact.setPicture(resultSet.getString("picture"));
-            String category = resultSet.getString("category");
-            ContactGroup contactGroup = ContactGroup.valueOf(category);
-            contact.setContactGroup(contactGroup);
-            contacts.add(contact);
-        }
-
-        return new RequestResult<>(contacts, null);
-    } catch (SQLException e) {
-        return new RequestResult<>(null,null);
-    }
-    }
-    public RequestResult<String> getContactProfilePic(int contactID) {
-        try (Connection connection = ConnectionManager.getConnection()) {
-
-            String query = "SELECT picture " +
-                           "FROM user " +
-                           "WHERE ID = ?";
-            
-            PreparedStatement selectStatement = connection.prepareStatement(query);
-            selectStatement.setInt(1, contactID); 
-    
-            ResultSet resultSet = selectStatement.executeQuery();
-    
+            String query = "SELECT * FROM CONTACT WHERE (first_ID = ? AND second_ID = ?) OR (first_ID = ? AND second_ID = ?)";
+        try (PreparedStatement statement = DBConnection.getConnection().prepareStatement(query)){
+            statement.setInt(1, userID);
+            statement.setInt(2, contactID);
+            statement.setInt(3, contactID);
+            statement.setInt(4, userID);
+            ResultSet resultSet = statement.executeQuery();
             if (resultSet.next()) {
-                String picture = resultSet.getString("picture");
-                return new RequestResult<>(picture, null); 
+                return new RequestResult<>(true, null); 
             } else {
-                return new RequestResult<>(null, null);  
+                return new RequestResult<>(false, null);
             }
         } catch (SQLException e) {
-            e.printStackTrace();  
-            return new RequestResult<>(null, null);
+            return new RequestResult<>(false, e.getMessage());
         }
     }
-    public RequestResult<NormalUser> getContactProfile(int contactID) {
-        String query = "SELECT username , phone_number,email,picture,status,bio FROM User WHERE ID= ? ";
-        try (Connection connection = ConnectionManager.getConnection();
-            PreparedStatement Statement = connection.prepareStatement(query)){
-            Statement.setInt(1, contactID);
-            ResultSet resultSet = Statement.executeQuery();
-            if(!resultSet.next())
-                return new RequestResult<>(null, null);
-            NormalUser contact = new NormalUser();
-            contact.setDisplayName(resultSet.getString(1));
-            contact.setPhoneNumber(resultSet.getString(2));
-            contact.setEmail(resultSet.getString(3));
-            contact.setPic(resultSet.getString(4));
-            contact.setStatus(NormalUserStatus.valueOf(resultSet.getString(5)));
-            contact.setBio(resultSet.getString(6));
-            resultSet.close();
-            return new RequestResult<>(contact, null);
+    public RequestResult<List<Contact>> getAllContacts(int userID) {
+        String query = "SELECT distinct u.display_name, u.pic, c.category " +
+                        "FROM CONTACT c " +
+                        "JOIN NormalUser u ON c.second_ID = u.user_ID " +
+                        "WHERE c.first_ID =?";
+        try (PreparedStatement statement = DBConnection.getConnection().prepareStatement(query)){
+            statement.setInt(1, userID);
+            ResultSet resultSet = statement.executeQuery();
+            List<Contact> contacts = new ArrayList<>();
+            while (resultSet.next()) {
+                Contact contact = new Contact();
+                contact.setName(resultSet.getString("display_name"));
+                contact.setPicture(resultSet.getBlob("pic"));
+                ContactGroup contactGroup = ContactGroup.valueOf(resultSet.getString("category"));
+                contact.setContactGroup(contactGroup);
+                contacts.add(contact);
+            }
+            return new RequestResult<>(contacts, null);
         } catch (SQLException e) {
-            return new RequestResult<>(null, 
-                    e.getMessage());
+            return new RequestResult<>(null, e.getMessage());
         }
     }
+    public RequestResult<Blob> getContactProfilePic(int contactID) {
+        String query = "SELECT pic FROM NormalUser WHERE user_ID = ?";
+        try (PreparedStatement statement = DBConnection.getConnection().prepareStatement(query)){
+            statement.setInt(1, contactID);
+            ResultSet resultSet = statement.executeQuery();
+            if (resultSet.next()) {
+                Blob pic = resultSet.getBlob("pic");
+                return new RequestResult<>(pic, null);
+            } else {
+                return new RequestResult<>(null, "Profile picture not found.");
+            }
+        } catch (SQLException e) {
+            return new RequestResult<>(null, e.getMessage());
+        }
+    }    
+    public RequestResult<NormalUser> getContactProfile(int contactID) {
+        String query = "SELECT display_name, phone_number, email, pic, `status`, bio FROM NormalUser WHERE user_ID = ?";
+        try (PreparedStatement statement = DBConnection.getConnection().prepareStatement(query)){
+            statement.setInt(1, contactID);
+            ResultSet resultSet = statement.executeQuery();
+            if (resultSet.next()) {
+                NormalUser contact = new NormalUser();
+                contact.setDisplayName(resultSet.getString("display_name"));
+                contact.setPhoneNumber(resultSet.getString("phone_number"));
+                contact.setEmail(resultSet.getString("email"));
+                contact.setPic(resultSet.getBlob("pic"));
+                contact.setStatus(NormalUserStatus.valueOf(resultSet.getString("status")));
+                contact.setBio(resultSet.getString("bio"));
+                return new RequestResult<>(contact, null);
+            } else {
+                return new RequestResult<>(null, "Contact not found.");
+            }
+        } catch (SQLException e) {
+            return new RequestResult<>(null, e.getMessage());
+        }
+    }
+    
 }

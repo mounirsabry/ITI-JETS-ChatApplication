@@ -27,7 +27,8 @@ public class NotificatonCallback {
         this.contactDao = contactDao;
         usersDao = new UsersDao();
         onlineUsers = OnlineNormalUserTable.getOnlineUsersTable();
-        executor = Executors.newFixedThreadPool(onlineUsers.size());
+        int onlineCount = (onlineUsers != null) ? onlineUsers.size() : 1;
+        executor = Executors.newFixedThreadPool(onlineCount);
     }
     public void userWentOnline(int userID) {
         executor.submit(()->{

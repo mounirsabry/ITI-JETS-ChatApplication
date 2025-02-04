@@ -1,7 +1,9 @@
 
 package jets.projects.entities;
 
-public class GroupMember {
+import java.io.Serializable;
+
+public class GroupMember implements Serializable{
     private int groupID;
     private int memberID;
     private String username;

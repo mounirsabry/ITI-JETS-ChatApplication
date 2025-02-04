@@ -1,8 +1,9 @@
 package jets.projects.entities;
 
+import java.io.Serializable;
 import java.util.Date;
 
-public class GroupMessage {
+public class GroupMessage implements Serializable{
     private int messageID;
     private int senderID;
     private int groupID;

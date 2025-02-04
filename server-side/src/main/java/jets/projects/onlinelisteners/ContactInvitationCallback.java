@@ -19,7 +19,8 @@ public class ContactInvitationCallback {
     public ContactInvitationCallback(ContactInvitationDao contactInvitationDao) {
         this.contactInvitationDao = contactInvitationDao;
         onlineUsers = OnlineNormalUserTable.getOnlineUsersTable();
-        executor = Executors.newFixedThreadPool(onlineUsers.size());
+        int onlineCount = (onlineUsers != null) ? onlineUsers.size() : 1;
+        executor = Executors.newFixedThreadPool(onlineCount);
     }
     public void contactInvitationReceived(ContactInvitation invitation) {
         int receiverID = invitation.getReceiverID();
@@ -47,7 +48,6 @@ public class ContactInvitationCallback {
             }
         });        
     }
-    
     public void contactInvitationRejected(ContactInvitation invitation) {
         int receiverID = invitation.getReceiverID();
         ClientAPI client = onlineUsers.get(receiverID).getImpl();

@@ -18,7 +18,8 @@ public class AnnouncementCallback {
     public AnnouncementCallback(AnnouncementDao announcementDao){
         this.announcementDao = announcementDao;
         onlineUsers = OnlineNormalUserTable.getOnlineUsersTable();
-        executor = Executors.newFixedThreadPool(onlineUsers.size());
+        int onlineCount = (onlineUsers != null) ? onlineUsers.size() : 1;
+        executor = Executors.newFixedThreadPool(onlineCount);
     }
     
     public void newAnnouncementAdded(Announcement announcement){

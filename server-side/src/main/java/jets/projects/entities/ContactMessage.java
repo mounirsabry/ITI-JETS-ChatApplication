@@ -1,14 +1,16 @@
 package jets.projects.entities;
 
+import java.io.Serializable;
+import java.sql.Blob;
 import java.util.Date;
 
-public class ContactMessage {
+public class ContactMessage implements Serializable{
     private int ID;
     private int senderID;
     private int receiverID;
     private Date sentAt;
     private String content;
-    private String fileURL;
+    private Blob fileURL;
     private boolean isRead;
     private boolean isFile;
     
@@ -23,7 +25,7 @@ public class ContactMessage {
         isFile = false;
     }
 
-    public ContactMessage(int ID, int senderID, int receiverID, Date sentAt, String content, String fileURL, boolean isRead, boolean isFile) {
+    public ContactMessage(int ID, int senderID, int receiverID, Date sentAt, String content, Blob fileURL, boolean isRead, boolean isFile) {
         this.ID = ID;
         this.senderID = senderID;
         this.receiverID = receiverID;
@@ -33,7 +35,14 @@ public class ContactMessage {
         this.isRead = isRead;
         this.isFile = isFile;
     }
-
+    public ContactMessage(int senderID, int receiverID, String content, Blob fileURL, boolean isRead, boolean isFile) {
+        this.senderID = senderID;
+        this.receiverID = receiverID;
+        this.content = content;
+        this.fileURL = fileURL;
+        this.isRead = isRead;
+        this.isFile = isFile;
+    }
     public int getID() {
         return ID;
     }
@@ -54,7 +63,7 @@ public class ContactMessage {
         return content;
     }
 
-    public String getFileURL() {
+    public Blob getFileURL() {
         return fileURL;
     }
 
@@ -86,7 +95,7 @@ public class ContactMessage {
         this.content = content;
     }
 
-    public void setFileURL(String fileURL) {
+    public void setFileURL(Blob fileURL) {
         this.fileURL = fileURL;
     }
 

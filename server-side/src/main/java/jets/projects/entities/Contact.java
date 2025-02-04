@@ -1,22 +1,25 @@
 package jets.projects.entities;
 
-public class Contact {
+import java.io.Serializable;
+import java.sql.Blob;
+
+public class Contact implements Serializable{
     private int userID;
     private int contactID;
     private ContactGroup contactGroup;
     private String name ;
-    private String picture;
+    private Blob picture;
 
     public Contact() {
         userID = -1;
         contactID = -1;
         contactGroup = ContactGroup.OTHER;
         name = "";  
-        picture = "";
+        picture = null;
      
     }
 
-    public Contact(int userID, int contactID, ContactGroup contactGroup , String name ,String picture) {
+    public Contact(int userID, int contactID, ContactGroup contactGroup , String name ,Blob picture) {
         this.userID = userID;
         this.contactID = contactID;
         this.contactGroup = contactGroup;
@@ -39,7 +42,7 @@ public class Contact {
         return name;  
     }
 
-    public String getPicture() {
+    public Blob getPicture() {
         return picture;  
     }
 
@@ -58,7 +61,7 @@ public class Contact {
         this.name = name;  
     }
 
-    public void setPicture(String picture) {
+    public void setPicture(Blob picture) {
         this.picture = picture;  
     }
     

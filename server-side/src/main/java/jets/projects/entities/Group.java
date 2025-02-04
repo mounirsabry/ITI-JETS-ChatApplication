@@ -1,13 +1,16 @@
 package jets.projects.entities;
 
+import java.io.Serializable;
+import java.sql.Blob;
 import java.util.Date;
 
-public class Group {
+public class Group implements Serializable{
     private int groupID;
     private int groupAdminID;
     private String name;
     private Date createdAt;
-    private String pic;
+    private Blob pic;
+    private String description;
     
     public Group() {
         groupID = -1;
@@ -15,16 +18,28 @@ public class Group {
         name = null;
         createdAt = null;
         pic = null;
+        description = "";
     }
 
-    public Group(int groupID, int groupAdminID, String name, Date createdAt, String pic) {
+    public Group(int groupID, int groupAdminID, String name, Date createdAt, Blob pic , String description) {
         this.groupID = groupID;
         this.groupAdminID = groupAdminID;
         this.name = name;
         this.createdAt = createdAt;
         this.pic = pic;
+        this.description = description;
     }
-
+    public Group(int groupAdminID, String name, Blob pic , String description) {
+        this.groupAdminID = groupAdminID;
+        this.name = name;
+        this.pic = pic;
+        this.description = description;
+    }
+    public Group(int groupAdminID, String name , String description) {
+        this.groupAdminID = groupAdminID;
+        this.name = name;
+        this.description = description;
+    }
     public int getGroupID() {
         return groupID;
     }
@@ -41,8 +56,11 @@ public class Group {
         return createdAt;
     }
 
-    public String getPic() {
+    public Blob getPic() {
         return pic;
+    }
+    public String getDescription(){
+        return description;
     }
 
     public void setGroupID(int groupID) {
@@ -61,8 +79,11 @@ public class Group {
         this.createdAt = createdAt;
     }
 
-    public void setPic(String pic) {
+    public void setPic(Blob pic) {
         this.pic = pic;
+    }
+    public void setDescription(String description){
+        this.description = description;
     }
     
     @Override

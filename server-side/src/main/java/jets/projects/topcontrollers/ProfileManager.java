@@ -1,6 +1,7 @@
 package jets.projects.topcontrollers;
 
 import java.rmi.RemoteException;
+import java.sql.Blob;
 import java.util.Map;
 
 import jets.projects.classes.ExceptionMessages;
@@ -28,7 +29,7 @@ public class ProfileManager {
         this.notificatonCallback = new NotificatonCallback(notificationDao , contactsDao);
         onlineUsers = OnlineNormalUserTable.getOnlineUsersTable();
     }    
-    public RequestResult<String> getProfilePic(ClientToken token) throws RemoteException {
+    public RequestResult<Blob> getProfilePic(ClientToken token) throws RemoteException {
         boolean validToken = tokenValidator.checkClientToken(token).getResponseData();
         if (!validToken) {
             return new RequestResult<>(null, ExceptionMessages.UNREGISTERED_USER);
@@ -75,7 +76,7 @@ public class ProfileManager {
         }
         return new RequestResult<>(result.getResponseData(), null);
     }
-    public RequestResult<Boolean> editProfile(ClientToken token , String username , String bio , String profilePic) throws RemoteException {
+    public RequestResult<Boolean> editProfile(ClientToken token , String username , String bio , Blob profilePic) throws RemoteException {
         boolean validToken = tokenValidator.checkClientToken(token).getResponseData();
         if (!validToken) {
             return new RequestResult<>(false, ExceptionMessages.UNREGISTERED_USER);
@@ -83,7 +84,7 @@ public class ProfileManager {
         if(!onlineUsers.containsKey(token.getUserID())){
             return new RequestResult<>(false, ExceptionMessages.TIMEOUT_USER_EXCEPTION_MESSAGE);
         }
-        var result = usersDao.saveProfileChanges(token.getUserID(),username,bio);
+        var result = usersDao.saveProfileChanges(token.getUserID(),username,bio,profilePic);
         if (result.getErrorMessage()!=null) {
             throw new RemoteException(result.getErrorMessage());            
         }

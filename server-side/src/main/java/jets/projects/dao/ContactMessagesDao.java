@@ -1,147 +1,141 @@
 package jets.projects.dao;
 
-import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Timestamp;
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 import jets.projects.classes.RequestResult;
-import jets.projects.dbconnections.ConnectionManager;
+import jets.projects.dbconnections.DBConnection;
 import jets.projects.entities.ContactMessage;
 
 public class ContactMessagesDao {
-    
-    public RequestResult<List<ContactMessage>> getContactMessages(int userID , int contactID ) {
-        try (Connection connection = ConnectionManager.getConnection()) {
-        PreparedStatement selectStatement = connection.prepareStatement(
-                "SELECT * FROM contactmessage WHERE (sender_ID = ? AND receiver_ID = ?) OR (sender_ID = ? AND receiver_ID = ?) ORDER BY sent_at");
-        selectStatement.setInt(1, userID);
-        selectStatement.setInt(2, contactID);
-        selectStatement.setInt(3, contactID);
-        selectStatement.setInt(4, userID);
 
-        ResultSet resultSet = selectStatement.executeQuery();
-        List<ContactMessage> messages = new ArrayList<>();
+    public RequestResult<List<ContactMessage>> getContactMessages(int userID, int contactID) {
+        String query = "SELECT * FROM ContactMessage " +
+                        "WHERE (sender_ID = ? AND receiver_ID = ?) " +
+                        "OR (sender_ID = ? AND receiver_ID = ?) " +
+                        "ORDER BY sent_at";
 
-        while (resultSet.next()) {
-            ContactMessage message = new ContactMessage();
-            message.setSenderID(resultSet.getInt("sender_ID"));
-            message.setReceiverID(resultSet.getInt("receiver_ID"));
-            message.setContent(resultSet.getString("content"));
-            message.setFileURL(resultSet.getString("file_url"));
-            message.setSentAt(resultSet.getTimestamp("sent_at"));           
-            messages.add(message);
-        }
+        try (PreparedStatement stmt = DBConnection.getConnection().prepareStatement(query)) {
+            stmt.setInt(1, userID);
+            stmt.setInt(2, contactID);
+            stmt.setInt(3, contactID);
+            stmt.setInt(4, userID);
 
-        return new RequestResult<>(messages, null);
-    } catch (SQLException e) {
-        return new RequestResult<>(null, "Database error: " + e.getMessage());
-    }
-    }
+            ResultSet rs = stmt.executeQuery();
+            List<ContactMessage> messages = new ArrayList<>();
 
-    public RequestResult<List<ContactMessage>> getUnReadContactMessages(int senderID , int receiverID ) {
-        try (Connection connection = ConnectionManager.getConnection()) {
-            PreparedStatement selectStatement = connection.prepareStatement(
-                    "SELECT * FROM contactmessage WHERE sender_ID = ? AND receiver_ID = ? AND is_read = 0");
-            //"SELECT * FROM contactmessage " +"WHERE ((sender_ID = ? AND receiver_ID = ?) OR (sender_ID = ? AND receiver_ID = ?)) " +"AND is_read = false " + "ORDER BY sent_at";
-            // w 3 w 4 contactID W usesrID
-                    selectStatement.setInt(1, senderID);
-            selectStatement.setInt(2, receiverID);
-            ResultSet resultSet = selectStatement.executeQuery();
-    
-            List<ContactMessage> unreadMessages = new ArrayList<>();
-            while (resultSet.next()) {
-                ContactMessage message = new ContactMessage();
-                message.setSenderID(resultSet.getInt("sender_ID"));
-                message.setReceiverID(resultSet.getInt("receiver_ID"));
-                message.setContent(resultSet.getString("content"));
-                message.setSentAt(resultSet.getTimestamp("sent_at"));
-                unreadMessages.add(message);
+            while (rs.next()) {
+                ContactMessage message = new ContactMessage(
+                    rs.getInt("message_ID"),
+                    rs.getInt("sender_ID"),
+                    rs.getInt("receiver_ID"),
+                    rs.getDate("sent_at"),
+                    rs.getString("content"),
+                    rs.getBlob("message_file"),
+                    rs.getBoolean("is_read"),
+                    rs.getBoolean("is_file")
+                );
+                messages.add(message);
             }
-    
+            return new RequestResult<>(messages, null);
+        } catch (SQLException e) {
+            return new RequestResult<>(null, "Database error: " + e.getMessage());
+        }
+    }
+    public RequestResult<List<ContactMessage>> getUnReadContactMessages(int senderID, int receiverID) {
+        String query = "SELECT * FROM ContactMessage " +
+                        "WHERE ((sender_ID = ? AND receiver_ID = ?) " +
+                        "OR (sender_ID = ? AND receiver_ID = ?)) AND is_read=0 " +
+                        "ORDER BY sent_at";
+
+        try (PreparedStatement stmt = DBConnection.getConnection().prepareStatement(query)) {
+            stmt.setInt(1, senderID);
+            stmt.setInt(2, receiverID);
+            stmt.setInt(3, senderID);
+            stmt.setInt(4, receiverID);
+            ResultSet rs = stmt.executeQuery();
+
+            List<ContactMessage> unreadMessages = new ArrayList<>();
+            while (rs.next()) {
+                unreadMessages.add(new ContactMessage(
+                    rs.getInt("message_ID"),
+                    rs.getInt("sender_ID"),
+                    rs.getInt("receiver_ID"),
+                    rs.getDate("sent_at"),
+                    rs.getString("content"),
+                    rs.getBlob("message_file"),
+                    rs.getBoolean("is_read"),
+                    rs.getBoolean("is_file")
+                ));
+            }
             return new RequestResult<>(unreadMessages, null);
         } catch (SQLException e) {
             return new RequestResult<>(null, "Database error: " + e.getMessage());
         }
     }
-
     public RequestResult<Boolean> sendContactMessage(ContactMessage message) {
-        try (Connection connection = ConnectionManager.getConnection()) {
-           
-    
-            String query = "INSERT INTO contactmessage (sender_ID, receiver_ID, sent_at, content, file_uri, is_read, is_file) " +
-                           "VALUES (?, ?, ?, ?, ?, ?, ?)";
-            PreparedStatement insertStatement = connection.prepareStatement(query);
-         
-        
-            insertStatement.setLong(1, message.getSenderID());  
-            insertStatement.setLong(2, message.getReceiverID()); 
-            insertStatement.setTimestamp(3, new Timestamp(message.getSentAt().getTime()));
-            insertStatement.setString(4, message.getContent());   
-            insertStatement.setString(5, message.getFileURL());  
-            insertStatement.setBoolean(6, message.getIsRead());      
-            insertStatement.setBoolean(7, message.getIsFile());      
-    
-            
-            int rowsAffected = insertStatement.executeUpdate();
-    
-            if (rowsAffected == 1) {
-                return new RequestResult<>(true, null); 
-            } else {
-                return new RequestResult<>(false, null); 
+        String query = "INSERT INTO ContactMessage (sender_ID, receiver_ID, sent_at, content, is_read , is_file ,message_file) " +
+                        "VALUES (?, ?, ?, ?, ?, ?, ?)";
+
+        try (PreparedStatement stmt = DBConnection.getConnection().prepareStatement(query)) {
+            stmt.setInt(1, message.getSenderID());
+            stmt.setInt(2, message.getReceiverID());
+            stmt.setTimestamp(3,Timestamp.valueOf(LocalDateTime.now()));
+            stmt.setString(4, message.getContent());
+            stmt.setBoolean(5, message.getIsRead());
+            stmt.setBoolean(6, message.getIsFile());
+            stmt.setBlob(7, message.getFileURL());
+
+            int rowsAffected = stmt.executeUpdate();
+            if(rowsAffected == 1){
+                return new RequestResult<>(true, null);
+            }else{
+                return new RequestResult<>(false, null);
             }
         } catch (SQLException e) {
-            
-            return new RequestResult<>(false, null);
+            return new RequestResult<>(false, "Database error: " + e.getMessage());
         }
     }
-
     public RequestResult<Boolean> markContactMessagesAsRead(List<ContactMessage> messages) {
-        if (messages == null || messages.isEmpty()) {
-            return new RequestResult<>(false, null);
-        }
-    
-        try (Connection connection = ConnectionManager.getConnection()) {
-            String query = "UPDATE contactmessage SET is_read = ? WHERE receiver_ID = ? AND sender_ID = ?";
-            PreparedStatement updateStatement = connection.prepareStatement(query);
-    
-            ContactMessage firstMessage = messages.get(0);
+        String query = "UPDATE ContactMessage SET is_read = 1 " +
+                        "WHERE receiver_ID = ? AND sender_ID = ?";
 
-    
-            updateStatement.setBoolean(1, true); 
-            updateStatement.setLong(2, firstMessage.getReceiverID()); // Receiver ID (messages received by the user)
-            updateStatement.setLong(3, firstMessage.getSenderID()); // Sender ID
-    
-            int rowsAffected = updateStatement.executeUpdate();
-    
+        try (PreparedStatement stmt = DBConnection.getConnection().prepareStatement(query)) {
+            stmt.setInt(1, messages.get(0).getReceiverID());
+            stmt.setInt(2, messages.get(0).getSenderID());
+            int rowsAffected = stmt.executeUpdate();
             return new RequestResult<>(rowsAffected > 0, null);
         } catch (SQLException e) {
-            return new RequestResult<>(false, null);
+            return new RequestResult<>(false, "Database error: " + e.getMessage());
         }
     }
-
     public RequestResult<Boolean> sendContactFileMessage(int senderID, String file, int receiverID) {
-        try (Connection connection = ConnectionManager.getConnection()) {
-    
-            String query = "INSERT INTO contactmessage (sender_ID, receiver_ID, content, file_uri, is_read, is_file) " +
-                           "VALUES (?, ?, ?, ?, ?, ?)";
-            PreparedStatement insertStatement = connection.prepareStatement(query);
-            
-            insertStatement.setLong(1, senderID); 
-            insertStatement.setLong(2, receiverID); 
-            
-            insertStatement.setString(4, null); 
-            insertStatement.setString(5, file); 
-            insertStatement.setBoolean(6, false); 
-            insertStatement.setBoolean(7, true); 
-    
-            int rowsAffected = insertStatement.executeUpdate();
-    
+        String query = "INSERT INTO ContactMessage (sender_ID, receiver_ID, sent_at, content, is_read , is_file ,message_file) " +
+                        "VALUES (?, ?, NOW(), null, 0, 1, ?)";
+        try (PreparedStatement stmt = DBConnection.getConnection().prepareStatement(query)) {
+            stmt.setInt(1, senderID);
+            stmt.setInt(2, receiverID);
+            stmt.setString(3, file);
+
+            int rowsAffected = stmt.executeUpdate();
             return new RequestResult<>(rowsAffected == 1, null);
+
         } catch (SQLException e) {
-            return new RequestResult<>(false, null);
+            return new RequestResult<>(false, "Database error: " + e.getMessage());
         }
     }
+    public RequestResult<Boolean> deleteContactMessage(ContactMessage message){
+        String query = "DELETE FROM ContactMessage WHERE message_ID = ?";
+        try (PreparedStatement statement = DBConnection.getConnection().prepareStatement(query)) {
+            statement.setInt(1, message.getID());
+            int rowsAffected = statement.executeUpdate();
+            return new RequestResult<>(rowsAffected > 0, null);
+        } catch (SQLException e) {
+            return new RequestResult<Boolean>(false, e.getMessage());
+        }
+    } 
 }

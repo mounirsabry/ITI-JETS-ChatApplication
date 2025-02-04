@@ -1,6 +1,7 @@
 package jets.projects.topcontrollers;
 
 import java.rmi.RemoteException;
+import java.sql.Blob;
 import java.util.List;
 import java.util.Map;
 
@@ -71,7 +72,7 @@ public class ContactsManager {
         }
         return new RequestResult<>(result.getResponseData(), null);
     }    
-    public RequestResult<String> getContactProfilePic(ClientToken token, int contactID) throws RemoteException {
+    public RequestResult<Blob> getContactProfilePic(ClientToken token, int contactID) throws RemoteException {
         boolean validToken = tokenValidator.checkClientToken(token).getResponseData();
         if (!validToken) {
             return new RequestResult<>(null, ExceptionMessages.UNREGISTERED_USER);

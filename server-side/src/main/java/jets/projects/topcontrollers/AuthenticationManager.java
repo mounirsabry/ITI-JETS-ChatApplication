@@ -1,6 +1,7 @@
 package jets.projects.topcontrollers;
 
 import java.rmi.RemoteException;
+import java.sql.Blob;
 import java.util.Date;
 import java.util.Map;
 
@@ -29,17 +30,17 @@ public class AuthenticationManager {
         this.notificatonCallback = new NotificatonCallback(notificationDao , contactsDao);
         onlineUsers = OnlineNormalUserTable.getOnlineUsersTable();
     }
-    
     public RequestResult<ClientSessionData> login(String phoneNumber, String password) throws RemoteException {
         var result = usersDao.clientLogin(phoneNumber, password);  //check database
          if (result.getErrorMessage() != null) {
             throw new RemoteException(result.getErrorMessage());
+        }else{
+            notificatonCallback.userWentOnline(result.getResponseData().getUserID());   //callback for contacts
+            return result;
         }
-        notificatonCallback.userWentOnline(result.getResponseData().getUserID());   //callback for contacts
-        return result;
     }
     public RequestResult<Boolean> registerNormalUser(
-            String displayName, String phoneNumber, String email, String pic,
+            String displayName, String phoneNumber, String email, Blob pic,
             String password, Gender gender, String country, Date birthDate,
             String bio) throws RemoteException {
         var result = usersDao.registerNormalUser(

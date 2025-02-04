@@ -1,20 +1,22 @@
 package jets.projects.entities;
 
+import java.io.Serializable;
+import java.sql.Blob;
 import java.util.Date;
 
-public class NormalUser {
+public class NormalUser implements Serializable{
     private int userID;
     private String displayName;
     private String phoneNumber;
     private String email;
-    private String pic;
+    private Blob pic;
     private String password;
     private Gender gender;
     private String country;
     private Date birthDate;
     private Date createdAt;
     private boolean isAdminCreated;
-    private boolean isFirstTimeLogin;
+    private boolean isPasswordValid;
     private NormalUserStatus status;
     private String bio;
 
@@ -23,14 +25,14 @@ public class NormalUser {
         displayName = "Not Specified";
         phoneNumber = "Not Specified";
         email = "Not Specified";
-        pic = "Not Specified";
+        pic = null;
         password = "";
         gender = Gender.MALE;
         country = "Not Specified";
         birthDate = null;
         createdAt = null;
         isAdminCreated = false;
-        isFirstTimeLogin = false;
+        isPasswordValid = false;
         status = NormalUserStatus.OFFLINE;
         bio = "";
     }
@@ -51,7 +53,7 @@ public class NormalUser {
         return email;
     }
 
-    public String getPic() {
+    public Blob getPic() {
         return pic;
     }
 
@@ -79,8 +81,8 @@ public class NormalUser {
         return isAdminCreated;
     }
 
-    public boolean isFirstTimeLogin() {
-        return isFirstTimeLogin;
+    public boolean isPasswordValid() {
+        return isPasswordValid;
     }
 
     public NormalUserStatus getStatus() {
@@ -107,7 +109,7 @@ public class NormalUser {
         this.email = email;
     }
 
-    public void setPic(String pic) {
+    public void setPic(Blob pic) {
         this.pic = pic;
     }
 
@@ -135,8 +137,8 @@ public class NormalUser {
         this.isAdminCreated = isAdminCreated;
     }
 
-    public void setIsFirstTimeLogin(boolean isFirstTimeLogin) {
-        this.isFirstTimeLogin = isFirstTimeLogin;
+    public void setIsPasswordValid(boolean isPasswordValid) {
+        this.isPasswordValid = isPasswordValid;
     }
 
     public void setStatus(NormalUserStatus status) {
@@ -187,8 +189,8 @@ public class NormalUser {
         builder.append(", isAdminCreated=");
         builder.append(isAdminCreated);
         
-        builder.append(", isFirstTimeLogin=");
-        builder.append(isFirstTimeLogin);
+        builder.append(", isPasswordValid=");
+        builder.append(isPasswordValid);
         
         builder.append(", status=");
         builder.append(status);

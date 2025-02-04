@@ -2,6 +2,7 @@ package jets.projects.impl;
 
 import java.rmi.RemoteException;
 import java.rmi.server.UnicastRemoteObject;
+import java.sql.Blob;
 import java.util.Date;
 import java.util.List;
 import jets.projects.topcontrollers.*;
@@ -71,7 +72,7 @@ public class NormalUserAPIImpl extends UnicastRemoteObject implements NormalUser
     }
     @Override
     public boolean register(
-            String displayName, String phoneNumber, String email, String pic,
+            String displayName, String phoneNumber, String email, Blob pic,
             String password, Gender gender, String country, Date birthDate,
             String bio) throws RemoteException {
         
@@ -102,10 +103,8 @@ public class NormalUserAPIImpl extends UnicastRemoteObject implements NormalUser
         }
         return result.getResponseData();
     }
-    
-    // String represents the image for now.
     @Override
-    public String getProfilePic(ClientToken token) throws RemoteException {
+    public Blob getProfilePic(ClientToken token) throws RemoteException {
         if (!validToken(token)) {
             throw new RemoteException(ExceptionMessages.UNREGISTERED_USER);
         }
@@ -155,7 +154,7 @@ public class NormalUserAPIImpl extends UnicastRemoteObject implements NormalUser
         return result.getResponseData();
     }
     @Override
-    public String getContactProfilePic(ClientToken token, int contactID) throws RemoteException {
+    public Blob getContactProfilePic(ClientToken token, int contactID) throws RemoteException {
         if (!validToken(token)) {
             throw new RemoteException(ExceptionMessages.UNREGISTERED_USER);
         }
@@ -252,7 +251,7 @@ public class NormalUserAPIImpl extends UnicastRemoteObject implements NormalUser
         return result.getResponseData();
     }
     @Override
-    public String getGroupPic(ClientToken token, int groupID) 
+    public Blob getGroupPic(ClientToken token, int groupID) 
             throws RemoteException{
         if (!validToken(token)) {
             throw new RemoteException(ExceptionMessages.UNREGISTERED_USER);
@@ -265,11 +264,11 @@ public class NormalUserAPIImpl extends UnicastRemoteObject implements NormalUser
     }
     
     @Override
-    public boolean setGroupPic(ClientToken token, int groupID, String pic) throws RemoteException {
+    public boolean setGroupPic(ClientToken token, int groupID, Blob pic) throws RemoteException {
         if(!validToken(token)){
             throw new RemoteException(ExceptionMessages.UNREGISTERED_USER);
         }
-        if(pic.isBlank() || pic==null){
+        if(pic==null){
             throw new RemoteException(ExceptionMessages.INVALID_INPUT_DATA);
         }
         var result =  groupManager.setGroupPic(token , groupID , pic);
@@ -546,7 +545,7 @@ public class NormalUserAPIImpl extends UnicastRemoteObject implements NormalUser
         return result.getResponseData();
     }
     @Override
-    public boolean editProfile(ClientToken token ,String username ,String bio ,String profilePic) throws RemoteException {
+    public boolean editProfile(ClientToken token ,String username ,String bio ,Blob profilePic) throws RemoteException {
         if (!validToken(token)) {
             throw new RemoteException(ExceptionMessages.UNREGISTERED_USER);
         }

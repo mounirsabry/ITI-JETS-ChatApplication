@@ -25,7 +25,8 @@ public class GroupCallback {
         this.groupMemberDao = groupMemberDao;
         this.usersDao = usersDao;
         onlineUsers = OnlineNormalUserTable.getOnlineUsersTable();
-        executor = Executors.newFixedThreadPool(onlineUsers.size());
+        int onlineCount = (onlineUsers != null) ? onlineUsers.size() : 1;
+        executor = Executors.newFixedThreadPool(onlineCount);
     }
 
     public void addedToGroup(int userID, int groupID) {

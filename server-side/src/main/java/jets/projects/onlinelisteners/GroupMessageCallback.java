@@ -23,7 +23,8 @@ public class GroupMessageCallback {
         this.groupMessagesDao = groupMessagesDao;
         this.groupMemberDao = groupMemberDao;
         onlineUsers = OnlineNormalUserTable.getOnlineUsersTable();
-        executor = Executors.newFixedThreadPool(onlineUsers.size());
+        int onlineCount = (onlineUsers != null) ? onlineUsers.size() : 1;
+        executor = Executors.newFixedThreadPool(onlineCount);
     }
     public void groupMessageReceived(GroupMessage message) {
         executor.submit(()->{
