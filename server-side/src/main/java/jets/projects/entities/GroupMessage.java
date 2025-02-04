@@ -1,6 +1,8 @@
 package jets.projects.entities;
 
+import java.sql.Blob;
 import java.util.Date;
+
 
 public class GroupMessage {
     private int messageID;
@@ -8,8 +10,8 @@ public class GroupMessage {
     private int groupID;
     private Date sentAt;
     private String content;
-    private String fileURL;
-    private String isFile;
+    private Blob fileURL;
+    private Boolean isFile;
     
     public GroupMessage() {
         messageID = -1;
@@ -18,10 +20,10 @@ public class GroupMessage {
         sentAt = null;
         content = null;
         fileURL = null;
-        isFile = null;
+        isFile = false;
     }
 
-    public GroupMessage(int messageID, int senderID, int groupID, Date sentAt, String content, String fileURL, String isFile) {
+    public GroupMessage(int messageID, int senderID, int groupID, Date sentAt, String content, Blob fileURL, Boolean isFile) {
         this.messageID = messageID;
         this.senderID = senderID;
         this.groupID = groupID;
@@ -51,11 +53,11 @@ public class GroupMessage {
         return content;
     }
 
-    public String getFileURL() {
+    public Blob getFileURL() {
         return fileURL;
     }
 
-    public String getIsFile() {
+    public Boolean getIsFile() {
         return isFile;
     }
 
@@ -79,11 +81,11 @@ public class GroupMessage {
         this.content = content;
     }
 
-    public void setFileURL(String fileURL) {
+    public void setFileURL(Blob fileURL) {
         this.fileURL = fileURL;
     }
 
-    public void setIsFile(String isFile) {
+    public void setIsFile(Boolean isFile) {
         this.isFile = isFile;
     }
     

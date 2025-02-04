@@ -8,6 +8,8 @@ public class Notification {
     private String content;
     private boolean isRead;
     private Timestamp sentAt;
+    private NotificationType Type;
+    
    
     public Notification() {
         notificationID = -1;
@@ -15,11 +17,13 @@ public class Notification {
         content = null;
         isRead = false;
         sentAt = null;
+        Type=NotificationType.NONE;
     }
 
-    public Notification(int notificationID, int userID, String content, boolean isRead, Timestamp sentAt) {
+    public Notification(int notificationID, int userID,NotificationType type, String content, boolean isRead, Timestamp sentAt) {
         this.notificationID = notificationID;
         this.userID = userID;
+        this.Type= type;
         this.content = content;
         this.isRead = isRead;
         this.sentAt = sentAt;
@@ -32,6 +36,11 @@ public class Notification {
     public int getUserID() {
         return userID;
     }
+
+    public NotificationType getNotificationType() {
+        return Type;
+    }
+
 
     public String getContent() {
         return content;
@@ -52,6 +61,12 @@ public class Notification {
     public void setUserID(int userID) {
         this.userID = userID;
     }
+
+    public void setNotificationType(NotificationType type) {
+        this.Type=type;
+    }
+
+
 
     public void setContent(String content) {
         this.content = content;
@@ -77,7 +92,10 @@ public class Notification {
         
         builder.append(", userID=");
         builder.append(userID);
-        
+
+        builder.append(", notificationtype=");
+        builder.append(Type);
+
         builder.append(", content=");
         builder.append(content);
         

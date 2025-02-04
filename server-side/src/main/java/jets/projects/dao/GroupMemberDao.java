@@ -13,9 +13,32 @@ import jets.projects.entities.GroupMember;
 
 public class GroupMemberDao {
     public RequestResult<Boolean> isMember(int groupID, int userID){
-        // TODO Auto-generated method stub
-        throw new UnsupportedOperationException("Unimplemented method 'isMember'");
+
+        try (Connection connection = ConnectionManager.getConnection()) {
+            String query = "SELECT COUNT(*) FROM usersgroupmember WHERE group_ID = ? AND member_ID = ?";
+            PreparedStatement preparedStatement = connection.prepareStatement(query);
+            preparedStatement.setInt(1, groupID);
+            preparedStatement.setInt(2, userID);
+
+            ResultSet resultSet = preparedStatement.executeQuery();
+
+            if (resultSet.next() && resultSet.getInt(1) > 0) {
+                return new RequestResult<>(true, null); 
+            } else {
+                return new RequestResult<>(false, "User is not a member of the group.");
+            }
+        } catch (SQLException e) {
+            return new RequestResult<>(false, "Database error: " + e.getMessage());
+        }
+       
+
     }
+
+
+
+
+
+
     public RequestResult<List<GroupMember>> getAllMembers(int groupID) {
          List<GroupMember> groupMembers = new ArrayList<>();
 
@@ -45,6 +68,8 @@ public class GroupMemberDao {
         return new RequestResult<>(null, e.getMessage());
     }
     }
+
+
     
     public RequestResult<Boolean> addMemberToGroup(int userID, int groupID, int otherID) {
         try (Connection connection = ConnectionManager.getConnection()) {
@@ -68,17 +93,125 @@ public class GroupMemberDao {
         }
     }
 
+
+
+
     public RequestResult<Boolean> removeMemberFromGroup(int userID, int groupID, int otherID) {
-        // TODO Auto-generated method stub
-        throw new UnsupportedOperationException("Unimplemented method 'removeMemberFromGroup'");
+
+        try (Connection connection = ConnectionManager.getConnection()) {
+            // Check if the logged-in user is the group admin
+            String adminCheckQuery = "SELECT group_admin_ID FROM usersgroup WHERE group_ID = ?";
+            PreparedStatement adminCheckStatement = connection.prepareStatement(adminCheckQuery);
+            adminCheckStatement.setInt(1, groupID);
+
+            ResultSet adminCheckResult = adminCheckStatement.executeQuery();
+
+            if (!adminCheckResult.next() || adminCheckResult.getInt("group_admin_ID") != userID) {
+                return new RequestResult<>(false, "Unauthorized: Only the group admin can remove members.");
+            }
+
+            // Remove the user from the group
+            String query = "DELETE FROM usersgroupmember WHERE group_ID = ? AND member_ID = ?";
+            PreparedStatement preparedStatement = connection.prepareStatement(query);
+            preparedStatement.setInt(1, groupID);
+            preparedStatement.setInt(2, otherID);
+
+            int rowsAffected = preparedStatement.executeUpdate();
+
+            if (rowsAffected == 1) {
+                return new RequestResult<>(true, null);
+            } else {
+                return new RequestResult<>(false, "Failed to remove user from the group.");
+            }
+        } catch (SQLException e) {
+            return new RequestResult<>(false, "Database error: " + e.getMessage());
+        }
+       
     }
 
+
+
+
     public RequestResult<Boolean> leaveGroupAsMemeber(int userID, int groupID) {
-        // TODO Auto-generated method stub
-        throw new UnsupportedOperationException("Unimplemented method 'leaveGroupAsMemeber'");
+
+        try (Connection connection = ConnectionManager.getConnection()) {
+            // Check if the user is the group admin
+            String adminCheckQuery = "SELECT group_admin_ID FROM UsersGroup WHERE group_ID = ?";
+            PreparedStatement adminCheckStatement = connection.prepareStatement(adminCheckQuery);
+            adminCheckStatement.setInt(1, groupID);
+
+            ResultSet adminCheckResult = adminCheckStatement.executeQuery();
+
+            if (adminCheckResult.next() && adminCheckResult.getInt("group_admin_ID") == userID) {
+                return new RequestResult<>(false, "Group admin cannot leave the group. Assign a new admin first.");
+            }
+
+            // Remove the user from the group
+            String query = "DELETE FROM UsersGroupMember WHERE group_ID = ? AND member_ID = ?";
+            PreparedStatement preparedStatement = connection.prepareStatement(query);
+            preparedStatement.setInt(1, groupID);
+            preparedStatement.setInt(2, userID);
+
+            int rowsAffected = preparedStatement.executeUpdate();
+
+            if (rowsAffected == 1) {
+                return new RequestResult<>(true, null); // Success
+            } else {
+                return new RequestResult<>(false, "Failed to leave the group.");
+            }
+        } catch (SQLException e) {
+            return new RequestResult<>(false, "Database error: " + e.getMessage());
+        }
+        
     }
+
+
+
     public RequestResult<Boolean> leaveGroupAsAdmin(int userID, int groupID, int newAdminID) {
-        // TODO Auto-generated method stub
-        throw new UnsupportedOperationException("Unimplemented method 'leaveGroupAsAdmin'");
+
+        try (Connection connection = ConnectionManager.getConnection()) {
+            // Check if the logged-in user is the group admin
+            String adminCheckQuery = "SELECT group_admin_ID FROM usersgroup WHERE group_ID = ?";
+            PreparedStatement adminCheckStatement = connection.prepareStatement(adminCheckQuery);
+            adminCheckStatement.setInt(1, groupID);
+
+            ResultSet adminCheckResult = adminCheckStatement.executeQuery();
+
+            if (!adminCheckResult.next() || adminCheckResult.getInt("group_admin_ID") != userID) {
+                return new RequestResult<>(false, "Unauthorized: Only the group admin can perform this action.");
+            }
+
+            // Assign the new admin
+            String updateAdminQuery = "UPDATE usersgroup SET group_admin_ID = ? WHERE group_ID = ?";
+            PreparedStatement updateAdminStatement = connection.prepareStatement(updateAdminQuery);
+            updateAdminStatement.setInt(1, newAdminID);
+            updateAdminStatement.setInt(2, groupID);
+
+            int updateRowsAffected = updateAdminStatement.executeUpdate();
+
+            if (updateRowsAffected != 1) {
+                return new RequestResult<>(false, "Failed to assign new admin.");
+            }
+
+            // Remove the old admin from the group
+            String leaveQuery = "DELETE FROM usersgroupmember WHERE group_ID = ? AND member_ID = ?";
+            PreparedStatement leaveStatement = connection.prepareStatement(leaveQuery);
+            leaveStatement.setInt(1, groupID);
+            leaveStatement.setInt(2, userID);
+
+            int leaveRowsAffected = leaveStatement.executeUpdate();
+
+            if (leaveRowsAffected == 1) {
+                return new RequestResult<>(true, null); 
+            } else {
+                return new RequestResult<>(false, "Failed to leave the group.");
+            }
+        } catch (SQLException e) {
+            return new RequestResult<>(false, "Database error: " + e.getMessage());
+        }
+        
     }
+
+
+
 }

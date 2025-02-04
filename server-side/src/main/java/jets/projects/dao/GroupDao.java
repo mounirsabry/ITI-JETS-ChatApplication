@@ -13,17 +13,79 @@ import jets.projects.entities.Group;
 public class GroupDao {
 
     public RequestResult<Boolean> isGroupExists(int groupID) {
-        // TODO Auto-generated method stub
-        throw new UnsupportedOperationException("Unimplemented method 'isGroupExists'");
+       
+        try (Connection connection = ConnectionManager.getConnection()) {
+            String query = "SELECT COUNT(*) FROM usersgroup WHERE group_ID = ?";
+            PreparedStatement preparedStatement = connection.prepareStatement(query);
+            preparedStatement.setInt(1, groupID);
+
+            ResultSet resultSet = preparedStatement.executeQuery();
+
+            if (resultSet.next() && resultSet.getInt(1) > 0) {
+                return new RequestResult<>(true, null); 
+            } else {
+                return new RequestResult<>(false, "Group does not exist.");
+            }
+        } catch (SQLException e) {
+            return new RequestResult<>(false, "Database error: " + e.getMessage());
+        }
+
+
     }
+
+
+
+
+
     public RequestResult<Integer> getGroupAdmin(int groupID){
-        // TODO Auto-generated method stub
-        throw new UnsupportedOperationException("Unimplemented method 'getGroupAdmin'");
+
+        try (Connection connection = ConnectionManager.getConnection()) {
+            String query = "SELECT group_admin_ID FROM usersgroup WHERE group_ID = ?";
+            PreparedStatement preparedStatement = connection.prepareStatement(query);
+            preparedStatement.setInt(1, groupID);
+
+            ResultSet resultSet = preparedStatement.executeQuery();
+
+            if (resultSet.next()) {
+                int adminID = resultSet.getInt("group_admin_ID");
+                return new RequestResult<>(adminID, null); 
+            } else {
+                return new RequestResult<>(null, "Group not found.");
+            }
+        } catch (SQLException e) {
+            return new RequestResult<>(null, "Database error: " + e.getMessage());
+        }
+       
     }
+
+
     public RequestResult<Boolean> updateAdmin(int groupID, int newAdminID) {
-        // TODO Auto-generated method stub
-        throw new UnsupportedOperationException("Unimplemented method 'updateAdmin'");
+        try (Connection connection = ConnectionManager.getConnection()) {
+            String query = "UPDATE usersgroup SET group_admin_ID = ? WHERE group_ID = ?";
+            PreparedStatement preparedStatement = connection.prepareStatement(query);
+            preparedStatement.setInt(1, newAdminID);
+            preparedStatement.setInt(2, groupID);
+
+            int rowsAffected = preparedStatement.executeUpdate();
+
+            if (rowsAffected == 1) {
+                return new RequestResult<>(true, null); 
+            } else {
+                return new RequestResult<>(false, "Failed to update group admin.");
+            }
+        } catch (SQLException e) {
+            return new RequestResult<>(false, "Database error: " + e.getMessage());
+        }
+
+
+
+      
     }
+
+
+
+
+
     public RequestResult<List<Group>> getAllGroups(int userID) {
        List<Group> groups = new ArrayList<>();
     
@@ -113,8 +175,23 @@ public class GroupDao {
 
 
     public RequestResult<Boolean> deleteGroup(int groupID) {
-        // TODO Auto-generated method stub
-        throw new UnsupportedOperationException("Unimplemented method 'deleteGroup'");
+
+        try (Connection connection = ConnectionManager.getConnection()) {
+            String query = "DELETE FROM usersgroup WHERE group_ID = ?";
+            PreparedStatement preparedStatement = connection.prepareStatement(query);
+            preparedStatement.setInt(1, groupID);
+
+            int rowsAffected = preparedStatement.executeUpdate();
+
+            if (rowsAffected == 1) {
+                return new RequestResult<>(true, null); 
+            } else {
+                return new RequestResult<>(false, "Failed to delete group.");
+            }
+        } catch (SQLException e) {
+            return new RequestResult<>(false, "Database error: " + e.getMessage());
+        }
+       
     }
     
 }

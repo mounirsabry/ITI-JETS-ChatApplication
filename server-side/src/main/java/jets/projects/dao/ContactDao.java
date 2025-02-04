@@ -14,9 +14,37 @@ import jets.projects.entities.NormalUser;
 import jets.projects.entities.NormalUserStatus;
 
 public class ContactDao {
+
+
+
+    
     public RequestResult<Boolean> isContacts(int userID, int contactID) {
-        throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
+        try (Connection connection = ConnectionManager.getConnection()) {
+           
+            String query = "SELECT COUNT(*) FROM contact WHERE (first_ID = ? AND second_ID = ?) OR (first_ID = ? AND second_ID = ?)";
+            PreparedStatement preparedStatement = connection.prepareStatement(query);
+            preparedStatement.setInt(1, userID);
+            preparedStatement.setInt(2, contactID);
+            preparedStatement.setInt(3, contactID);
+            preparedStatement.setInt(4, userID);
+    
+            ResultSet resultSet = preparedStatement.executeQuery();
+    
+            
+            if (resultSet.next() && resultSet.getInt(1) > 0) {
+                return new RequestResult<>(true, null); 
+            } else {
+                return new RequestResult<>(false, "Not a Contact");
+            }
+        } catch (SQLException e) {
+            
+            return new RequestResult<>(false, "Database error: " + e.getMessage());
+        }
     }
+
+
+
+
     public RequestResult<List<Contact>> getAllContacts(int userID) {
         try (Connection connection = ConnectionManager.getConnection()) {
 
@@ -47,6 +75,11 @@ public class ContactDao {
         return new RequestResult<>(null,null);
     }
     }
+
+
+
+
+
     public RequestResult<String> getContactProfilePic(int contactID) {
         try (Connection connection = ConnectionManager.getConnection()) {
 
@@ -70,6 +103,10 @@ public class ContactDao {
             return new RequestResult<>(null, null);
         }
     }
+
+
+
+
     public RequestResult<NormalUser> getContactProfile(int contactID) {
         String query = "SELECT username , phone_number,email,picture,status,bio FROM User WHERE ID= ? ";
         try (Connection connection = ConnectionManager.getConnection();

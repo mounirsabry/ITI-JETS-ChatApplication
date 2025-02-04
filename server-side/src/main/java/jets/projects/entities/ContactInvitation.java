@@ -3,22 +3,28 @@ package jets.projects.entities;
 import java.util.Date;
 
 public class ContactInvitation {
+    private int invitationID; 
     private int senderID;
     private int receiverID;
     private Date sentAt;
     
     public ContactInvitation() {
+        invitationID=-1;
         senderID = -1;
         receiverID = -1;
         sentAt = null;
     }
 
-    public ContactInvitation(int senderID, int receiverID, Date sentAt) {
+    public ContactInvitation(int invitationID,int senderID, int receiverID, Date sentAt) {
+        this.invitationID=invitationID;
         this.senderID = senderID;
         this.receiverID = receiverID;
         this.sentAt = sentAt;
     }
 
+    public int getInvitationID() {
+        return invitationID;
+    }
     public int getSenderID() {
         return senderID;
     }
@@ -29,6 +35,10 @@ public class ContactInvitation {
 
     public Date getSentAt() {
         return sentAt;
+    }
+
+    public void setInvitationID(int invitationID) {
+        this.invitationID = invitationID;
     }
 
     public void setSenderID(int senderID) {
@@ -49,7 +59,10 @@ public class ContactInvitation {
         
         builder.append(ContactInvitation.class.getName());
         builder.append('{');
-        
+
+        builder.append("invitationID=");
+        builder.append(invitationID);
+
         builder.append("senderID=");
         builder.append(senderID);
         
