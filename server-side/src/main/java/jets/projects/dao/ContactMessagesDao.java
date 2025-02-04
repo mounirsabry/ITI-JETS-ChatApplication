@@ -1,5 +1,6 @@
 package jets.projects.dao;
 
+import java.io.Serializable;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
@@ -11,8 +12,7 @@ import jets.projects.classes.RequestResult;
 import jets.projects.dbconnections.DBConnection;
 import jets.projects.entities.ContactMessage;
 
-public class ContactMessagesDao {
-
+public class ContactMessagesDao{
     public RequestResult<List<ContactMessage>> getContactMessages(int userID, int contactID) {
         String query = "SELECT * FROM ContactMessage " +
                         "WHERE (sender_ID = ? AND receiver_ID = ?) " +
@@ -103,7 +103,6 @@ public class ContactMessagesDao {
     public RequestResult<Boolean> markContactMessagesAsRead(List<ContactMessage> messages) {
         String query = "UPDATE ContactMessage SET is_read = 1 " +
                         "WHERE receiver_ID = ? AND sender_ID = ?";
-
         try (PreparedStatement stmt = DBConnection.getConnection().prepareStatement(query)) {
             stmt.setInt(1, messages.get(0).getReceiverID());
             stmt.setInt(2, messages.get(0).getSenderID());

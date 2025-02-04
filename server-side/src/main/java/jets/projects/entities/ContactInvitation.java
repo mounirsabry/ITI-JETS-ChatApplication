@@ -4,6 +4,7 @@ import java.io.Serializable;
 import java.util.Date;
 
 public class ContactInvitation implements Serializable{
+    private int invitation_ID;
     private int senderID;
     private int receiverID;
     private Date sentAt;
@@ -22,7 +23,13 @@ public class ContactInvitation implements Serializable{
     public int getSenderID() {
         return senderID;
     }
+    public int getInvitation_ID() {
+        return this.invitation_ID;
+    }
 
+    public void setInvitation_ID(int invitation_ID) {
+        this.invitation_ID = invitation_ID;
+    }
     public int getReceiverID() {
         return receiverID;
     }

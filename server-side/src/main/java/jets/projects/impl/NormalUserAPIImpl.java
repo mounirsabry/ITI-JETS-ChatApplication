@@ -19,6 +19,7 @@ import jets.projects.entities.Gender;
 import jets.projects.entities.GroupMember;
 import jets.projects.entities.NormalUser;
 import jets.projects.entities.NormalUserStatus;
+import jets.projects.api.ClientAPI;
 import jets.projects.api.NormalUserAPI;
 import jets.projects.classes.ExceptionMessages;
 
@@ -57,18 +58,23 @@ public class NormalUserAPIImpl extends UnicastRemoteObject implements NormalUser
             ||  token.getPhoneNumber().isBlank()
             ||  token.getUserID() <= 0);
     }
-    
     @Override
-    public ClientSessionData login(String phoneNumber, String password) throws RemoteException {
+    public ClientSessionData login(String phoneNumber, String password, ClientAPI impl) throws RemoteException {
         if (phoneNumber == null || phoneNumber.isBlank()
-        ||  password == null || password.isBlank()) {
+        ||  password == null || password.isBlank() || impl == null) {
             throw new RemoteException(ExceptionMessages.INVALID_INPUT_DATA);
         }
-        var result = authenticationManager.login(phoneNumber, password);
+        var result = authenticationManager.login(phoneNumber, password,impl);
         if (result.getErrorMessage() != null) {
             throw new RemoteException(result.getErrorMessage());
         }
         return result.getResponseData();
+    }
+    @Override
+    public ClientSessionData adminAccountCreatedFirstLogin(String phoneNumber, String oldPassword, String newPassword,
+            ClientAPI impl) throws RemoteException {
+        // TODO Auto-generated method stub
+        throw new UnsupportedOperationException("Unimplemented method 'adminAccountCreatedFirstLogin'");
     }
     @Override
     public boolean register(
@@ -203,7 +209,6 @@ public class NormalUserAPIImpl extends UnicastRemoteObject implements NormalUser
         }
         return result.getResponseData();
     }
-    
     @Override
     public boolean sendContactFileMessage(ClientToken token,int receiverID,String file) throws RemoteException {
         if (!validToken(token)) {
@@ -220,6 +225,12 @@ public class NormalUserAPIImpl extends UnicastRemoteObject implements NormalUser
             throw new RemoteException(result.getErrorMessage());
         }
         return result.getResponseData();
+    }
+    
+    @Override
+    public Blob getContactFileMessage(ClientToken token, int contactID, int messageID) throws RemoteException {
+        // TODO Auto-generated method stub
+        throw new UnsupportedOperationException("Unimplemented method 'getContactFileMessage'");
     }
     @Override
     public boolean markContactMessagesAsRead(ClientToken token,
@@ -443,8 +454,7 @@ public class NormalUserAPIImpl extends UnicastRemoteObject implements NormalUser
         return result.getResponseData();
     }
     @Override
-    public List<ContactInvitation> getContactInvitations(
-            ClientToken token) throws RemoteException {
+    public List<NormalUser> getContactInvitations(ClientToken token) throws RemoteException {
         if (!validToken(token)) {
             throw new RemoteException(ExceptionMessages.UNREGISTERED_USER);
         }

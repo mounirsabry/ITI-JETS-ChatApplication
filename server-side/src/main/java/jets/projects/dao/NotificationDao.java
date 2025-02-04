@@ -16,9 +16,6 @@ import jets.projects.entities.NotificationType;
 
 
 public class NotificationDao {
-
-
-
     public RequestResult<List<Notification>> getAllNotifications(int userID) {
         List<Notification> notifications = new ArrayList<>();
         try (Connection connection = ConnectionManager.getConnection()) {
@@ -45,9 +42,6 @@ public class NotificationDao {
             return new RequestResult<>(null, "Database error: " + e.getMessage());
         }
     }
-
-
-
     public RequestResult<Boolean> markNotificationsAsRead(int userID) {
         try (Connection connection = ConnectionManager.getConnection()) {
             String query = "UPDATE notification SET is_read = 1 WHERE user_ID = ?";
@@ -65,14 +59,7 @@ public class NotificationDao {
             return new RequestResult<>(false, "Database error: " + e.getMessage());
         }
     }
-
-
-
-
-
     public RequestResult<List<Notification>> getUnreadNotifications(int userID) {
-
-
         List<Notification> notifications = new ArrayList<>();
         try (Connection connection = ConnectionManager.getConnection()) {
             String query = "SELECT * FROM notification WHERE user_ID = ? AND is_read = 0 ORDER BY sent_at DESC";

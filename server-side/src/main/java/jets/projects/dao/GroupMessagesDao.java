@@ -9,6 +9,7 @@ import java.util.List;
 
 import jets.projects.classes.RequestResult;
 import jets.projects.dbconnections.ConnectionManager;
+import jets.projects.dbconnections.DBConnection;
 import jets.projects.entities.GroupMessage;
 
 
@@ -48,11 +49,6 @@ public class GroupMessagesDao {
         }
        
     }
-
-
-
-    
-
     public RequestResult<Boolean> sendGroupMessage(GroupMessage message) {
 
         try (Connection connection = ConnectionManager.getConnection()) {
@@ -77,10 +73,20 @@ public class GroupMessagesDao {
         }
         
     }
-
     public RequestResult<Boolean> sendGroupFileMessage(int senderID , int groupId , String file) {
-        // TODO Auto-generated method stub
-        throw new UnsupportedOperationException("Unimplemented method 'sendGroupMessage'");
+        String query = "INSERT INTO UserGroupMessage (sender_ID, group_ID, sent_at, content, is_read , is_file ,message_file) " +
+                        "VALUES (?, ?, NOW(), null, 0, 1, ?)";
+        try (PreparedStatement stmt = DBConnection.getConnection().prepareStatement(query)) {
+            stmt.setInt(1, senderID);
+            stmt.setInt(2, groupId);
+            stmt.setString(3, file);
+
+            int rowsAffected = stmt.executeUpdate();
+            return new RequestResult<>(rowsAffected == 1, null);
+
+        } catch (SQLException e) {
+            return new RequestResult<>(false, "Database error: " + e.getMessage());
+        }
     }
     
 }

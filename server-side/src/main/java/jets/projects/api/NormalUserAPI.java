@@ -89,7 +89,7 @@ public interface NormalUserAPI extends Remote {
     
     public List<Announcement> getUnReadAnnouncements(ClientToken token) throws RemoteException;
     
-    public List<ContactInvitation> getContactInvitations(ClientToken token) throws RemoteException;
+    public List<NormalUser> getContactInvitations(ClientToken token) throws RemoteException;
     
     public boolean sendContactInvitation(ClientToken token, ContactInvitation invitation) throws RemoteException;
     

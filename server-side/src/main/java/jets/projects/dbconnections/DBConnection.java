@@ -2,21 +2,13 @@ package jets.projects.dbconnections;
 
 import java.io.File;
 import java.io.FileInputStream;
-import java.io.FileOutputStream;
 import java.io.IOException;
-import java.io.OutputStream;
 import java.util.Properties;
 
 import javax.sql.DataSource;
 import com.mysql.cj.jdbc.MysqlDataSource;
-import com.mysql.cj.jdbc.MysqlDataSource;
-
-import javax.sql.DataSource;
-import java.io.FileInputStream;
-import java.io.IOException;
 import java.sql.Connection;
 import java.sql.SQLException;
-import java.util.Properties;
 
 public class DBConnection{
 

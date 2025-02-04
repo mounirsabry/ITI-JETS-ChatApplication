@@ -12,6 +12,7 @@ import jets.projects.dao.ContactMessagesDao;
 import jets.projects.dao.TokenValidatorDao;
 import jets.projects.dao.UsersDao;
 import jets.projects.entities.ContactInvitation;
+import jets.projects.entities.NormalUser;
 import jets.projects.onlinelisteners.ContactInvitationCallback;
 import jets.projects.session.ClientToken;
 import jets.projects.sharedds.OnlineNormalUserInfo;
@@ -31,7 +32,7 @@ public class ContactInvitationManager {
         onlineUsers = OnlineNormalUserTable.getOnlineUsersTable();
     }
     
-    public RequestResult<List<ContactInvitation>> getContactInvitations(ClientToken token) throws RemoteException {
+    public RequestResult<List<NormalUser>> getContactInvitations(ClientToken token) throws RemoteException {
         boolean validToken = tokenValidator.checkClientToken(token).getResponseData();
         if (!validToken) {
             return new RequestResult<>(null, ExceptionMessages.UNREGISTERED_USER);

@@ -5,6 +5,7 @@ import java.sql.Blob;
 import java.util.Date;
 import java.util.Map;
 
+import jets.projects.api.ClientAPI;
 import jets.projects.classes.ExceptionMessages;
 import jets.projects.classes.RequestResult;
 import jets.projects.dao.ContactDao;
@@ -30,7 +31,7 @@ public class AuthenticationManager {
         this.notificatonCallback = new NotificatonCallback(notificationDao , contactsDao);
         onlineUsers = OnlineNormalUserTable.getOnlineUsersTable();
     }
-    public RequestResult<ClientSessionData> login(String phoneNumber, String password) throws RemoteException {
+    public RequestResult<ClientSessionData> login(String phoneNumber, String password,ClientAPI impl) throws RemoteException {
         var result = usersDao.clientLogin(phoneNumber, password);  //check database
          if (result.getErrorMessage() != null) {
             throw new RemoteException(result.getErrorMessage());
