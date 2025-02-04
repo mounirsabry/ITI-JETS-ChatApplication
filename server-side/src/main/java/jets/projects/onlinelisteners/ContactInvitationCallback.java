@@ -1,9 +1,11 @@
 package jets.projects.onlinelisteners;
 
+import java.rmi.RemoteException;
 import java.util.Map;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
+import jets.projects.api.ClientAPI;
 import jets.projects.dao.ContactInvitationDao;
 import jets.projects.entities.ContactInvitation;
 import jets.projects.sharedds.OnlineNormalUserInfo;
@@ -19,16 +21,44 @@ public class ContactInvitationCallback {
         onlineUsers = OnlineNormalUserTable.getOnlineUsersTable();
         executor = Executors.newFixedThreadPool(onlineUsers.size());
     }
-
     public void contactInvitationReceived(ContactInvitation invitation) {
-        executor.submit(()->{});
+        int receiverID = invitation.getReceiverID();
+        ClientAPI client = onlineUsers.get(receiverID).getImpl();
+        executor.submit(()->{
+            if(client!=null){
+                try {
+                    client.contactInvitationReceived(invitation);
+                } catch (RemoteException e) {
+                    System.err.println("Failed to send invitation " + e.getMessage());
+                }
+            }
+        });
     }
-    
     public void contactInvitationAccepted(ContactInvitation invitation) {
-        executor.submit(()->{});        
+        int receiverID = invitation.getReceiverID();
+        ClientAPI client = onlineUsers.get(receiverID).getImpl();
+        executor.submit(()->{
+            if(client!=null){
+                try {
+                    client.contactInvitationAccepted(invitation);;
+                } catch (RemoteException e) {
+                    System.err.println("Failed to send invitation " + e.getMessage());
+                }
+            }
+        });        
     }
     
     public void contactInvitationRejected(ContactInvitation invitation) {
-        executor.submit(()->{});        
+        int receiverID = invitation.getReceiverID();
+        ClientAPI client = onlineUsers.get(receiverID).getImpl();
+        executor.submit(()->{
+            if (client!=null) {
+                try {
+                    client.contactInvitationRejected(invitation);
+                } catch (RemoteException e) {
+                    System.err.println("Failed to send invitation " + e.getMessage());
+                }
+            }
+        });        
     }
 }

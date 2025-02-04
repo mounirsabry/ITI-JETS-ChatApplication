@@ -93,6 +93,7 @@ public interface NormalUserAPI extends Remote {
             int groupID) throws RemoteException;
     
     public boolean sendGroupMessage(ClientToken token,GroupMessage message) throws RemoteException;
+    public boolean sendGroupFileMessage (ClientToken token , int groupID , String file) throws RemoteException;
     
     public List<Announcement> getAllAnnouncements(ClientToken token)
             throws RemoteException;
@@ -119,7 +120,7 @@ public interface NormalUserAPI extends Remote {
     public boolean deleteNotification(ClientToken token,int notificationID) throws RemoteException;
     public NormalUser getMyProfile(ClientToken token) throws RemoteException;
     
-    public boolean saveProfileChanges(ClientToken token , String newPassword , NormalUserStatus newStatus) throws RemoteException;
+    public boolean editProfile(ClientToken token , String username , String bio ,String profilePic) throws RemoteException;
     
     public boolean changePassword(ClientToken token, String oldPassword,String newPassword) throws RemoteException;
 }

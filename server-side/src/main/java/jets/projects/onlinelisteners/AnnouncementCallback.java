@@ -15,7 +15,7 @@ public class AnnouncementCallback {
     private final ExecutorService executor;
     AnnouncementDao announcementDao;
 
-    AnnouncementCallback(AnnouncementDao announcementDao){
+    public AnnouncementCallback(AnnouncementDao announcementDao){
         this.announcementDao = announcementDao;
         onlineUsers = OnlineNormalUserTable.getOnlineUsersTable();
         executor = Executors.newFixedThreadPool(onlineUsers.size());

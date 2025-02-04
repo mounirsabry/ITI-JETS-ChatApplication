@@ -4,7 +4,7 @@ import java.rmi.RemoteException;
 import java.rmi.server.UnicastRemoteObject;
 import java.util.Date;
 import java.util.List;
-import jets.projects.topcontrollers.NormalUserManager;
+import jets.projects.topcontrollers.*;
 import jets.projects.entities.Announcement;
 import jets.projects.session.ClientToken;
 import jets.projects.entities.Contact;
@@ -26,13 +26,28 @@ import jets.projects.classes.ExceptionMessages;
  * If the ResultSet is null, then either the database is down, or
  * an unhandled problem happens in the server.
  */
-public class NormalUserAPIImpl extends UnicastRemoteObject
-        implements NormalUserAPI {
-    private final NormalUserManager controller;
+public class NormalUserAPIImpl extends UnicastRemoteObject implements NormalUserAPI {
+    private final AuthenticationManager authenticationManager;
+    private final AnnouncementManager announcementManager;
+    private final ContactInvitationManager contactInvitationManager;
+    private final ContactMessagesManager contactMessagesManager;
+    private final ContactsManager contactsManager;
+    private final GroupMessagesManager groupMessagesManager;
+    private final GroupManager groupManager;
+    private final NotificationManager notificationManager;
+    private final ProfileManager profileManager;
     
     public NormalUserAPIImpl() throws RemoteException {
         super();
-        controller = new NormalUserManager();
+        authenticationManager  = new AuthenticationManager();
+        announcementManager = new AnnouncementManager();
+        contactInvitationManager = new ContactInvitationManager();
+        contactMessagesManager = new ContactMessagesManager();
+        groupMessagesManager = new GroupMessagesManager();
+        groupManager = new GroupManager();
+        notificationManager = new NotificationManager();
+        profileManager = new ProfileManager();   
+        contactsManager  = new ContactsManager();     
     }
     
     private boolean validToken(ClientToken token) {
@@ -48,7 +63,7 @@ public class NormalUserAPIImpl extends UnicastRemoteObject
         ||  password == null || password.isBlank()) {
             throw new RemoteException(ExceptionMessages.INVALID_INPUT_DATA);
         }
-        var result = controller.login(phoneNumber, password);
+        var result = authenticationManager.login(phoneNumber, password);
         if (result.getErrorMessage() != null) {
             throw new RemoteException(result.getErrorMessage());
         }
@@ -68,7 +83,7 @@ public class NormalUserAPIImpl extends UnicastRemoteObject
         || country == null || country.isBlank()) {
             throw new RemoteException(ExceptionMessages.INVALID_INPUT_DATA);
         }
-        var result = controller.registerNormalUser(
+        var result = authenticationManager.registerNormalUser(
                 displayName, phoneNumber, email, pic,
                 password, gender, country, birthDate, bio);
         if (result.getErrorMessage() != null) {
@@ -81,7 +96,7 @@ public class NormalUserAPIImpl extends UnicastRemoteObject
         if (!validToken(token)) {
             throw new RemoteException(ExceptionMessages.UNREGISTERED_USER);
         }
-        var result = controller.logout(token);
+        var result = authenticationManager.logout(token);
         if (result.getErrorMessage() != null) {
             throw new RemoteException(result.getErrorMessage());
         }
@@ -94,7 +109,7 @@ public class NormalUserAPIImpl extends UnicastRemoteObject
         if (!validToken(token)) {
             throw new RemoteException(ExceptionMessages.UNREGISTERED_USER);
         }
-        var result = controller.getProfilePic(token);
+        var result = profileManager.getProfilePic(token);
         if (result.getErrorMessage() != null) {
             throw new RemoteException(result.getErrorMessage());
         }
@@ -110,7 +125,7 @@ public class NormalUserAPIImpl extends UnicastRemoteObject
         if (newStatus == null || newStatus == NormalUserStatus.OFFLINE) {
             throw new RemoteException(ExceptionMessages.INVALID_INPUT_DATA);
         }
-        var result = controller.setOnlineStatus(token, newStatus);
+        var result = profileManager.setOnlineStatus(token, newStatus);
         if (result.getErrorMessage() != null) {
             throw new RemoteException(result.getErrorMessage());
         }
@@ -121,7 +136,7 @@ public class NormalUserAPIImpl extends UnicastRemoteObject
         if (!validToken(token)) {
             throw new RemoteException(ExceptionMessages.UNREGISTERED_USER);
         }
-        var result = controller.getContacts(token);
+        var result = contactsManager.getContacts(token);
         if (result.getErrorMessage() != null) {
             throw new RemoteException(result.getErrorMessage());
         }
@@ -133,7 +148,7 @@ public class NormalUserAPIImpl extends UnicastRemoteObject
         if (!validToken(token)) {
             throw new RemoteException(ExceptionMessages.UNREGISTERED_USER);
         }
-        var result = controller.getContactProfile(token, contactID);
+        var result = contactsManager.getContactProfile(token, contactID);
         if (result.getErrorMessage() != null) {
             throw new RemoteException(result.getErrorMessage());
         }
@@ -144,7 +159,7 @@ public class NormalUserAPIImpl extends UnicastRemoteObject
         if (!validToken(token)) {
             throw new RemoteException(ExceptionMessages.UNREGISTERED_USER);
         }
-        var result = controller.getContactProfilePic(token, contactID);
+        var result = contactsManager.getContactProfilePic(token, contactID);
         if (result.getErrorMessage() != null) {
             throw new RemoteException(result.getErrorMessage());
         }
@@ -155,7 +170,7 @@ public class NormalUserAPIImpl extends UnicastRemoteObject
         if (!validToken(token)) {
             throw new RemoteException(ExceptionMessages.UNREGISTERED_USER);
         }
-        var result = controller.getContactMessages(token, contactID);
+        var result = contactMessagesManager.getContactMessages(token, contactID);
         if (result.getErrorMessage() != null) {
             throw new RemoteException(result.getErrorMessage());
         }
@@ -167,7 +182,7 @@ public class NormalUserAPIImpl extends UnicastRemoteObject
         if (!validToken(token)) {
             throw new RemoteException(ExceptionMessages.UNREGISTERED_USER);
         }
-        var result = controller.getUnReadContactMessages(token, contactID);
+        var result = contactMessagesManager.getUnReadContactMessages(token, contactID);
         if (result.getErrorMessage() != null) {
             throw new RemoteException(result.getErrorMessage());
         }
@@ -183,7 +198,7 @@ public class NormalUserAPIImpl extends UnicastRemoteObject
         if (message == null) {
             throw new RemoteException(ExceptionMessages.INVALID_MESSAGE);
         }
-        var result = controller.sendContactMessage(token, message);
+        var result = contactMessagesManager.sendContactMessage(token, message);
         if (result.getErrorMessage() != null) {
             throw new RemoteException(result.getErrorMessage());
         }
@@ -201,7 +216,7 @@ public class NormalUserAPIImpl extends UnicastRemoteObject
         if (file.isBlank()) {
             throw new RemoteException(ExceptionMessages.INVALID_INPUT_DATA);
         }
-        var result = controller.sendContactFileMessage(token, file , receiverID);
+        var result = contactMessagesManager.sendContactFileMessage(token, file , receiverID);
         if (result.getErrorMessage() != null) {
             throw new RemoteException(result.getErrorMessage());
         }
@@ -219,7 +234,7 @@ public class NormalUserAPIImpl extends UnicastRemoteObject
         if ( messages.isEmpty()) {
             throw new RemoteException(ExceptionMessages.INVALID_MESSAGE);
         }
-        var result = controller.markContactMessagesAsRead(token, messages);
+        var result = contactMessagesManager.markContactMessagesAsRead(token, messages);
         if (result.getErrorMessage() != null) {
             throw new RemoteException(result.getErrorMessage());
         }
@@ -230,7 +245,7 @@ public class NormalUserAPIImpl extends UnicastRemoteObject
         if (!validToken(token)) {
             throw new RemoteException(ExceptionMessages.UNREGISTERED_USER);
         }
-        var result = controller.getAllGroups(token);
+        var result = groupManager.getAllGroups(token);
         if (result.getErrorMessage() != null) {
             throw new RemoteException(result.getErrorMessage());
         }
@@ -242,7 +257,7 @@ public class NormalUserAPIImpl extends UnicastRemoteObject
         if (!validToken(token)) {
             throw new RemoteException(ExceptionMessages.UNREGISTERED_USER);
         }
-        var result = controller.getGroupPic(token, groupID);
+        var result = groupManager.getGroupPic(token, groupID);
         if (result.getErrorMessage() != null) {
             throw new RemoteException(result.getErrorMessage());
         }
@@ -257,7 +272,7 @@ public class NormalUserAPIImpl extends UnicastRemoteObject
         if(pic.isBlank() || pic==null){
             throw new RemoteException(ExceptionMessages.INVALID_INPUT_DATA);
         }
-        var result =  controller.setGroupPic(token , groupID , pic);
+        var result =  groupManager.setGroupPic(token , groupID , pic);
         if (result.getErrorMessage() != null) {
             throw new RemoteException(result.getErrorMessage());
         }
@@ -272,7 +287,7 @@ public class NormalUserAPIImpl extends UnicastRemoteObject
         if (newGroup == null) {
             throw new RemoteException(ExceptionMessages.INVALID_INPUT_DATA);
         }
-        var result = controller.createGroup(token, newGroup);
+        var result = groupManager.createGroup(token, newGroup);
         if (result.getErrorMessage() != null) {
             throw new RemoteException(result.getErrorMessage());
         }
@@ -284,7 +299,7 @@ public class NormalUserAPIImpl extends UnicastRemoteObject
         if (!validToken(token)) {
             throw new RemoteException(ExceptionMessages.UNREGISTERED_USER);
         }        
-        var result = controller.getGroupMembers(token, groupID);
+        var result = groupManager.getGroupMembers(token, groupID);
         if (result.getErrorMessage() != null) {
             throw new RemoteException(result.getErrorMessage());
         }
@@ -296,7 +311,7 @@ public class NormalUserAPIImpl extends UnicastRemoteObject
         if (!validToken(token)) {
             throw new RemoteException(ExceptionMessages.UNREGISTERED_USER);
         }
-        var result = controller.addMemberToGroup(token, groupID, contactID);
+        var result = groupManager.addMemberToGroup(token, groupID, contactID);
         if (result.getErrorMessage() != null) {
             throw new RemoteException(result.getErrorMessage());
         }
@@ -307,7 +322,7 @@ public class NormalUserAPIImpl extends UnicastRemoteObject
         if (!validToken(token)) {
             throw new RemoteException(ExceptionMessages.UNREGISTERED_USER);
         }
-        var result = controller.removeMemberFromGroup(token, groupID,contactID);
+        var result = groupManager.removeMemberFromGroup(token, groupID,contactID);
         if (result.getErrorMessage() != null) {
             throw new RemoteException(result.getErrorMessage());
         }
@@ -319,7 +334,7 @@ public class NormalUserAPIImpl extends UnicastRemoteObject
         if (!validToken(token)) {
             throw new RemoteException(ExceptionMessages.UNREGISTERED_USER);
         }
-        var result = controller.leaveGroupAsMember(token, groupID);
+        var result = groupManager.leaveGroupAsMember(token, groupID);
         if (result.getErrorMessage() != null) {
             throw new RemoteException(result.getErrorMessage());
         }
@@ -331,7 +346,7 @@ public class NormalUserAPIImpl extends UnicastRemoteObject
         if (!validToken(token)) {
             throw new RemoteException(ExceptionMessages.UNREGISTERED_USER);
         }
-        var result = controller.leaveGroupAsAdmin(token, groupID, newAdminID);
+        var result = groupManager.leaveGroupAsAdmin(token, groupID, newAdminID);
         if (result.getErrorMessage() != null) {
             throw new RemoteException(result.getErrorMessage());
         }
@@ -344,7 +359,7 @@ public class NormalUserAPIImpl extends UnicastRemoteObject
         if (!validToken(token)) {
             throw new RemoteException(ExceptionMessages.UNREGISTERED_USER);
         }
-        var result = controller.assignGroupLeadership(token, groupID,newAdminID);
+        var result = groupManager.assignGroupLeadership(token, groupID,newAdminID);
         if (result.getErrorMessage() != null) {
             throw new RemoteException(result.getErrorMessage());
         }
@@ -355,7 +370,7 @@ public class NormalUserAPIImpl extends UnicastRemoteObject
         if (!validToken(token)) {
             throw new RemoteException(ExceptionMessages.UNREGISTERED_USER);
         }
-        var result = controller.deleteGroup(token, groupID);
+        var result = groupManager.deleteGroup(token, groupID);
         if (result.getErrorMessage() != null) {
             throw new RemoteException(result.getErrorMessage());
         }
@@ -366,7 +381,7 @@ public class NormalUserAPIImpl extends UnicastRemoteObject
         if (!validToken(token)) {
             throw new RemoteException(ExceptionMessages.UNREGISTERED_USER);
         }
-        var result = controller.getGroupMessages(token);
+        var result = groupMessagesManager.getGroupMessages(token);
         if (result.getErrorMessage() != null) {
             throw new RemoteException(result.getErrorMessage());
         }
@@ -381,18 +396,35 @@ public class NormalUserAPIImpl extends UnicastRemoteObject
         if (message==null) {
             throw new RemoteException(ExceptionMessages.INVALID_MESSAGE);            
         }        
-        var result = controller.sendGroupMessage(token,message);
+        var result = groupMessagesManager.sendGroupMessage(token,message);
         if (result.getErrorMessage() != null) {
             throw new RemoteException(result.getErrorMessage());
         }
         return result.getResponseData();
     }    
     @Override
+    public boolean sendGroupFileMessage(ClientToken token,int groupID,String file) throws RemoteException {
+        if (!validToken(token)) {
+            throw new RemoteException(ExceptionMessages.UNREGISTERED_USER);
+        }
+        if (file == null) {
+            throw new RemoteException(ExceptionMessages.INVALID_INPUT_DATA);
+        }
+        if (file.isBlank()) {
+            throw new RemoteException(ExceptionMessages.INVALID_INPUT_DATA);
+        }
+        var result = groupMessagesManager.sendGroupFileMessage(token, groupID , file);
+        if (result.getErrorMessage() != null) {
+            throw new RemoteException(result.getErrorMessage());
+        }
+        return result.getResponseData();
+    }
+    @Override
     public List<Announcement> getAllAnnouncements(ClientToken token) throws RemoteException {
         if (!validToken(token)) {
             throw new RemoteException(ExceptionMessages.UNREGISTERED_USER);
         }
-        var result = controller.getAnnouncements(token);
+        var result = announcementManager.getAnnouncements(token);
         if (result.getErrorMessage() != null) {
             throw new RemoteException(result.getErrorMessage());
         }
@@ -405,7 +437,7 @@ public class NormalUserAPIImpl extends UnicastRemoteObject
         if (!validToken(token)) {
             throw new RemoteException(ExceptionMessages.UNREGISTERED_USER);
         }
-        var result = controller.getUnReadAnnouncements(token);
+        var result = announcementManager.getUnReadAnnouncements(token);
         if (result.getErrorMessage() != null) {
             throw new RemoteException(result.getErrorMessage());
         }
@@ -417,7 +449,7 @@ public class NormalUserAPIImpl extends UnicastRemoteObject
         if (!validToken(token)) {
             throw new RemoteException(ExceptionMessages.UNREGISTERED_USER);
         }
-        var result = controller.getContactInvitations(token);
+        var result = contactInvitationManager.getContactInvitations(token);
         if (result.getErrorMessage() != null) {
             throw new RemoteException(result.getErrorMessage());
         }
@@ -428,7 +460,7 @@ public class NormalUserAPIImpl extends UnicastRemoteObject
         if (!validToken(token)) {
             throw new RemoteException(ExceptionMessages.UNREGISTERED_USER);
         }
-        var result = controller.sendContactInvitation(token , invitation);
+        var result = contactInvitationManager.sendContactInvitation(token , invitation);
         if (result.getErrorMessage() != null) {
             throw new RemoteException(result.getErrorMessage());
         }
@@ -439,7 +471,7 @@ public class NormalUserAPIImpl extends UnicastRemoteObject
         if (!validToken(token)) {
             throw new RemoteException(ExceptionMessages.UNREGISTERED_USER);
         }
-        var result = controller.acceptContactInvitation(token , invitation);
+        var result = contactInvitationManager.acceptContactInvitation(token , invitation);
         if (result.getErrorMessage() != null) {
             throw new RemoteException(result.getErrorMessage());
         }
@@ -450,7 +482,7 @@ public class NormalUserAPIImpl extends UnicastRemoteObject
         if (!validToken(token)) {
             throw new RemoteException(ExceptionMessages.UNREGISTERED_USER);
         }
-        var result = controller.rejectContactInvitation(token , invitation);
+        var result = contactInvitationManager.rejectContactInvitation(token , invitation);
         if (result.getErrorMessage() != null) {
             throw new RemoteException(result.getErrorMessage());
         }
@@ -462,7 +494,7 @@ public class NormalUserAPIImpl extends UnicastRemoteObject
         if (!validToken(token)) {
             throw new RemoteException(ExceptionMessages.UNREGISTERED_USER);
         }
-        var result = controller.getNotifications(token);
+        var result = notificationManager.getNotifications(token);
         if (result.getErrorMessage() != null) {
             throw new RemoteException(result.getErrorMessage());
         }
@@ -473,7 +505,7 @@ public class NormalUserAPIImpl extends UnicastRemoteObject
         if (!validToken(token)) {
             throw new RemoteException(ExceptionMessages.UNREGISTERED_USER);
         }
-        var result = controller.getUnReadNotifications(token);
+        var result = notificationManager.getUnReadNotifications(token);
         if (result.getErrorMessage() != null) {
             throw new RemoteException(result.getErrorMessage());
         }
@@ -485,7 +517,7 @@ public class NormalUserAPIImpl extends UnicastRemoteObject
         if (!validToken(token)) {
             throw new RemoteException(ExceptionMessages.UNREGISTERED_USER);
         }
-        var result = controller.markNotificationsAsRead(token);
+        var result = notificationManager.markNotificationsAsRead(token);
         if (result.getErrorMessage() != null) {
             throw new RemoteException(result.getErrorMessage());
         }
@@ -496,7 +528,7 @@ public class NormalUserAPIImpl extends UnicastRemoteObject
         if (!validToken(token)) {
             throw new RemoteException(ExceptionMessages.UNREGISTERED_USER);
         }
-        var result = controller.deleteNotification(token , notificationID);
+        var result = notificationManager.deleteNotification(token , notificationID);
         if (result.getErrorMessage() != null) {
             throw new RemoteException(result.getErrorMessage());
         }
@@ -507,18 +539,18 @@ public class NormalUserAPIImpl extends UnicastRemoteObject
         if (!validToken(token)) {
             throw new RemoteException(ExceptionMessages.UNREGISTERED_USER);
         }
-        var result = controller.getMyProfile(token);
+        var result = profileManager.getMyProfile(token);
         if (result.getErrorMessage() != null) {
             throw new RemoteException(result.getErrorMessage());
         }
         return result.getResponseData();
     }
     @Override
-    public boolean saveProfileChanges(ClientToken token ,String newPassword ,NormalUserStatus newStatus) throws RemoteException {
+    public boolean editProfile(ClientToken token ,String username ,String bio ,String profilePic) throws RemoteException {
         if (!validToken(token)) {
             throw new RemoteException(ExceptionMessages.UNREGISTERED_USER);
         }
-        var result = controller.saveProfileChanges(token);
+        var result = profileManager.editProfile(token , username , bio , profilePic);
         if (result.getErrorMessage() != null) {
             throw new RemoteException(result.getErrorMessage());
         }
@@ -528,7 +560,7 @@ public class NormalUserAPIImpl extends UnicastRemoteObject
         if (!validToken(token)) {
             throw new RemoteException(ExceptionMessages.UNREGISTERED_USER);
         }
-        var result = controller.changePassword(token , oldPassword , newPassword);
+        var result = profileManager.changePassword(token , oldPassword , newPassword);
         if (result.getErrorMessage() != null) {
             throw new RemoteException(result.getErrorMessage());
         }

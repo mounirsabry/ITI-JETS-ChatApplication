@@ -57,8 +57,15 @@ public class GroupDao {
         }
        
     }
+<<<<<<< HEAD
 
 
+=======
+    public RequestResult<String> getGroupName(int groupID){
+        // TODO Auto-generated method stub
+        throw new UnsupportedOperationException("Unimplemented method 'getGroupAdmin'");
+    }
+>>>>>>> c5eda22a6c0c254302654f99663290d23dbbe6d8
     public RequestResult<Boolean> updateAdmin(int groupID, int newAdminID) {
         try (Connection connection = ConnectionManager.getConnection()) {
             String query = "UPDATE usersgroup SET group_admin_ID = ? WHERE group_ID = ?";
