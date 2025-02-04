@@ -19,7 +19,6 @@ public class ContactInvitation implements Serializable{
         this.receiverID = receiverID;
         this.sentAt = sentAt;
     }
-
     public int getSenderID() {
         return senderID;
     }
@@ -31,7 +30,6 @@ public class ContactInvitation implements Serializable{
     public Date getSentAt() {
         return sentAt;
     }
-
     public void setSenderID(int senderID) {
         this.senderID = senderID;
     }
@@ -50,7 +48,7 @@ public class ContactInvitation implements Serializable{
         
         builder.append(ContactInvitation.class.getName());
         builder.append('{');
-        
+
         builder.append("senderID=");
         builder.append(senderID);
         

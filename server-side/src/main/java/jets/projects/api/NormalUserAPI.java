@@ -21,7 +21,11 @@ import jets.projects.entities.Notification;
 
 public interface NormalUserAPI extends Remote {
 
-    public ClientSessionData login(String phoneNumber, String password) throws RemoteException;
+    public ClientSessionData login(String phoneNumber,
+            String password, ClientAPI impl) throws RemoteException;
+    
+    public ClientSessionData adminAccountCreatedFirstLogin(String phoneNumber,
+            String oldPassword, String newPassword, ClientAPI impl) throws RemoteException;
     
     public boolean register(
             String displayName, String phoneNumber, String email, Blob pic,
@@ -42,7 +46,11 @@ public interface NormalUserAPI extends Remote {
     
     public List<ContactMessage> getAllContactMessages(ClientToken token,int contactID) throws RemoteException;
     
-    public List<ContactMessage> getUnReadContactMessages(ClientToken token, int otherID) throws RemoteException;
+    public Blob getContactFileMessage(ClientToken token,
+            int contactID, int messageID) throws RemoteException;
+    
+    public List<ContactMessage> getUnReadContactMessages(
+            ClientToken token, int otherID) throws RemoteException;
     
     public boolean sendContactMessage(ClientToken token, ContactMessage message) throws RemoteException;
     
