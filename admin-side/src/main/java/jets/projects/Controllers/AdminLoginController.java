@@ -1,41 +1,60 @@
 package jets.projects.Controllers;
 
-import java.net.URL;
-import java.util.ResourceBundle;
+import java.io.IOException;
+import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
-import javafx.fxml.Initializable;
+import javafx.fxml.FXMLLoader;
+import javafx.scene.Node;
+import javafx.scene.Parent;
+import javafx.scene.Scene;
+import javafx.scene.control.Alert;
+import javafx.scene.control.Button;
 import javafx.scene.control.PasswordField;
 import javafx.scene.control.TextField;
-import javafx.scene.image.ImageView;
 import javafx.stage.Stage;
 
-public class AdminLoginController implements Initializable {
+public class AdminLoginController {
     private Stage stage;
-    private Director myDirector;
-    
+    private Director director;
     @FXML
-    TextField userIDField;
-    
-    @FXML
-    PasswordField passwordField;
+    private TextField phoneField;
 
-    @Override
-    public void initialize(URL url, ResourceBundle rb) {
-    }
-    
-    public void setDirector(Stage stage, Director myDirector) {
-        this.stage = stage;
-        this.myDirector = myDirector;
-    }
-    
-    public void perform() {
-        // Read last session for the user and maybe auto login for them.
-        // Check if the user has exit or sign out after he called logout.
-        // If exit, then auto fail the userID with his data.
-    }
+    @FXML
+    private PasswordField passwordField;
     
     @FXML
-    public void handleLogin() {
-        myDirector.login();
+    private Button signinButton;
+
+    public TextField getPhoneField() {
+        return phoneField;
     }
+
+    public PasswordField getPasswordField() {
+        return passwordField;
+    }
+
+    public void setStageDirector(Stage stage, Director director) {
+        this.stage = stage;
+        this.director = director;
+    }
+
+    @FXML
+    void handleSignInButton() {
+        String phone = phoneField.getText().trim();
+        String password = passwordField.getText().trim();
+
+        // checking pass and phone
+        if (!phone.isEmpty() && !password.isEmpty() && isValidCredentials(phone, password)) {
+            director.login(phone, password);
+        } else {
+            AdminAlerts.invokeErrorAlert("Login Failed","Invalid phone number or password.");
+        }
+    }
+
+    // validation method on pass and phone fields
+    private boolean isValidCredentials(String phone, String password) {
+        // need to implement
+        return true;
+    }
+
 }

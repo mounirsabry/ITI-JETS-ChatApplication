@@ -6,10 +6,19 @@ import javafx.scene.chart.NumberAxis;
 import javafx.scene.chart.PieChart;
 import javafx.scene.chart.XYChart;
 import javafx.scene.layout.StackPane;
+import javafx.stage.Stage;
 
-public class StatisticsController {
+public class AdminStatisticsController {
+    private Stage stage;
+    private Director director;
+
     @FXML
     private StackPane stackPane;
+
+    public void setStageDirector(Stage stage, Director director){
+        this.director = director;
+        this.stage = stage;
+    }
     @FXML
     public void userStatusAction(){
         PieChart status = new PieChart();

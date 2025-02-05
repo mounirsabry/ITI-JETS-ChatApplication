@@ -11,7 +11,7 @@
 <?import javafx.scene.text.Text?>
 
 <VBox maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="600.0" prefWidth="580.0" styleClass="announcementBackground" stylesheets="@../Styles/sidebar.css" xmlns="http://javafx.com/javafx/9.0.1" xmlns:fx="http://javafx.com/fxml/1" 
-fx:controller="jets.projects.Controllers.StatisticsController">
+fx:controller="jets.projects.Controllers.AdminStatisticsController">
    <children>
       <Pane minHeight="60.0" prefHeight="61.0" prefWidth="580.0" VBox.vgrow="ALWAYS" />
       <Text fill="#59769c" strokeType="OUTSIDE" strokeWidth="0.0" text="Statistics" textAlignment="CENTER" wrappingWidth="580.0">
