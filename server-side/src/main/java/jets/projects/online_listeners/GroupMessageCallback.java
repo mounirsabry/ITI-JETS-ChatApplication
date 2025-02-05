@@ -1,4 +1,4 @@
-package jets.projects.onlinelisteners;
+package jets.projects.online_listeners;
 
 import java.rmi.RemoteException;
 import java.util.List;
@@ -8,10 +8,10 @@ import java.util.concurrent.Executors;
 import jets.projects.api.ClientAPI;
 import jets.projects.dao.GroupMemberDao;
 import jets.projects.dao.GroupMessagesDao;
-import jets.projects.entities.GroupMember;
+import jets.projects.entity_info.GroupMemberInfo;
 import jets.projects.entities.GroupMessage;
-import jets.projects.sharedds.OnlineNormalUserInfo;
-import jets.projects.sharedds.OnlineNormalUserTable;
+import jets.projects.shared_ds.OnlineNormalUserInfo;
+import jets.projects.shared_ds.OnlineNormalUserTable;
 
 public class GroupMessageCallback {
     Map<Integer, OnlineNormalUserInfo> onlineUsers;
@@ -29,8 +29,8 @@ public class GroupMessageCallback {
     public void groupMessageReceived(GroupMessage message) {
         executor.submit(()->{
             ClientAPI client;
-            List<GroupMember> members = groupMemberDao.getAllMembers(message.getGroupID()).getResponseData();
-            for(GroupMember member : members){
+            List<GroupMemberInfo> members = groupMemberDao.getAllMembers(message.getGroupID()).getResponseData();
+            for(GroupMemberInfo member : members){
                 client = onlineUsers.get(member.getMemberID()).getImpl();
                 if(client!=null){
                    try {
@@ -45,12 +45,12 @@ public class GroupMessageCallback {
     public void fileGroupMessageReceived(int senderID ,int groupID, String file) {
         executor.submit(()->{
             ClientAPI client;
-            List<GroupMember> members = groupMemberDao.getAllMembers(groupID).getResponseData();
-            for(GroupMember member : members){
+            List<GroupMemberInfo> members = groupMemberDao.getAllMembers(groupID).getResponseData();
+            for(GroupMemberInfo member : members){
                 client = onlineUsers.get(member.getMemberID()).getImpl();
                 if(client!=null){
                    try {
-                    client.fileGroupMessageReceived(senderID, groupID, file);  //notify group members 
+                    client.groupFileMessageReceived(senderID, groupID, file);  //notify group members 
                     } catch (RemoteException e) {
                         System.err.println("Falied to notify member about new group file message: " + e.getMessage());
                     } 

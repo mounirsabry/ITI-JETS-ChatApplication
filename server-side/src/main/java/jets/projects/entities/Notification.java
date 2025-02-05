@@ -3,28 +3,27 @@ package jets.projects.entities;
 import java.io.Serializable;
 import java.sql.Timestamp;
 
-public class Notification implements Serializable{
+public class Notification implements Serializable {
     private int notificationID; 
     private int userID;
+    private NotificationType type;
     private String content;
     private boolean isRead;
     private Timestamp sentAt;
-    private NotificationType Type;
     
-   
     public Notification() {
         notificationID = -1;
         userID = -1;
+        type = NotificationType.NONE;
         content = null;
         isRead = false;
         sentAt = null;
-        Type=NotificationType.NONE;
     }
 
-    public Notification(int notificationID, int userID,NotificationType type, String content, boolean isRead, Timestamp sentAt) {
+    public Notification(int notificationID, int userID, NotificationType type, String content, boolean isRead, Timestamp sentAt) {
         this.notificationID = notificationID;
         this.userID = userID;
-        this.Type= type;
+        this.type = type;
         this.content = content;
         this.isRead = isRead;
         this.sentAt = sentAt;
@@ -38,16 +37,15 @@ public class Notification implements Serializable{
         return userID;
     }
 
-    public NotificationType getNotificationType() {
-        return Type;
+    public NotificationType getType() {
+        return type;
     }
-
 
     public String getContent() {
         return content;
     }
 
-    public boolean getIsRead() {
+    public boolean isIsRead() {
         return isRead;
     }
 
@@ -63,11 +61,9 @@ public class Notification implements Serializable{
         this.userID = userID;
     }
 
-    public void setNotificationType(NotificationType type) {
-        this.Type=type;
+    public void setType(NotificationType type) {
+        this.type = type;
     }
-
-
 
     public void setContent(String content) {
         this.content = content;
@@ -80,22 +76,22 @@ public class Notification implements Serializable{
     public void setSentAt(Timestamp sentAt) {
         this.sentAt = sentAt;
     }
-   
+
     @Override
     public String toString() {
         StringBuilder builder = new StringBuilder();
         
-        builder.append(Notification.class.getName());
+        builder.append("Notification");
         builder.append('{');
-        
+
         builder.append("notificationID=");
         builder.append(notificationID);
         
         builder.append(", userID=");
         builder.append(userID);
 
-        builder.append(", notificationtype=");
-        builder.append(Type);
+        builder.append(", type=");
+        builder.append(type);
 
         builder.append(", content=");
         builder.append(content);

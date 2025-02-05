@@ -9,7 +9,7 @@ import java.util.ArrayList;
 import java.util.Date;
 import jets.projects.classes.RequestResult;
 
-import jets.projects.dbconnections.ConnectionManager;
+import jets.projects.db_connections.ConnectionManager;
 import jets.projects.entities.Announcement;
 
 public class AnnouncementDao {

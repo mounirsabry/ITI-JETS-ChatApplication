@@ -1,4 +1,4 @@
-package jets.projects.topcontrollers;
+package jets.projects.top_controllers;
 
 import java.rmi.RemoteException;
 import java.util.List;
@@ -11,10 +11,10 @@ import jets.projects.dao.ContactMessagesDao;
 import jets.projects.dao.TokenValidatorDao;
 import jets.projects.dao.UsersDao;
 import jets.projects.entities.ContactMessage;
-import jets.projects.onlinelisteners.ContactMessageCallback;
+import jets.projects.online_listeners.ContactMessageCallback;
 import jets.projects.session.ClientToken;
-import jets.projects.sharedds.OnlineNormalUserInfo;
-import jets.projects.sharedds.OnlineNormalUserTable;
+import jets.projects.shared_ds.OnlineNormalUserInfo;
+import jets.projects.shared_ds.OnlineNormalUserTable;
 
 public class ContactMessagesManager {
     ContactDao contactsDao = new ContactDao();

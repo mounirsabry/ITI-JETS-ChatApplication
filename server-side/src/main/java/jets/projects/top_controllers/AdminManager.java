@@ -1,4 +1,4 @@
-package jets.projects.topcontrollers;
+package jets.projects.top_controllers;
 
 import jets.projects.classes.ServerCommand;
 import java.rmi.RemoteException;

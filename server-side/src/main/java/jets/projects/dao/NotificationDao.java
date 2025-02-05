@@ -9,7 +9,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import jets.projects.classes.RequestResult;
-import jets.projects.dbconnections.ConnectionManager;
+import jets.projects.db_connections.ConnectionManager;
 import jets.projects.entities.Notification;
 import jets.projects.entities.NotificationType;
 

@@ -1,6 +1,8 @@
 package jets.projects.session;
 
-public class AdminToken {
+import java.io.Serializable;
+
+public class AdminToken implements Serializable {
     private final int userID;
 
     public AdminToken(int userID) {

@@ -1,4 +1,4 @@
-package jets.projects.topcontrollers;
+package jets.projects.top_controllers;
 
 import java.rmi.RemoteException;
 import java.sql.Blob;
@@ -13,11 +13,11 @@ import jets.projects.dao.NotificationDao;
 import jets.projects.dao.TokenValidatorDao;
 import jets.projects.dao.UsersDao;
 import jets.projects.entities.Gender;
-import jets.projects.onlinelisteners.NotificatonCallback;
+import jets.projects.online_listeners.NotificatonCallback;
 import jets.projects.session.ClientSessionData;
 import jets.projects.session.ClientToken;
-import jets.projects.sharedds.OnlineNormalUserInfo;
-import jets.projects.sharedds.OnlineNormalUserTable;
+import jets.projects.shared_ds.OnlineNormalUserInfo;
+import jets.projects.shared_ds.OnlineNormalUserTable;
 
 public class AuthenticationManager {
     ContactDao contactsDao = new ContactDao();

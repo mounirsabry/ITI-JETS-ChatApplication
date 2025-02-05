@@ -1,4 +1,4 @@
-package jets.projects.onlinelisteners;
+package jets.projects.online_listeners;
 
 import java.rmi.RemoteException;
 import java.util.Map;
@@ -8,8 +8,8 @@ import java.util.concurrent.Executors;
 import jets.projects.api.ClientAPI;
 import jets.projects.dao.ContactInvitationDao;
 import jets.projects.entities.ContactInvitation;
-import jets.projects.sharedds.OnlineNormalUserInfo;
-import jets.projects.sharedds.OnlineNormalUserTable;
+import jets.projects.shared_ds.OnlineNormalUserInfo;
+import jets.projects.shared_ds.OnlineNormalUserTable;
 
 public class ContactInvitationCallback {
     Map<Integer, OnlineNormalUserInfo> onlineUsers;

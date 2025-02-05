@@ -8,7 +8,7 @@ import java.util.ArrayList;
 import java.util.List;
 import jets.projects.classes.RequestResult;
 import jets.projects.dbconnections.DBConnection;
-import jets.projects.entities.Contact;
+import jets.projects.entity_info.ContactInfo;
 import jets.projects.entities.ContactGroup;
 import jets.projects.entities.NormalUser;
 import jets.projects.entities.NormalUserStatus;
@@ -31,7 +31,7 @@ public class ContactDao {
             return new RequestResult<>(false, e.getMessage());
         }
     }
-    public RequestResult<List<Contact>> getAllContacts(int userID) {
+    public RequestResult<List<ContactInfo>> getAllContacts(int userID) {
         String query = "SELECT distinct u.display_name, u.pic, c.category " +
                         "FROM CONTACT c " +
                         "JOIN NormalUser u ON c.second_ID = u.user_ID " +
@@ -39,9 +39,9 @@ public class ContactDao {
         try (PreparedStatement statement = DBConnection.getConnection().prepareStatement(query)){
             statement.setInt(1, userID);
             ResultSet resultSet = statement.executeQuery();
-            List<Contact> contacts = new ArrayList<>();
+            List<ContactInfo> contacts = new ArrayList<>();
             while (resultSet.next()) {
-                Contact contact = new Contact();
+                ContactInfo contact = new ContactInfo();
                 contact.setName(resultSet.getString("display_name"));
                 contact.setPicture(resultSet.getBlob("pic"));
                 ContactGroup contactGroup = ContactGroup.valueOf(resultSet.getString("category"));

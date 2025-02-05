@@ -1,4 +1,4 @@
-package jets.projects.topcontrollers;
+package jets.projects.top_controllers;
 
 import java.rmi.RemoteException;
 import java.util.List;
@@ -12,11 +12,11 @@ import jets.projects.dao.GroupMessagesDao;
 import jets.projects.dao.TokenValidatorDao;
 import jets.projects.dao.UsersDao;
 import jets.projects.entities.GroupMessage;
-import jets.projects.onlinelisteners.GroupCallback;
-import jets.projects.onlinelisteners.GroupMessageCallback;
+import jets.projects.online_listeners.GroupCallback;
+import jets.projects.online_listeners.GroupMessageCallback;
 import jets.projects.session.ClientToken;
-import jets.projects.sharedds.OnlineNormalUserInfo;
-import jets.projects.sharedds.OnlineNormalUserTable;
+import jets.projects.shared_ds.OnlineNormalUserInfo;
+import jets.projects.shared_ds.OnlineNormalUserTable;
 
 public class GroupMessagesManager {
     GroupDao groupDao = new GroupDao();

@@ -1,4 +1,4 @@
-package jets.projects.onlinelisteners;
+package jets.projects.online_listeners;
 
 import java.rmi.RemoteException;
 import java.util.List;
@@ -10,10 +10,10 @@ import jets.projects.api.ClientAPI;
 import jets.projects.dao.ContactDao;
 import jets.projects.dao.NotificationDao;
 import jets.projects.dao.UsersDao;
-import jets.projects.entities.Contact;
+import jets.projects.entity_info.ContactInfo;
 import jets.projects.entities.NormalUserStatus;
-import jets.projects.sharedds.OnlineNormalUserInfo;
-import jets.projects.sharedds.OnlineNormalUserTable;
+import jets.projects.shared_ds.OnlineNormalUserInfo;
+import jets.projects.shared_ds.OnlineNormalUserTable;
 
 public class NotificatonCallback {
     Map<Integer, OnlineNormalUserInfo> onlineUsers;
@@ -33,9 +33,9 @@ public class NotificatonCallback {
     public void userWentOnline(int userID) {
         executor.submit(()->{
             ClientAPI client;
-            List<Contact> contacts = contactDao.getAllContacts(userID).getResponseData();
-            for(Contact contact : contacts){
-                client = onlineUsers.get(contact.getUserID()).getImpl();
+            List<ContactInfo> contacts = contactDao.getAllContacts(userID).getResponseData();
+            for(ContactInfo contact : contacts){
+                client = onlineUsers.get(contact.getFirstID()).getImpl();
                 if(client!=null){
                    try {
                     client.userWentOnline(usersDao.getUserById(userID).getDisplayName()); //notify contacts 
@@ -49,9 +49,9 @@ public class NotificatonCallback {
     public void userWentOffline(int userID) {
         executor.submit(()->{
             ClientAPI client;
-            List<Contact> contacts = contactDao.getAllContacts(userID).getResponseData();
-            for(Contact contact : contacts){
-                client = onlineUsers.get(contact.getUserID()).getImpl();
+            List<ContactInfo> contacts = contactDao.getAllContacts(userID).getResponseData();
+            for(ContactInfo contact : contacts){
+                client = onlineUsers.get(contact.getFirstID()).getImpl();
                 if(client!=null){
                    try {
                     client.userWentOffline(usersDao.getUserById(userID).getDisplayName()); //notify contacts 
@@ -65,9 +65,9 @@ public class NotificatonCallback {
     public void userStatusChanged(int userID, NormalUserStatus newStatus) {
         executor.submit(()->{
             ClientAPI client;
-            List<Contact> contacts = contactDao.getAllContacts(userID).getResponseData();
-            for(Contact contact : contacts){
-                client = onlineUsers.get(contact.getUserID()).getImpl();
+            List<ContactInfo> contacts = contactDao.getAllContacts(userID).getResponseData();
+            for(ContactInfo contact : contacts){
+                client = onlineUsers.get(contact.getFirstID()).getImpl();
                 if(client!=null){
                    try {
                     client.userStatusChanged(usersDao.getUserById(userID).getDisplayName(), newStatus); //notify contacts 

@@ -1,14 +1,22 @@
 package jets.projects.impl;
 
+import jets.projects.top_controllers.GroupMessagesManager;
+import jets.projects.top_controllers.NotificationManager;
+import jets.projects.top_controllers.AuthenticationManager;
+import jets.projects.top_controllers.GroupManager;
+import jets.projects.top_controllers.ProfileManager;
+import jets.projects.top_controllers.ContactsManager;
+import jets.projects.top_controllers.AnnouncementManager;
+import jets.projects.top_controllers.ContactMessagesManager;
+import jets.projects.top_controllers.ContactInvitationManager;
 import java.rmi.RemoteException;
 import java.rmi.server.UnicastRemoteObject;
 import java.sql.Blob;
 import java.util.Date;
 import java.util.List;
-import jets.projects.topcontrollers.*;
 import jets.projects.entities.Announcement;
 import jets.projects.session.ClientToken;
-import jets.projects.entities.Contact;
+import jets.projects.entity_info.ContactInfo;
 import jets.projects.entities.ContactInvitation;
 import jets.projects.entities.ContactMessage;
 import jets.projects.entities.Group;
@@ -16,7 +24,7 @@ import jets.projects.entities.GroupMessage;
 import jets.projects.entities.Notification;
 import jets.projects.session.ClientSessionData;
 import jets.projects.entities.Gender;
-import jets.projects.entities.GroupMember;
+import jets.projects.entity_info.GroupMemberInfo;
 import jets.projects.entities.NormalUser;
 import jets.projects.entities.NormalUserStatus;
 import jets.projects.api.ClientAPI;
@@ -110,7 +118,7 @@ public class NormalUserAPIImpl extends UnicastRemoteObject implements NormalUser
         return result.getResponseData();
     }
     @Override
-    public Blob getProfilePic(ClientToken token) throws RemoteException {
+    public Blob getMyProfilePic(ClientToken token) throws RemoteException {
         if (!validToken(token)) {
             throw new RemoteException(ExceptionMessages.UNREGISTERED_USER);
         }
@@ -137,7 +145,7 @@ public class NormalUserAPIImpl extends UnicastRemoteObject implements NormalUser
         return result.getResponseData();
     }
     @Override
-    public List<Contact> getContacts(ClientToken token) throws RemoteException {
+    public List<ContactInfo> getContacts(ClientToken token) throws RemoteException {
         if (!validToken(token)) {
             throw new RemoteException(ExceptionMessages.UNREGISTERED_USER);
         }
@@ -210,7 +218,7 @@ public class NormalUserAPIImpl extends UnicastRemoteObject implements NormalUser
         return result.getResponseData();
     }
     @Override
-    public boolean sendContactFileMessage(ClientToken token,int receiverID,String file) throws RemoteException {
+    public boolean sendContactMessageFile(ClientToken token,int receiverID,String file) throws RemoteException {
         if (!validToken(token)) {
             throw new RemoteException(ExceptionMessages.UNREGISTERED_USER);
         }
@@ -228,7 +236,7 @@ public class NormalUserAPIImpl extends UnicastRemoteObject implements NormalUser
     }
     
     @Override
-    public Blob getContactFileMessage(ClientToken token, int contactID, int messageID) throws RemoteException {
+    public Blob getContactMessageFile(ClientToken token, int contactID, int messageID) throws RemoteException {
         // TODO Auto-generated method stub
         throw new UnsupportedOperationException("Unimplemented method 'getContactFileMessage'");
     }
@@ -305,7 +313,7 @@ public class NormalUserAPIImpl extends UnicastRemoteObject implements NormalUser
     }
     
     @Override
-    public List<GroupMember> getGroupMembers(ClientToken token,int groupID) throws RemoteException {
+    public List<GroupMemberInfo> getGroupMembers(ClientToken token,int groupID) throws RemoteException {
         if (!validToken(token)) {
             throw new RemoteException(ExceptionMessages.UNREGISTERED_USER);
         }        
@@ -413,7 +421,7 @@ public class NormalUserAPIImpl extends UnicastRemoteObject implements NormalUser
         return result.getResponseData();
     }    
     @Override
-    public boolean sendGroupFileMessage(ClientToken token,int groupID,String file) throws RemoteException {
+    public boolean sendGroupMessageFile(ClientToken token,int groupID,String file) throws RemoteException {
         if (!validToken(token)) {
             throw new RemoteException(ExceptionMessages.UNREGISTERED_USER);
         }

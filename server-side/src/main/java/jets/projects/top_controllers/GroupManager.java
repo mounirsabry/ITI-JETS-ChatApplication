@@ -1,4 +1,4 @@
-package jets.projects.topcontrollers;
+package jets.projects.top_controllers;
 
 import java.rmi.RemoteException;
 import java.sql.Blob;
@@ -14,12 +14,12 @@ import jets.projects.dao.GroupMessagesDao;
 import jets.projects.dao.TokenValidatorDao;
 import jets.projects.dao.UsersDao;
 import jets.projects.entities.Group;
-import jets.projects.entities.GroupMember;
+import jets.projects.entity_info.GroupMemberInfo;
 import jets.projects.entities.NormalUser;
-import jets.projects.onlinelisteners.GroupCallback;
+import jets.projects.online_listeners.GroupCallback;
 import jets.projects.session.ClientToken;
-import jets.projects.sharedds.OnlineNormalUserInfo;
-import jets.projects.sharedds.OnlineNormalUserTable;
+import jets.projects.shared_ds.OnlineNormalUserInfo;
+import jets.projects.shared_ds.OnlineNormalUserTable;
 
 public class GroupManager {
     GroupDao groupDao = new GroupDao();
@@ -103,7 +103,7 @@ public class GroupManager {
         }
         return new RequestResult<>(true, null);
     }
-    public RequestResult<List<GroupMember>> getGroupMembers(ClientToken token, int groupID) throws RemoteException {
+    public RequestResult<List<GroupMemberInfo>> getGroupMembers(ClientToken token, int groupID) throws RemoteException {
         boolean validToken = tokenValidator.checkClientToken(token).getResponseData();
         if (!validToken) {
             return new RequestResult<>(null, ExceptionMessages.UNREGISTERED_USER);
@@ -117,7 +117,7 @@ public class GroupManager {
             }
             boolean isMember = groupMemberDao.isMember(groupID , token.getUserID()).getResponseData();
             if (!isMember) {
-                return new RequestResult<List<GroupMember>>(null, ExceptionMessages.NOT_MEMBER);            
+                return new RequestResult<List<GroupMemberInfo>>(null, ExceptionMessages.NOT_MEMBER);            
             }
         var result = groupMemberDao.getAllMembers(groupID);
         if (result.getErrorMessage()!=null) {

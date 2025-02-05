@@ -1,7 +1,6 @@
 package jets.projects.entities;
 
 import java.io.Serializable;
-import java.sql.Blob;
 import java.util.Date;
 
 public class NormalUser implements Serializable{
@@ -9,16 +8,16 @@ public class NormalUser implements Serializable{
     private String displayName;
     private String phoneNumber;
     private String email;
-    private Blob pic;
+    private byte[] pic;
     private String password;
     private Gender gender;
     private String country;
     private Date birthDate;
     private Date createdAt;
-    private boolean isAdminCreated;
-    private boolean isPasswordValid;
     private NormalUserStatus status;
     private String bio;
+    private boolean isAdminCreated;
+    private boolean isPasswordValid;
 
     public NormalUser() {
         userID = -1;
@@ -31,10 +30,10 @@ public class NormalUser implements Serializable{
         country = "Not Specified";
         birthDate = null;
         createdAt = null;
-        isAdminCreated = false;
-        isPasswordValid = false;
         status = NormalUserStatus.OFFLINE;
         bio = "";
+        isAdminCreated = false;
+        isPasswordValid = true;
     }
 
     public int getUserID() {
@@ -53,7 +52,7 @@ public class NormalUser implements Serializable{
         return email;
     }
 
-    public Blob getPic() {
+    public byte[] getPic() {
         return pic;
     }
 
@@ -77,20 +76,20 @@ public class NormalUser implements Serializable{
         return createdAt;
     }
 
-    public boolean isAdminCreated() {
-        return isAdminCreated;
-    }
-
-    public boolean isPasswordValid() {
-        return isPasswordValid;
-    }
-
     public NormalUserStatus getStatus() {
         return status;
     }
 
     public String getBio() {
         return bio;
+    }
+
+    public boolean isIsAdminCreated() {
+        return isAdminCreated;
+    }
+
+    public boolean isIsPasswordValid() {
+        return isPasswordValid;
     }
 
     public void setUserID(int userID) {
@@ -109,7 +108,7 @@ public class NormalUser implements Serializable{
         this.email = email;
     }
 
-    public void setPic(Blob pic) {
+    public void setPic(byte[] pic) {
         this.pic = pic;
     }
 
@@ -133,6 +132,14 @@ public class NormalUser implements Serializable{
         this.createdAt = createdAt;
     }
 
+    public void setStatus(NormalUserStatus status) {
+        this.status = status;
+    }
+
+    public void setBio(String bio) {
+        this.bio = bio;
+    }
+
     public void setIsAdminCreated(boolean isAdminCreated) {
         this.isAdminCreated = isAdminCreated;
     }
@@ -141,19 +148,11 @@ public class NormalUser implements Serializable{
         this.isPasswordValid = isPasswordValid;
     }
 
-    public void setStatus(NormalUserStatus status) {
-        this.status = status;
-    }
-
-    public void setBio(String bio) {
-        this.bio = bio;
-    }
-    
     @Override
     public String toString() {
         StringBuilder builder = new StringBuilder();
         
-        builder.append(NormalUser.class.getName());
+        builder.append("NormalUser");
         builder.append('{');
         
         builder.append("userID=");
@@ -169,7 +168,7 @@ public class NormalUser implements Serializable{
         builder.append(email);
         
         builder.append(", pic=");
-        builder.append(pic == null ? "null" : "cannot be displayed here"); 
+        builder.append(pic == null ? "null" : "Cannot be displayed here."); 
         
         builder.append(", password=");
         builder.append(password);
@@ -186,18 +185,18 @@ public class NormalUser implements Serializable{
         builder.append(", createdAt=");
         builder.append(createdAt);
         
-        builder.append(", isAdminCreated=");
-        builder.append(isAdminCreated);
-        
-        builder.append(", isPasswordValid=");
-        builder.append(isPasswordValid);
-        
         builder.append(", status=");
         builder.append(status);
         builder.append('.');
         
         builder.append("\nbio=");
         builder.append(bio);
+        
+        builder.append(", isAdminCreated=");
+        builder.append(isAdminCreated);
+        
+        builder.append(", isPasswordValid=");
+        builder.append(isPasswordValid);
         
         builder.append('}');
         return builder.toString();

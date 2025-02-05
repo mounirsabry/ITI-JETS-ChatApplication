@@ -1,5 +1,5 @@
 
-package jets.projects.sharedds;
+package jets.projects.shared_ds;
 
 import java.util.Collections;
 import java.util.HashMap;

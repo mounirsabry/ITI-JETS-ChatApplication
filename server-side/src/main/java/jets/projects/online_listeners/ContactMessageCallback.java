@@ -1,4 +1,4 @@
-package jets.projects.onlinelisteners;
+package jets.projects.online_listeners;
 
 import java.util.Map;
 import java.util.concurrent.ExecutorService;
@@ -7,8 +7,8 @@ import java.util.concurrent.Executors;
 import jets.projects.api.ClientAPI;
 import jets.projects.dao.ContactMessagesDao;
 import jets.projects.entities.ContactMessage;
-import jets.projects.sharedds.OnlineNormalUserInfo;
-import jets.projects.sharedds.OnlineNormalUserTable;
+import jets.projects.shared_ds.OnlineNormalUserInfo;
+import jets.projects.shared_ds.OnlineNormalUserTable;
 
 public class ContactMessageCallback {
     
@@ -43,7 +43,7 @@ public class ContactMessageCallback {
         if (client != null) {
             executor.submit(() -> {
                 try {
-                    client.fileContactMessageReceived(file); 
+                    client.contactFileMessageReceived(file); 
                 } catch (Exception e) {
                     System.err.println("Failed to send file contact message callback: " + e.getMessage());
                 }

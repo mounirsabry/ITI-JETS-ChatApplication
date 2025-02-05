@@ -6,7 +6,7 @@ import java.util.List;
 import java.util.Map;
 import jets.projects.session.AdminSessionData;
 import jets.projects.session.AdminToken;
-import jets.projects.topcontrollers.AdminManager;
+import jets.projects.top_controllers.AdminManager;
 import jets.projects.entities.Announcement;
 import jets.projects.api.AdminAPI;
 import jets.projects.entities.NormalUser;

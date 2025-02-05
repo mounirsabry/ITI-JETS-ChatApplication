@@ -7,7 +7,7 @@ import java.util.ArrayList;
 import java.util.List;
 import jets.projects.classes.RequestResult;
 import jets.projects.dbconnections.DBConnection;
-import jets.projects.entities.GroupMember;
+import jets.projects.entity_info.GroupMemberInfo;
 
 public class GroupMemberDao {
     public RequestResult<Boolean> isMember(int groupID, int userID) {
@@ -25,8 +25,8 @@ public class GroupMemberDao {
             return new RequestResult<>(false, e.getMessage());
         }
     }
-    public RequestResult<List<GroupMember>> getAllMembers(int groupID) {
-        List<GroupMember> groupMembers = new ArrayList<>();
+    public RequestResult<List<GroupMemberInfo>> getAllMembers(int groupID) {
+        List<GroupMemberInfo> groupMembers = new ArrayList<>();
         String query = "SELECT username, picture " +
                         "FROM UsersGroupMember gm " +
                         "JOIN NormalUser u ON gm.member_ID = u.ID " +
@@ -38,7 +38,7 @@ public class GroupMemberDao {
                 String username = resultSet.getString("username");
                 String picture = resultSet.getString("picture");
 
-                GroupMember groupMember = new GroupMember();
+                GroupMemberInfo groupMember = new GroupMemberInfo();
                 groupMember.setPic(picture);
                 groupMember.setUsername(username);
                 groupMembers.add(groupMember);

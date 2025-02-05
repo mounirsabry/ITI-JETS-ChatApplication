@@ -1,4 +1,4 @@
-package jets.projects.onlinelisteners;
+package jets.projects.online_listeners;
 
 import java.rmi.RemoteException;
 import java.util.Map;
@@ -7,8 +7,8 @@ import java.util.concurrent.Executors;
 
 import jets.projects.dao.AnnouncementDao;
 import jets.projects.entities.Announcement;
-import jets.projects.sharedds.OnlineNormalUserInfo;
-import jets.projects.sharedds.OnlineNormalUserTable;
+import jets.projects.shared_ds.OnlineNormalUserInfo;
+import jets.projects.shared_ds.OnlineNormalUserTable;
 
 public class AnnouncementCallback {
     Map<Integer, OnlineNormalUserInfo> onlineUsers;

@@ -1,4 +1,4 @@
-package jets.projects.topcontrollers;
+package jets.projects.top_controllers;
 
 import java.rmi.RemoteException;
 import java.sql.Blob;
@@ -10,16 +10,16 @@ import jets.projects.classes.RequestResult;
 import jets.projects.dao.ContactDao;
 import jets.projects.dao.TokenValidatorDao;
 import jets.projects.dao.UsersDao;
-import jets.projects.entities.Contact;
+import jets.projects.entity_info.ContactInfo;
 import jets.projects.entities.NormalUser;
-import jets.projects.onlinelisteners.ContactInvitationCallback;
-import jets.projects.onlinelisteners.ContactMessageCallback;
-import jets.projects.onlinelisteners.GroupCallback;
-import jets.projects.onlinelisteners.GroupMessageCallback;
-import jets.projects.onlinelisteners.NotificatonCallback;
+import jets.projects.online_listeners.ContactInvitationCallback;
+import jets.projects.online_listeners.ContactMessageCallback;
+import jets.projects.online_listeners.GroupCallback;
+import jets.projects.online_listeners.GroupMessageCallback;
+import jets.projects.online_listeners.NotificatonCallback;
 import jets.projects.session.ClientToken;
-import jets.projects.sharedds.OnlineNormalUserInfo;
-import jets.projects.sharedds.OnlineNormalUserTable;
+import jets.projects.shared_ds.OnlineNormalUserInfo;
+import jets.projects.shared_ds.OnlineNormalUserTable;
 
 public class ContactsManager {
     ContactDao contactsDao = new ContactDao();
@@ -36,7 +36,7 @@ public class ContactsManager {
     public ContactsManager(){
         onlineUsers = OnlineNormalUserTable.getOnlineUsersTable();
     }
-    public RequestResult<List<Contact>> getContacts(ClientToken token) throws RemoteException {
+    public RequestResult<List<ContactInfo>> getContacts(ClientToken token) throws RemoteException {
         boolean validToken = tokenValidator.checkClientToken(token).getResponseData();
         if (!validToken) {
             return new RequestResult<>(null, ExceptionMessages.UNREGISTERED_USER);

@@ -1,7 +1,7 @@
-package jets.projects.topcontrollers;
+package jets.projects.top_controllers;
 
 import java.rmi.RemoteException;
-import java.sql.Blob;
+import java.util.List;
 import java.util.Map;
 
 import jets.projects.classes.ExceptionMessages;
@@ -10,14 +10,13 @@ import jets.projects.dao.ContactDao;
 import jets.projects.dao.NotificationDao;
 import jets.projects.dao.TokenValidatorDao;
 import jets.projects.dao.UsersDao;
-import jets.projects.entities.NormalUser;
-import jets.projects.entities.NormalUserStatus;
-import jets.projects.onlinelisteners.NotificatonCallback;
+import jets.projects.entities.Notification;
+import jets.projects.online_listeners.NotificatonCallback;
 import jets.projects.session.ClientToken;
-import jets.projects.sharedds.OnlineNormalUserInfo;
-import jets.projects.sharedds.OnlineNormalUserTable;
+import jets.projects.shared_ds.OnlineNormalUserInfo;
+import jets.projects.shared_ds.OnlineNormalUserTable;
 
-public class ProfileManager {
+public class NotificationManager {
     ContactDao contactsDao = new ContactDao();
     NotificationDao notificationDao = new NotificationDao();
     UsersDao usersDao = new UsersDao();
@@ -25,11 +24,12 @@ public class ProfileManager {
     NotificatonCallback notificatonCallback;
     Map<Integer, OnlineNormalUserInfo> onlineUsers;
 
-    public ProfileManager(){
+    public NotificationManager(){
         this.notificatonCallback = new NotificatonCallback(notificationDao , contactsDao);
         onlineUsers = OnlineNormalUserTable.getOnlineUsersTable();
-    }    
-    public RequestResult<Blob> getProfilePic(ClientToken token) throws RemoteException {
+    }
+    
+    public RequestResult<List<Notification>> getNotifications(ClientToken token) throws RemoteException {
         boolean validToken = tokenValidator.checkClientToken(token).getResponseData();
         if (!validToken) {
             return new RequestResult<>(null, ExceptionMessages.UNREGISTERED_USER);
@@ -37,32 +37,13 @@ public class ProfileManager {
         if(!onlineUsers.containsKey(token.getUserID())){
             return new RequestResult<>(null, ExceptionMessages.TIMEOUT_USER_EXCEPTION_MESSAGE);
         }
-        var result = usersDao.getNormalUserProfilePic(token.getUserID());
+        var result = notificationDao.getAllNotifications(token.getUserID()); 
         if (result.getErrorMessage()!=null) {
             throw new RemoteException(result.getErrorMessage());            
         }
         return new RequestResult<>(result.getResponseData(), null);
     }
-    public RequestResult<Boolean> setOnlineStatus(ClientToken token,
-            NormalUserStatus newStatus) throws RemoteException {
-        boolean validToken = tokenValidator.checkClientToken(token).getResponseData();
-        if (!validToken) {
-            return new RequestResult<>(false, ExceptionMessages.UNREGISTERED_USER);
-        }
-        if(!onlineUsers.containsKey(token.getUserID())){
-            return new RequestResult<>(false, ExceptionMessages.TIMEOUT_USER_EXCEPTION_MESSAGE);
-        }
-        if (newStatus==null) {
-            return new RequestResult<>(false, ExceptionMessages.INVALID_INPUT_DATA);
-        }
-        var result = usersDao.setOnlineStatus(token.getUserID(), newStatus); //update database
-        notificatonCallback.userStatusChanged(token.getUserID(),newStatus);//callback for contacts
-        if (result.getErrorMessage()!=null) {
-            throw new RemoteException(result.getErrorMessage());            
-        }
-        return new RequestResult<>(true, null);
-    }
-    public RequestResult<NormalUser> getMyProfile(ClientToken token) throws RemoteException {
+    public RequestResult<List<Notification>> getUnReadNotifications(ClientToken token) throws RemoteException {
         boolean validToken = tokenValidator.checkClientToken(token).getResponseData();
         if (!validToken) {
             return new RequestResult<>(null, ExceptionMessages.UNREGISTERED_USER);
@@ -70,27 +51,13 @@ public class ProfileManager {
         if(!onlineUsers.containsKey(token.getUserID())){
             return new RequestResult<>(null, ExceptionMessages.TIMEOUT_USER_EXCEPTION_MESSAGE);
         }
-        var result = usersDao.getNormalUserProfile(token.getUserID());
+        var result = notificationDao.getUnreadNotifications(token.getUserID());
         if (result.getErrorMessage()!=null) {
             throw new RemoteException(result.getErrorMessage());            
         }
         return new RequestResult<>(result.getResponseData(), null);
     }
-    public RequestResult<Boolean> editProfile(ClientToken token , String username , String bio , Blob profilePic) throws RemoteException {
-        boolean validToken = tokenValidator.checkClientToken(token).getResponseData();
-        if (!validToken) {
-            return new RequestResult<>(false, ExceptionMessages.UNREGISTERED_USER);
-        }
-        if(!onlineUsers.containsKey(token.getUserID())){
-            return new RequestResult<>(false, ExceptionMessages.TIMEOUT_USER_EXCEPTION_MESSAGE);
-        }
-        var result = usersDao.saveProfileChanges(token.getUserID(),username,bio,profilePic);
-        if (result.getErrorMessage()!=null) {
-            throw new RemoteException(result.getErrorMessage());            
-        }
-        return new RequestResult<>(result.getResponseData(), null);
-    }
-    public RequestResult<Boolean> changePassword(ClientToken token , String oldPassword , String newPassword) throws RemoteException{
+    public RequestResult<Boolean> markNotificationsAsRead(ClientToken token) throws RemoteException {
         boolean validToken = tokenValidator.checkClientToken(token).getResponseData();
         if (!validToken) {
             return new RequestResult<>(null, ExceptionMessages.UNREGISTERED_USER);
@@ -98,14 +65,25 @@ public class ProfileManager {
         if(!onlineUsers.containsKey(token.getUserID())){
             return new RequestResult<>(null, ExceptionMessages.TIMEOUT_USER_EXCEPTION_MESSAGE);
         }
-        boolean validOldPassword = usersDao.isPasswordValid(token.getUserID(),oldPassword).getResponseData();
-        if(!validOldPassword){
-            return new RequestResult<Boolean>(false, ExceptionMessages.INVALID_INPUT_DATA);
-        }
-        var result = usersDao.updatePassword(token.getUserID() , oldPassword , newPassword);
+        var result = notificationDao.markNotificationsAsRead(token.getUserID());
         if (result.getErrorMessage()!=null) {
             throw new RemoteException(result.getErrorMessage());            
         }
-        return new RequestResult<>(true, null);
+        return new RequestResult<>(result.getResponseData(), null);
+    }
+    public RequestResult<Boolean> deleteNotification(ClientToken token , int notificationID) throws RemoteException{
+        boolean validToken = tokenValidator.checkClientToken(token).getResponseData();
+        if (!validToken) {
+            return new RequestResult<>(null, ExceptionMessages.UNREGISTERED_USER);
+        }
+        if(!onlineUsers.containsKey(token.getUserID())){
+            return new RequestResult<>(null, ExceptionMessages.TIMEOUT_USER_EXCEPTION_MESSAGE);
+        }
+        var result = notificationDao.deleteNotification(token.getUserID() , notificationID);
+        if (result.getErrorMessage()!=null) {
+            throw new RemoteException(result.getErrorMessage());            
+        }
+        return new RequestResult<>(result.getResponseData(), null);
+
     }
 }

@@ -1,6 +1,8 @@
 package jets.projects.session;
 
-public class ClientSessionData {
+import java.io.Serializable;
+
+public class ClientSessionData implements Serializable {
     private final int userID;
     private final String phoneNumber;
     private String displayName;

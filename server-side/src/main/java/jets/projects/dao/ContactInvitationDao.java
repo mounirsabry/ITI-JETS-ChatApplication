@@ -7,7 +7,7 @@ import java.sql.Timestamp;
 import java.util.ArrayList;
 import java.util.List;
 import jets.projects.classes.RequestResult;
-import jets.projects.dbconnections.ConnectionManager;
+import jets.projects.db_connections.ConnectionManager;
 import jets.projects.dbconnections.DBConnection;
 import jets.projects.entities.ContactInvitation;
 import jets.projects.entities.Gender;

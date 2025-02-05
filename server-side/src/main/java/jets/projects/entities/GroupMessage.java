@@ -1,36 +1,36 @@
 package jets.projects.entities;
 
-import java.sql.Blob;
 import java.io.Serializable;
 import java.util.Date;
 
-public class GroupMessage implements Serializable{
+public class GroupMessage implements Serializable {
     private int messageID;
     private int senderID;
     private int groupID;
     private Date sentAt;
     private String content;
-    private Blob fileURL;
-    private Boolean isFile;
-    
+    private Boolean containsFile;
+    private byte[] file;
+
     public GroupMessage() {
         messageID = -1;
         senderID = -1;
         groupID = -1;
         sentAt = null;
         content = null;
-        fileURL = null;
-        isFile = false;
+        containsFile = false;
+        file = null;
     }
 
-    public GroupMessage(int messageID, int senderID, int groupID, Date sentAt, String content, Blob fileURL, Boolean isFile) {
+    public GroupMessage(int messageID, int senderID, int groupID, Date sentAt,
+            String content, Boolean containsFile, byte[] file) {
         this.messageID = messageID;
         this.senderID = senderID;
         this.groupID = groupID;
         this.sentAt = sentAt;
         this.content = content;
-        this.fileURL = fileURL;
-        this.isFile = isFile;
+        this.containsFile = containsFile;
+        this.file = file;
     }
 
     public int getMessageID() {
@@ -53,12 +53,12 @@ public class GroupMessage implements Serializable{
         return content;
     }
 
-    public Blob getFileURL() {
-        return fileURL;
+    public Boolean getContainsFile() {
+        return containsFile;
     }
 
-    public Boolean getIsFile() {
-        return isFile;
+    public byte[] getFile() {
+        return file;
     }
 
     public void setMessageID(int messageID) {
@@ -81,19 +81,19 @@ public class GroupMessage implements Serializable{
         this.content = content;
     }
 
-    public void setFileURL(Blob fileURL) {
-        this.fileURL = fileURL;
+    public void setContainsFile(Boolean containsFile) {
+        this.containsFile = containsFile;
     }
 
-    public void setIsFile(Boolean isFile) {
-        this.isFile = isFile;
+    public void setFile(byte[] file) {
+        this.file = file;
     }
-    
+
     @Override
     public String toString() {
         StringBuilder builder = new StringBuilder();
 
-        builder.append(GroupMessage.class.getName());
+        builder.append("GroupMessage");
         builder.append('{');
         
         builder.append("messageID=");
@@ -111,11 +111,8 @@ public class GroupMessage implements Serializable{
         builder.append(", content=");
         builder.append(content);
         
-        builder.append(", fileURL=");
-        builder.append(fileURL);
-        
-        builder.append(", isFile=");
-        builder.append(isFile);
+        builder.append(", containsFile=");
+        builder.append(containsFile);
 
         builder.append('}');
         return builder.toString();

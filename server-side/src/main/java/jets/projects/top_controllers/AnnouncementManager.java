@@ -1,4 +1,4 @@
-package jets.projects.topcontrollers;
+package jets.projects.top_controllers;
 
 import java.rmi.RemoteException;
 import java.util.List;
@@ -9,10 +9,10 @@ import jets.projects.classes.RequestResult;
 import jets.projects.dao.AnnouncementDao;
 import jets.projects.dao.TokenValidatorDao;
 import jets.projects.entities.Announcement;
-import jets.projects.onlinelisteners.AnnouncementCallback;
+import jets.projects.online_listeners.AnnouncementCallback;
 import jets.projects.session.ClientToken;
-import jets.projects.sharedds.OnlineNormalUserInfo;
-import jets.projects.sharedds.OnlineNormalUserTable;
+import jets.projects.shared_ds.OnlineNormalUserInfo;
+import jets.projects.shared_ds.OnlineNormalUserTable;
 
 public class AnnouncementManager {
     AnnouncementDao announcementDao;

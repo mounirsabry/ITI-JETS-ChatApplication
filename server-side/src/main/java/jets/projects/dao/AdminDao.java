@@ -6,11 +6,12 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 
 import jets.projects.classes.RequestResult;
-import jets.projects.dbconnections.ConnectionManager;
+import jets.projects.db_connections.ConnectionManager;
 import jets.projects.session.AdminSessionData;
 
 public class AdminDao {
-        public RequestResult<AdminSessionData> adminLogin(int userID, String password) {
+        public RequestResult<AdminSessionData> adminLogin(int userID,
+                String password) {
         try (Connection connection = ConnectionManager.getConnection()) {
             
             PreparedStatement selectStatement = connection.prepareStatement(

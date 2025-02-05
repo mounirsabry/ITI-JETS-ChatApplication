@@ -6,7 +6,5 @@ module jets.projects {
     
     opens jets.projects.api to java.rmi;
     exports jets.projects.api;
-    exports jets.projects.session;
-    exports jets.projects.entities;
     requires mysql.connector.j;
 }

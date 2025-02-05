@@ -1,18 +1,17 @@
 package jets.projects.entities;
 
 import java.io.Serializable;
-import java.sql.Blob;
-import java.util.Date;
+import java.time.LocalDateTime;
 
-public class ContactMessage implements Serializable{
+public class ContactMessage implements Serializable {
     private int ID;
     private int senderID;
     private int receiverID;
-    private Date sentAt;
+    private LocalDateTime sentAt;
     private String content;
-    private Blob fileURL;
     private boolean isRead;
-    private boolean isFile;
+    private boolean containsFile;
+    private byte[] file;
     
     public ContactMessage() {
         ID = -1;
@@ -20,29 +19,24 @@ public class ContactMessage implements Serializable{
         receiverID = -1;
         sentAt = null;
         content = null;
-        fileURL = null;
         isRead = false;
-        isFile = false;
+        containsFile = false;
+        file = null;
     }
 
-    public ContactMessage(int ID, int senderID, int receiverID, Date sentAt, String content, Blob fileURL, boolean isRead, boolean isFile) {
+    public ContactMessage(int ID, int senderID, int receiverID,
+            LocalDateTime sentAt, String content,
+            boolean isRead, boolean containsFile, byte[] file) {
         this.ID = ID;
         this.senderID = senderID;
         this.receiverID = receiverID;
         this.sentAt = sentAt;
         this.content = content;
-        this.fileURL = fileURL;
         this.isRead = isRead;
-        this.isFile = isFile;
+        this.containsFile = containsFile;        
+        this.file = file;
     }
-    public ContactMessage(int senderID, int receiverID, String content, Blob fileURL, boolean isRead, boolean isFile) {
-        this.senderID = senderID;
-        this.receiverID = receiverID;
-        this.content = content;
-        this.fileURL = fileURL;
-        this.isRead = isRead;
-        this.isFile = isFile;
-    }
+
     public int getID() {
         return ID;
     }
@@ -55,7 +49,7 @@ public class ContactMessage implements Serializable{
         return receiverID;
     }
 
-    public Date getSentAt() {
+    public LocalDateTime getSentAt() {
         return sentAt;
     }
 
@@ -63,16 +57,16 @@ public class ContactMessage implements Serializable{
         return content;
     }
 
-    public Blob getFileURL() {
-        return fileURL;
-    }
-
     public boolean getIsRead() {
         return isRead;
     }
 
-    public boolean getIsFile() {
-        return isFile;
+    public boolean getContainsFile() {
+        return containsFile;
+    }
+
+    public byte[] getFile() {
+        return file;
     }
 
     public void setID(int ID) {
@@ -87,7 +81,7 @@ public class ContactMessage implements Serializable{
         this.receiverID = receiverID;
     }
 
-    public void setSentAt(Date sentAt) {
+    public void setSentAt(LocalDateTime sentAt) {
         this.sentAt = sentAt;
     }
 
@@ -95,23 +89,23 @@ public class ContactMessage implements Serializable{
         this.content = content;
     }
 
-    public void setFileURL(Blob fileURL) {
-        this.fileURL = fileURL;
-    }
-
     public void setIsRead(boolean isRead) {
         this.isRead = isRead;
     }
 
-    public void setIsFile(boolean isFile) {
-        this.isFile = isFile;
+    public void setContainsFile(boolean containsFile) {
+        this.containsFile = containsFile;
+    }
+
+    public void setFile(byte[] file) {
+        this.file = file;
     }
     
     @Override
     public String toString() {
         StringBuilder builder = new StringBuilder();
         
-        builder.append(ContactMessage.class.getName());
+        builder.append("ContactMessage");
         builder.append('{');
     
         builder.append("ID=");
@@ -129,15 +123,12 @@ public class ContactMessage implements Serializable{
         builder.append(", content=");
         builder.append(content);
         
-        builder.append(", fileURL=");
-        builder.append(fileURL);
-        
         builder.append(", isRead=");
         builder.append(isRead);
         
-        builder.append(", isFile=");
-        builder.append(isFile);
-
+        builder.append(", containsFile=");
+        builder.append(containsFile);
+        
         builder.append('}');
         return builder.toString();
     }

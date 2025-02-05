@@ -1,4 +1,4 @@
-package jets.projects.onlinelisteners;
+package jets.projects.online_listeners;
 import java.rmi.RemoteException;
 import java.util.List;
 import java.util.Map;
@@ -9,9 +9,9 @@ import jets.projects.api.ClientAPI;
 import jets.projects.dao.GroupDao;
 import jets.projects.dao.GroupMemberDao;
 import jets.projects.dao.UsersDao;
-import jets.projects.entities.GroupMember;
-import jets.projects.sharedds.OnlineNormalUserInfo;
-import jets.projects.sharedds.OnlineNormalUserTable;
+import jets.projects.entity_info.GroupMemberInfo;
+import jets.projects.shared_ds.OnlineNormalUserInfo;
+import jets.projects.shared_ds.OnlineNormalUserTable;
 
 public class GroupCallback {
     Map<Integer, OnlineNormalUserInfo> onlineUsers;
@@ -71,9 +71,9 @@ public class GroupCallback {
     public void groupDeleted(int groupID) {
         executor.submit(()->{
             ClientAPI client;
-            List<GroupMember> members = groupMemberDao.getAllMembers(groupID).getResponseData();
+            List<GroupMemberInfo> members = groupMemberDao.getAllMembers(groupID).getResponseData();
             String groupName = groupDao.getGroupName(groupID).getResponseData();
-            for(GroupMember member : members){
+            for(GroupMemberInfo member : members){
                 client = onlineUsers.get(member.getMemberID()).getImpl();
                 if(client!=null){
                    try {

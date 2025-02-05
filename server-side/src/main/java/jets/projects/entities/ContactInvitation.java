@@ -1,13 +1,13 @@
 package jets.projects.entities;
 
 import java.io.Serializable;
-import java.util.Date;
+import java.time.LocalDateTime;
 
-public class ContactInvitation implements Serializable{
+public class ContactInvitation implements Serializable {
     private int invitation_ID;
     private int senderID;
     private int receiverID;
-    private Date sentAt;
+    private LocalDateTime sentAt;
     
     public ContactInvitation() {
         senderID = -1;
@@ -15,7 +15,7 @@ public class ContactInvitation implements Serializable{
         sentAt = null;
     }
 
-    public ContactInvitation(int senderID, int receiverID, Date sentAt) {
+    public ContactInvitation(int senderID, int receiverID, LocalDateTime sentAt) {
         this.senderID = senderID;
         this.receiverID = receiverID;
         this.sentAt = sentAt;
@@ -34,7 +34,7 @@ public class ContactInvitation implements Serializable{
         return receiverID;
     }
 
-    public Date getSentAt() {
+    public LocalDateTime getSentAt() {
         return sentAt;
     }
     public void setSenderID(int senderID) {
@@ -45,7 +45,7 @@ public class ContactInvitation implements Serializable{
         this.receiverID = receiverID;
     }
 
-    public void setSentAt(Date sentAt) {
+    public void setSentAt(LocalDateTime sentAt) {
         this.sentAt = sentAt;
     }
     
@@ -53,7 +53,7 @@ public class ContactInvitation implements Serializable{
     public String toString() {
         StringBuilder builder = new StringBuilder();
         
-        builder.append(ContactInvitation.class.getName());
+        builder.append("ContactInvitation");
         builder.append('{');
 
         builder.append("senderID=");
