@@ -1,25 +1,29 @@
 package jets.projects.entities;
 
+import java.io.Serializable;
 import java.sql.Timestamp;
 
-public class Notification {
+public class Notification implements Serializable {
     private int notificationID; 
     private int userID;
+    private NotificationType type;
     private String content;
     private boolean isRead;
     private Timestamp sentAt;
-   
+    
     public Notification() {
         notificationID = -1;
         userID = -1;
+        type = NotificationType.NONE;
         content = null;
         isRead = false;
         sentAt = null;
     }
 
-    public Notification(int notificationID, int userID, String content, boolean isRead, Timestamp sentAt) {
+    public Notification(int notificationID, int userID, NotificationType type, String content, boolean isRead, Timestamp sentAt) {
         this.notificationID = notificationID;
         this.userID = userID;
+        this.type = type;
         this.content = content;
         this.isRead = isRead;
         this.sentAt = sentAt;
@@ -33,11 +37,15 @@ public class Notification {
         return userID;
     }
 
+    public NotificationType getType() {
+        return type;
+    }
+
     public String getContent() {
         return content;
     }
 
-    public boolean getIsRead() {
+    public boolean isIsRead() {
         return isRead;
     }
 
@@ -53,6 +61,10 @@ public class Notification {
         this.userID = userID;
     }
 
+    public void setType(NotificationType type) {
+        this.type = type;
+    }
+
     public void setContent(String content) {
         this.content = content;
     }
@@ -64,20 +76,23 @@ public class Notification {
     public void setSentAt(Timestamp sentAt) {
         this.sentAt = sentAt;
     }
-   
+
     @Override
     public String toString() {
         StringBuilder builder = new StringBuilder();
         
-        builder.append(Notification.class.getName());
+        builder.append("Notification");
         builder.append('{');
-        
+
         builder.append("notificationID=");
         builder.append(notificationID);
         
         builder.append(", userID=");
         builder.append(userID);
-        
+
+        builder.append(", type=");
+        builder.append(type);
+
         builder.append(", content=");
         builder.append(content);
         

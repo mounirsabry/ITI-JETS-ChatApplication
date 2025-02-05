@@ -1,6 +1,8 @@
 package jets.projects.session;
 
-public class ClientToken {
+import java.io.Serializable;
+
+public class ClientToken implements Serializable {
     private final String phoneNumber;
     private final int userID;
 

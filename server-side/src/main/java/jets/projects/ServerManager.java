@@ -1,6 +1,6 @@
 package jets.projects;
 
-import io.tasks.classes.ServerCommand;
+import jets.projects.classes.*;
 
 public class ServerManager {
     private volatile ServerCommand nextCommand;

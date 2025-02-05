@@ -1,11 +1,13 @@
 package jets.projects.entities;
 
-import java.util.Date;
+import java.io.Serializable;
+import java.time.LocalDateTime;
 
-public class ContactInvitation {
+public class ContactInvitation implements Serializable {
+    private int invitation_ID;
     private int senderID;
     private int receiverID;
-    private Date sentAt;
+    private LocalDateTime sentAt;
     
     public ContactInvitation() {
         senderID = -1;
@@ -13,24 +15,28 @@ public class ContactInvitation {
         sentAt = null;
     }
 
-    public ContactInvitation(int senderID, int receiverID, Date sentAt) {
+    public ContactInvitation(int senderID, int receiverID, LocalDateTime sentAt) {
         this.senderID = senderID;
         this.receiverID = receiverID;
         this.sentAt = sentAt;
     }
-
     public int getSenderID() {
         return senderID;
     }
+    public int getInvitation_ID() {
+        return this.invitation_ID;
+    }
 
+    public void setInvitation_ID(int invitation_ID) {
+        this.invitation_ID = invitation_ID;
+    }
     public int getReceiverID() {
         return receiverID;
     }
 
-    public Date getSentAt() {
+    public LocalDateTime getSentAt() {
         return sentAt;
     }
-
     public void setSenderID(int senderID) {
         this.senderID = senderID;
     }
@@ -39,7 +45,7 @@ public class ContactInvitation {
         this.receiverID = receiverID;
     }
 
-    public void setSentAt(Date sentAt) {
+    public void setSentAt(LocalDateTime sentAt) {
         this.sentAt = sentAt;
     }
     
@@ -47,9 +53,9 @@ public class ContactInvitation {
     public String toString() {
         StringBuilder builder = new StringBuilder();
         
-        builder.append(ContactInvitation.class.getName());
+        builder.append("ContactInvitation");
         builder.append('{');
-        
+
         builder.append("senderID=");
         builder.append(senderID);
         

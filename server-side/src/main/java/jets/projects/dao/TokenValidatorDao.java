@@ -1,22 +1,18 @@
 package jets.projects.dao;
 
-import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import jets.projects.classes.RequestResult;
 import jets.projects.session.AdminToken;
 import jets.projects.session.ClientToken;
-import jets.projects.dbconnections.ConnectionManager;
+import jets.projects.dbconnections.DBConnection;
 
 public class TokenValidatorDao {
     public RequestResult<Boolean> checkAdminToken(AdminToken token) {
         String query = "SELECT * FROM AdminUser WHERE user_ID = ?";
         
-        try (Connection connection = ConnectionManager.getConnection();
-                PreparedStatement statement = connection.prepareStatement
-                (query);) {
-            
+        try (PreparedStatement statement = DBConnection.getConnection().prepareStatement(query)) {            
             statement.setInt(1, token.getUserID());
             ResultSet resultSet = statement.executeQuery();
             
@@ -31,16 +27,15 @@ public class TokenValidatorDao {
     }  
     
     public RequestResult<Boolean> checkClientToken(ClientToken token) {
-        String query = "SELECT * FROM User WHERE ID = ? AND phone_number = ?";
+        String query = "SELECT * FROM NormalUser WHERE user_ID = ? AND phone_number = ?";
         
-        try (Connection connection = ConnectionManager.getConnection();
-                PreparedStatement statement = connection.prepareStatement(query)) {
+        try (PreparedStatement statement = DBConnection.getConnection().prepareStatement(query)) {
             statement.setInt(1, token.getUserID());
             statement.setString(2, token.getPhoneNumber());
             
             ResultSet resultSet = statement.executeQuery();
             
-            boolean result = resultSet.next();
+            boolean result = (resultSet.next())? true : false;
             resultSet.close();
             
             return new RequestResult<>(result, null);

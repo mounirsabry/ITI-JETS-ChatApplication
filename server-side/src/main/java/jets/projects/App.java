@@ -1,9 +1,9 @@
 package jets.projects;
 
-import io.tasks.classes.Delays;
-import io.tasks.classes.ServerCommand;
-import jets.projects.dbconnections.ConnectionManager;
-import jets.projects.topcontrollers.AdminManager;
+import jets.projects.classes.Delays;
+import jets.projects.classes.ServerCommand;
+import jets.projects.db_connections.ConnectionManager;
+import jets.projects.top_controllers.AdminManager;
 
 public class App {
     @SuppressWarnings("SleepWhileInLoop")

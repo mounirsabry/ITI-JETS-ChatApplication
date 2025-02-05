@@ -1,4 +1,3 @@
-
 package jets.projects.entities;
 
 public class GroupMember {
@@ -34,16 +33,15 @@ public class GroupMember {
     @Override
     public String toString() {
         StringBuilder builder = new StringBuilder();
-        
-        builder.append(GroupMember.class.getName());
+        builder.append("GroupMember");
         builder.append('{');
-        
+                
         builder.append("groupID=");
         builder.append(groupID);
         
         builder.append(", memberID=");
         builder.append(memberID);
-
+        
         builder.append('}');
         return builder.toString();
     }

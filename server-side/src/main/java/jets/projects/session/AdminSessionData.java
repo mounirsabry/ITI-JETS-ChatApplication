@@ -1,6 +1,8 @@
 package jets.projects.session;
 
-public class AdminSessionData {
+import java.io.Serializable;
+
+public class AdminSessionData implements Serializable {
     private final int userID;
     private final String displayName;
     

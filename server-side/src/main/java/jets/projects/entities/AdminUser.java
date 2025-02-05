@@ -1,6 +1,8 @@
 package jets.projects.entities;
 
-public class AdminUser {
+import java.io.Serializable;
+
+public class AdminUser implements Serializable {
     private int userID;
     private String displayName;
     private String password;
@@ -11,6 +13,7 @@ public class AdminUser {
     public AdminUser(int userID, String displayName, String password) {
         this.userID = userID;
         this.displayName = displayName;
+        this.password = password;
     }
 
     public int getUserID() {
@@ -41,7 +44,7 @@ public class AdminUser {
     public String toString() {
         StringBuilder builder = new StringBuilder();
         
-        builder.append(AdminUser.class.getName());
+        builder.append("AdminUser");   
         builder.append('{');
         
         builder.append("userID=");

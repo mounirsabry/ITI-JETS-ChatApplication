@@ -1,91 +1,107 @@
 package jets.projects.entities;
 
+import java.io.Serializable;
 import java.util.Date;
 
-public class Group {
+public class Group implements Serializable {
     private int groupID;
+    private String groupName;
+    private String groupDesc;    
     private int groupAdminID;
-    private String name;
+    private byte[] pic;
     private Date createdAt;
-    private String pic;
     
     public Group() {
         groupID = -1;
+        groupName = null;
+        groupDesc = "";        
         groupAdminID = -1;
-        name = null;
-        createdAt = null;
         pic = null;
+        createdAt = null;
     }
 
-    public Group(int groupID, int groupAdminID, String name, Date createdAt, String pic) {
+    public Group(int groupID, String groupName, String groupDesc,
+            int groupAdminID, byte[] pic, Date createdAt) {
         this.groupID = groupID;
+        this.groupName = groupName;
+        this.groupDesc = groupDesc;
         this.groupAdminID = groupAdminID;
-        this.name = name;
-        this.createdAt = createdAt;
         this.pic = pic;
+        this.createdAt = createdAt;
     }
 
     public int getGroupID() {
         return groupID;
     }
 
+    public String getGroupName() {
+        return groupName;
+    }
+
+    public String getGroupDesc() {
+        return groupDesc;
+    }
+
     public int getGroupAdminID() {
         return groupAdminID;
     }
 
-    public String getName() {
-        return name;
+    public byte[] getPic() {
+        return pic;
     }
 
     public Date getCreatedAt() {
         return createdAt;
     }
 
-    public String getPic() {
-        return pic;
-    }
-
     public void setGroupID(int groupID) {
         this.groupID = groupID;
+    }
+
+    public void setGroupName(String groupName) {
+        this.groupName = groupName;
+    }
+
+    public void setGroupDesc(String groupDesc) {
+        this.groupDesc = groupDesc;
     }
 
     public void setGroupAdminID(int groupAdminID) {
         this.groupAdminID = groupAdminID;
     }
 
-    public void setName(String name) {
-        this.name = name;
+    public void setPic(byte[] pic) {
+        this.pic = pic;
     }
 
     public void setCreatedAt(Date createdAt) {
         this.createdAt = createdAt;
     }
-
-    public void setPic(String pic) {
-        this.pic = pic;
-    }
-    
+  
     @Override
     public String toString() {
         StringBuilder builder = new StringBuilder();
         
-        builder.append(Group.class.getName());
+        builder.append("Group");
         builder.append('{');
 
         builder.append("groupID=");
         builder.append(groupID);
         
+        builder.append(", groupName=");
+        builder.append(groupName);
+        
+        builder.append(", groupDesc=");
+        builder.append(groupDesc);
+        
         builder.append(", groupAdminID=");
         builder.append(groupAdminID);
-        
-        builder.append(", name=");
-        builder.append(name);
+       
+        builder.append(", pic=");
+        builder.append(pic == null ? "null" : "Cannot be displayed here.");
         
         builder.append(", createdAt=");
         builder.append(createdAt);
-        
-        builder.append(", pic=");
-        builder.append(pic == null ? "null" : "cannot be displayed here.");
 
         builder.append('}');
         return builder.toString();

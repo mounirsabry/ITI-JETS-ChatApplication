@@ -1,37 +1,56 @@
 package jets.projects.api;
 
 import java.rmi.Remote;
+import java.rmi.RemoteException;
+
 import jets.projects.entities.Announcement;
+import jets.projects.entities.ContactInvitation;
 import jets.projects.entities.ContactMessage;
+import jets.projects.entities.Group;
 import jets.projects.entities.GroupMessage;
-import jets.projects.entities.NormalUserStatus;
+import jets.projects.entities.Notification;
 
 public interface ClientAPI extends Remote {
-    public void contactInvitationReceived(int senderID, int receiverID);
-    public void contactInvitationAccepted(int senderID, int receiverID);
-    public void contactInvitationRejected(int senderID, int receiverID);
+    /*
+        In order not to alter the ContactInvitation class to add the name, I will
+        send the name separately, the name will represent the other user
+        regardless if he is a sender or receiver.
+    */
+    public void contactInvitationReceived(
+            ContactInvitation invitation, String otherDisplayName) throws RemoteException;
     
-    public void contactMessageReceived(ContactMessage message);
-    public void fileContactMessageReceived(ContactMessage message);
+    // The action should be removing the contact invitation from the list.
+    public void contactInvitationAccepted(
+            int invitationID) throws RemoteException;
     
-    public void addedToGroup(int userID, int groupID);
-    public void removedFromGroup(int userID, int groupID);
-    public void leadershipGained(int userID, int groupID);
-    public void groupDeleted(int groupID);
+    public void contactInvitationRejected(
+            int invitationID) throws RemoteException;
     
-    public void groupMessageReceived(GroupMessage message);
+    // The message will be either normal message or file message,
+    // If it is a file message, then I will NOT contain the file data.
+    public void contactMessageReceived(ContactMessage message) throws RemoteException;
     
-    public void userWentOnline(int userID);
-    public void userWentOffline(int userID);
-    public void userStatusChanged(int userID, NormalUserStatus newStatus);
-    public void contactInvitationReceivedNotification(
-            int senderID, int receiverID);
+    // The whole group info will be sent (including the pic) to be added
+    // to the list.
+    public void addedToGroup(Group group) throws RemoteException;
     
-    public void contactInvitationAcceptedNotification(
-            int senderID, int receiverID);
+    // Do the action based on the groupID.
+    // The group, groupMembers, groupMessages should be removed from the client.
+    public void removedFromGroup(int groupID) throws RemoteException;
+    public void leadershipGained(int groupID) throws RemoteException;
     
-    public void contactInvitationRejectedNotification(
-            int senderID, int receiverID);
+    // Same as removed from group.
+    public void groupDeleted(int groupID) throws RemoteException;
     
-    public void newAnnouncementAdded(Announcement announcement);
+    // Same idea as contactMessage.
+    public void groupMessageReceived(GroupMessage message) throws RemoteException;
+    
+    public void userStatusChangedNotification
+        (Notification notification) throws RemoteException;
+    
+    public void contactInvitationNotification(
+            Notification notification) throws RemoteException;
+    
+    public void newAnnouncementAdded(
+            Announcement announcement) throws RemoteException;
 }

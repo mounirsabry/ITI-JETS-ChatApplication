@@ -1,6 +1,6 @@
-package jets.projects.topcontrollers;
+package jets.projects.top_controllers;
 
-import io.tasks.classes.ServerCommand;
+import jets.projects.classes.ServerCommand;
 import java.rmi.RemoteException;
 import java.util.List;
 import java.util.Map;
@@ -9,6 +9,7 @@ import jets.projects.ServerManager;
 import jets.projects.session.AdminSessionData;
 import jets.projects.session.AdminToken;
 import jets.projects.classes.RequestResult;
+import jets.projects.dao.AdminDao;
 import jets.projects.dao.AnnouncementDao;
 import jets.projects.dao.StatsDao;
 import jets.projects.dao.UsersDao;
@@ -20,6 +21,7 @@ public class AdminManager {
     
     private TokenValidatorDao validatorDao = new TokenValidatorDao();
     private UsersDao usersDao = new UsersDao();
+    private AdminDao adminDao = new AdminDao();
     private AnnouncementDao announcementDao = new AnnouncementDao();
     private StatsDao statsDao = new StatsDao();
     
@@ -27,21 +29,21 @@ public class AdminManager {
         serverManager = manager;
     }
 
-    public RequestResult<AdminSessionData> login(int userID, String password) {
-        var result = usersDao.adminLogin(userID, password);
+    public RequestResult<AdminSessionData> login(int userID, String password) throws RemoteException {
+        var result = adminDao.adminLogin(userID, password);
         if (result.getErrorMessage() != null) {
             throw new RemoteException(result.getErrorMessage());
         }
-        return result.getResponseData();
+        return new RequestResult<AdminSessionData>(result.getResponseData(), null);
     }
 
     public RequestResult<Boolean> logout(AdminToken token) {
-        boolean isValidToken = validatorDao.checkAdminToken(token);
+        boolean isValidToken = validatorDao.checkAdminToken(token).getResponseData();
         if (!isValidToken) {
             return new RequestResult<>(false, null);
         }
-        boolean result = usersDao.adminLogout(token.getUserID());
-        return new RequestResult<>(true, result);
+        var result = adminDao.adminLogout(token.getUserID());
+        return new RequestResult<>(true, null);
     }
 
     public RequestResult<Boolean> startService(AdminToken token) {

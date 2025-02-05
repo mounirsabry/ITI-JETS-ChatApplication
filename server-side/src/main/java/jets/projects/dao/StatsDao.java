@@ -10,7 +10,7 @@ import java.util.List;
 import java.util.Map;
 import jets.projects.classes.RequestResult;
 
-import jets.projects.dbconnections.ConnectionManager;
+import jets.projects.db_connections.ConnectionManager;
 
 public class StatsDao {
 
