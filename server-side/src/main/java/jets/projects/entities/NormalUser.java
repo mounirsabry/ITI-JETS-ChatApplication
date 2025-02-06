@@ -12,7 +12,7 @@ public class NormalUser implements Serializable{
     private byte[] pic;
     private String password;
     private Gender gender;
-    private String country;
+    private Country country;
     private Date birthDate;
     private LocalDateTime createdAt;
     private NormalUserStatus status;
@@ -28,7 +28,7 @@ public class NormalUser implements Serializable{
         pic = null;
         password = "";
         gender = Gender.MALE;
-        country = "Not Specified";
+        country = null;
         birthDate = null;
         createdAt = null;
         status = NormalUserStatus.OFFLINE;
@@ -65,7 +65,7 @@ public class NormalUser implements Serializable{
         return gender;
     }
 
-    public String getCountry() {
+    public Country getCountry() {
         return country;
     }
 
@@ -121,7 +121,7 @@ public class NormalUser implements Serializable{
         this.gender = gender;
     }
 
-    public void setCountry(String country) {
+    public void setCountry(Country country) {
         this.country = country;
     }
 
