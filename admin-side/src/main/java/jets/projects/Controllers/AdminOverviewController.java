@@ -42,7 +42,7 @@ public class AdminOverviewController {
     }
     @FXML
     public void handleUpdateUserButton(){
-        director.viewUpdateUserWindow();
+        //director.viewUpdateUserWindow();
     }
     @FXML
     public void handleDeleteUserButton(){

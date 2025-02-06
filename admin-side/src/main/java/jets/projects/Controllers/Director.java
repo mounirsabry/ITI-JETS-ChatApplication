@@ -9,6 +9,7 @@ import javafx.stage.Modality;
 import javafx.stage.Stage;
 import jets.projects.api.AdminAPI;
 import jets.projects.entities.Announcement;
+import jets.projects.entities.Country;
 import jets.projects.entities.NormalUser;
 import jets.projects.session.AdminSessionData;
 import jets.projects.session.AdminToken;
@@ -19,6 +20,7 @@ import java.rmi.RemoteException;
 import java.rmi.registry.LocateRegistry;
 import java.rmi.registry.Registry;
 import java.util.List;
+import java.util.Map;
 
 
 public class Director{
@@ -93,16 +95,6 @@ public class Director{
             System.exit(1);
         }
         try{
-            FXMLLoader updateUserDataLoader = new FXMLLoader(getClass().getResource("/FXML/updateUserData.fxml"));
-            updateUserDataParent = updateUserDataLoader.load();
-            updateUserDataController = updateUserDataLoader.getController();
-            updateUserDataScene = new Scene(updateUserDataParent);
-        }catch (IOException e){
-            System.out.println("Error in loading the update user data page");
-            System.out.println(e.getMessage());
-            System.exit(1);
-        }
-        try{
             FXMLLoader deleteUserLoader = new FXMLLoader(getClass().getResource("/FXML/deleteUser.fxml"));
             deleteUserPatent = deleteUserLoader.load();
             deleteUserController = deleteUserLoader.getController();
@@ -120,17 +112,16 @@ public class Director{
         adminStatisticsController.setStageDirector(stage, this);
         viewUserDataController.setStageDirector(stage, this);
         addNewUserController.setStageDirector(stage, this);
-        updateUserDataController.setStageDirector(stage, this);
         deleteUserController.setStageDirector(stage, this);
 
         stage.setScene(adminLoginScene);
         stage.show();
     }
     
-    public void login(String phone, String password) {
+    public void login(int userID, String password) {
         if(connectToServer()){
             try{
-                adminSessionData = adminAPI.login(phone, password);
+                adminSessionData = adminAPI.login(userID, password);
                 if(adminSessionData != null){
                     adminToken = new AdminToken(adminSessionData.getUserID());
                     checkUserServiceStatus();
@@ -242,17 +233,6 @@ public class Director{
         newstage.showAndWait(); // Show and wait for the dialog to close
     }
 
-    public void viewUpdateUserWindow() {
-        Stage newstage = new Stage();
-        newstage.setTitle("Update User Window");
-        newstage.initModality(Modality.APPLICATION_MODAL); // Block interaction with other windows
-        newstage.initOwner(adminOverViewController.getUpdateUserButton().getScene().getWindow()); // Set the main window as owner
-
-        newstage.setScene(updateUserDataScene);
-        newstage.setResizable(false);
-        newstage.showAndWait(); // Show and wait for the dialog to close
-    }
-
     public void viewDeleteUserWindow(){
         Stage newstage = new Stage();
         newstage.setTitle("Delete User Window");
@@ -263,9 +243,6 @@ public class Director{
         newstage.showAndWait(); // Show and wait for the dialog to close
     }
 
-    public void goBackToHome() {
-
-    }
     
     public void logOut() {
         if(adminToken == null || adminAPI == null){
@@ -307,14 +284,45 @@ public class Director{
         }
     }
     
-    public void viewServerStats() {
-
+    public List<Integer> getOnlineOfflineStats(){
+        if(adminToken == null || adminAPI == null){
+            AdminAlerts.invokeErrorAlert("Error", "get online offline stats failed");
+            return null;
+        }
+        try{
+            return adminAPI.getOnlineOfflineStats(adminToken);
+        } catch (RemoteException e) {
+            AdminAlerts.invokeErrorAlert("Error", e.getMessage());
+            return null;
+        }
     }
-    
-    public void viewAllAnnouncements() {
 
+    public List<Integer> getMaleFemaleStats(){
+        if(adminToken == null || adminAPI == null){
+            AdminAlerts.invokeErrorAlert("Error", "get male female stats failed");
+            return null;
+        }
+        try{
+            return adminAPI.getMaleFemaleStats(adminToken);
+        } catch (RemoteException e) {
+            AdminAlerts.invokeErrorAlert("Error", e.getMessage());
+            return null;
+        }
     }
-    
+
+    public Map<Country,Integer> getTopCountries(){
+        if(adminToken == null || adminAPI == null){
+            AdminAlerts.invokeErrorAlert("Error", "get top countries failed");
+            return null;
+        }
+        try{
+            return adminAPI.getTopCountries(adminToken);
+        } catch (RemoteException e) {
+            AdminAlerts.invokeErrorAlert("Error", e.getMessage());
+            return null;
+        }
+    }
+
     public void addNewAnnouncement(Announcement newAnnouncement) {
         if(newAnnouncement == null || adminToken == null || adminAPI == null){
             AdminAlerts.invokeErrorAlert("Error", "add new announcement failed");
@@ -323,16 +331,13 @@ public class Director{
         try{
             if(adminAPI.submitNewAnnouncement(adminToken, newAnnouncement)){
                 AdminAlerts.invokeInformationAlert("New announcement", " announcement submitted successfully");
+                adminAnnouncementController.addAnnouncement(newAnnouncement);
             }else{
                 AdminAlerts.invokeErrorAlert("Error", "announcement not submitted");
             }
         } catch (RemoteException e) {
             AdminAlerts.invokeErrorAlert("Error", e.getMessage());
         }
-
-    }
-    
-    public void manageAllAccounts() {
 
     }
     
@@ -360,28 +365,17 @@ public class Director{
             return;
         }
         try{
-            adminAPI.addNormalUser(adminToken, newUser);
-            AdminAlerts.invokeInformationAlert("Add new user", " user added successfully");
+            if(adminAPI.addNormalUser(adminToken, newUser)){
+                AdminAlerts.invokeInformationAlert("Add new user", " user added successfully");
+            }else{
+                AdminAlerts.invokeErrorAlert("Error", "user not added");
+                return;
+            }
         }catch (RemoteException e){
             AdminAlerts.invokeErrorAlert("Error", e.getMessage());
         }
     }
 
-    public void updateUserData(NormalUser updatedUser) {
-        if(updatedUser == null || adminToken == null || adminAPI == null){
-            AdminAlerts.invokeErrorAlert("Error", "update user data failed");
-            return;
-        }
-        try{
-            if(adminAPI.updateNormalUser(adminToken, updatedUser)){
-                AdminAlerts.invokeInformationAlert("Update user data", " user data updated successfully");
-            }else{
-                AdminAlerts.invokeErrorAlert("Error", "user data not updated");
-            }
-        } catch (RemoteException e) {
-            AdminAlerts.invokeErrorAlert("Error", e.getMessage());
-        }
-    }
 
     public void deleteAccount(NormalUser deletedUser) {
         if(deletedUser == null || adminAPI == null || adminToken == null){
@@ -494,9 +488,6 @@ public class Director{
     private AddNewUserController addNewUserController;
     private Scene addNewUserScene;
 
-    private Parent updateUserDataParent;
-    private UpdateUserDataController updateUserDataController;
-    private Scene updateUserDataScene;
 
     private Parent deleteUserPatent;
     private DeleteUserController deleteUserController;

@@ -8,6 +8,7 @@ import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.stage.Stage;
 import jets.projects.entities.Announcement;
 
+import java.time.LocalDateTime;
 import java.util.Date;
 
 public class AdminAnnouncementController {
@@ -62,7 +63,6 @@ public class AdminAnnouncementController {
             Announcement newAnnouncement = new Announcement();
             newAnnouncement.setHeader(header);
             newAnnouncement.setContent(content);
-            newAnnouncement.setSentAt(new Date());
             director.addNewAnnouncement(newAnnouncement);
         }
     }

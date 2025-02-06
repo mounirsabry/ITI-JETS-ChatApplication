@@ -7,6 +7,10 @@ import javafx.scene.chart.PieChart;
 import javafx.scene.chart.XYChart;
 import javafx.scene.layout.StackPane;
 import javafx.stage.Stage;
+import jets.projects.entities.Country;
+
+import java.util.List;
+import java.util.Map;
 
 public class AdminStatisticsController {
     private Stage stage;
@@ -19,16 +23,18 @@ public class AdminStatisticsController {
         this.director = director;
         this.stage = stage;
     }
+
     @FXML
     public void userStatusAction(){
+        List<Integer> stats = director.getOnlineOfflineStats();
+        if(stats == null){
+            return;
+        }
         PieChart status = new PieChart();
-        PieChart.Data online = new PieChart.Data("online", 50);
-        PieChart.Data offline = new PieChart.Data("offline", 100);
-        
-        
+        PieChart.Data online = new PieChart.Data("online", stats.get(0));
+        PieChart.Data offline = new PieChart.Data("offline", stats.get(1));
+
         status.getData().addAll(online,offline);
-        //online.getNode().setStyle("-fx-pie-color: #4CAF50;"); // Green
-        //offline.getNode().setStyle("-fx-pie-color:rgb(21, 142, 194);"); // Red
         status.setLegendVisible(true);
         status.setLabelsVisible(true);
         status.setTitle("User State Statistics");
@@ -38,15 +44,17 @@ public class AdminStatisticsController {
     }
     @FXML
     public void genderStatusAction(){
+        List<Integer> stats = director.getMaleFemaleStats();
+        if(stats == null){
+            return;
+        }
         PieChart pieChart = new PieChart();
 
-        PieChart.Data maleData = new PieChart.Data("Male", 60);
-        PieChart.Data femaleData = new PieChart.Data("Female", 40);
+        PieChart.Data maleData = new PieChart.Data("Male", stats.get(0));
+        PieChart.Data femaleData = new PieChart.Data("Female", stats.get(1));
 
         pieChart.getData().addAll(maleData, femaleData);
-        
-        //maleData.getNode().setStyle("-fx-pie-color: #4CAF50;"); // Green
-        //femaleData.getNode().setStyle("-fx-pie-color:rgb(21, 142, 194);"); // Red
+
         pieChart.setLegendVisible(true);
         pieChart.setLabelsVisible(true);
         pieChart.setTitle("User State Statistics");
@@ -55,6 +63,10 @@ public class AdminStatisticsController {
     }
     @FXML
     public void countryStatusAction(){
+        Map<Country, Integer> map = director.getTopCountries();
+        if(map == null){
+            return;
+        }
         // Define axes
         CategoryAxis xAxis = new CategoryAxis();
         xAxis.setLabel("Country");
@@ -69,12 +81,12 @@ public class AdminStatisticsController {
         // Add data
         XYChart.Series<String, Number> series = new XYChart.Series<>();
         series.setName("Total Users");
-        series.getData().add(new XYChart.Data<>("Egypt", 500));
-        series.getData().add(new XYChart.Data<>("KSA", 300));
-        series.getData().add(new XYChart.Data<>("Sudan", 400));
+        for(Map.Entry<Country, Integer> entry : map.entrySet()){
+            series.getData().add(new XYChart.Data<>(entry.getKey().name(), entry.getValue()));
+        }
 
         barChart.getData().add(series);
-
+        barChart.setLegendVisible(true);
         stackPane.getChildren().clear();
         stackPane.getChildren().add(barChart);
     }

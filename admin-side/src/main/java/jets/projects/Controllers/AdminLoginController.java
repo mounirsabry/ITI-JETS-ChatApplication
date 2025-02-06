@@ -1,13 +1,7 @@
 package jets.projects.Controllers;
 
-import java.io.IOException;
-import javafx.event.ActionEvent;
+
 import javafx.fxml.FXML;
-import javafx.fxml.FXMLLoader;
-import javafx.scene.Node;
-import javafx.scene.Parent;
-import javafx.scene.Scene;
-import javafx.scene.control.Alert;
 import javafx.scene.control.Button;
 import javafx.scene.control.PasswordField;
 import javafx.scene.control.TextField;
@@ -17,7 +11,7 @@ public class AdminLoginController {
     private Stage stage;
     private Director director;
     @FXML
-    private TextField phoneField;
+    private TextField userIDField;
 
     @FXML
     private PasswordField passwordField;
@@ -25,13 +19,6 @@ public class AdminLoginController {
     @FXML
     private Button signinButton;
 
-    public TextField getPhoneField() {
-        return phoneField;
-    }
-
-    public PasswordField getPasswordField() {
-        return passwordField;
-    }
 
     public void setStageDirector(Stage stage, Director director) {
         this.stage = stage;
@@ -40,19 +27,24 @@ public class AdminLoginController {
 
     @FXML
     void handleSignInButton() {
-        String phone = phoneField.getText().trim();
+        String userIDStr = userIDField.getText().trim();
         String password = passwordField.getText().trim();
 
         // checking pass and phone
-        if (!phone.isEmpty() && !password.isEmpty() && isValidCredentials(phone, password)) {
-            director.login(phone, password);
+        if (!userIDStr.isEmpty() && !password.isEmpty() && isValidCredentials(userIDStr, password)) {
+            try{
+                int userID = Integer.parseInt(userIDStr);
+                director.login(userID, password);
+            }catch(NumberFormatException e){
+                AdminAlerts.invokeErrorAlert("Login Failed","Invalid user id, must be number.");
+            }
         } else {
-            AdminAlerts.invokeErrorAlert("Login Failed","Invalid phone number or password.");
+            AdminAlerts.invokeErrorAlert("Login Failed","Invalid userID or password.");
         }
     }
 
     // validation method on pass and phone fields
-    private boolean isValidCredentials(String phone, String password) {
+    private boolean isValidCredentials(String userIDStr, String password) {
         // need to implement
         return true;
     }
