@@ -1,16 +1,15 @@
 package jets.projects.dao;
 
-import java.util.List;
 import jets.projects.classes.RequestResult;
-import jets.projects.entities.Contact;
+import jets.projects.entities.NormalUser;
 
-public class ContactsDao {
-    public RequestResult<Boolean> isContacts(int userID, int contactID) {
+public class UsersManipulationDao {
+
+    public RequestResult<Boolean> addNormalUser(NormalUser user) {
         throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
     }
-    
-    public RequestResult<List<Contact>> getContacts(int userID) {
+
+    public RequestResult<Boolean> deleteNormalUser(int userID) {
         throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
     }
-    
 }

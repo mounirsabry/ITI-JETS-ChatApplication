@@ -1,4 +1,4 @@
-package jets.projects.sharedds;
+package jets.projects.shared_ds;
 
 import java.sql.Timestamp;
 import java.time.Instant;

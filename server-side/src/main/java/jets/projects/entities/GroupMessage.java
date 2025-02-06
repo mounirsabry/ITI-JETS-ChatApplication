@@ -1,34 +1,37 @@
 package jets.projects.entities;
 
-import java.util.Date;
+import java.io.Serializable;
+import java.time.LocalDateTime;
 
-public class GroupMessage {
+public class GroupMessage implements Serializable {
     private int messageID;
     private int senderID;
     private int groupID;
-    private Date sentAt;
+    private LocalDateTime sentAt;
     private String content;
-    private String fileURL;
-    private String isFile;
-    
+    private Boolean containsFile;
+    private byte[] file;
+
     public GroupMessage() {
         messageID = -1;
         senderID = -1;
         groupID = -1;
         sentAt = null;
         content = null;
-        fileURL = null;
-        isFile = null;
+        containsFile = false;
+        file = null;
     }
 
-    public GroupMessage(int messageID, int senderID, int groupID, Date sentAt, String content, String fileURL, String isFile) {
+    public GroupMessage(int messageID, int senderID, int groupID, 
+            LocalDateTime sentAt, String content,
+            Boolean containsFile, byte[] file) {
         this.messageID = messageID;
         this.senderID = senderID;
         this.groupID = groupID;
         this.sentAt = sentAt;
         this.content = content;
-        this.fileURL = fileURL;
-        this.isFile = isFile;
+        this.containsFile = containsFile;
+        this.file = file;
     }
 
     public int getMessageID() {
@@ -43,7 +46,7 @@ public class GroupMessage {
         return groupID;
     }
 
-    public Date getSentAt() {
+    public LocalDateTime getSentAt() {
         return sentAt;
     }
 
@@ -51,12 +54,12 @@ public class GroupMessage {
         return content;
     }
 
-    public String getFileURL() {
-        return fileURL;
+    public Boolean getContainsFile() {
+        return containsFile;
     }
 
-    public String getIsFile() {
-        return isFile;
+    public byte[] getFile() {
+        return file;
     }
 
     public void setMessageID(int messageID) {
@@ -71,7 +74,7 @@ public class GroupMessage {
         this.groupID = groupID;
     }
 
-    public void setSentAt(Date sentAt) {
+    public void setSentAt(LocalDateTime sentAt) {
         this.sentAt = sentAt;
     }
 
@@ -79,19 +82,19 @@ public class GroupMessage {
         this.content = content;
     }
 
-    public void setFileURL(String fileURL) {
-        this.fileURL = fileURL;
+    public void setContainsFile(Boolean containsFile) {
+        this.containsFile = containsFile;
     }
 
-    public void setIsFile(String isFile) {
-        this.isFile = isFile;
+    public void setFile(byte[] file) {
+        this.file = file;
     }
-    
+
     @Override
     public String toString() {
         StringBuilder builder = new StringBuilder();
 
-        builder.append(GroupMessage.class.getName());
+        builder.append("GroupMessage");
         builder.append('{');
         
         builder.append("messageID=");
@@ -109,11 +112,8 @@ public class GroupMessage {
         builder.append(", content=");
         builder.append(content);
         
-        builder.append(", fileURL=");
-        builder.append(fileURL);
-        
-        builder.append(", isFile=");
-        builder.append(isFile);
+        builder.append(", containsFile=");
+        builder.append(containsFile);
 
         builder.append('}');
         return builder.toString();

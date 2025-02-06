@@ -1,4 +1,4 @@
-package io.tasks.classes;
+package jets.projects.classes;
 
 public class Delays {
     public static final long SERVER_CHECK_NEXT_COMMAND_DELAY = 500; // In millis.
