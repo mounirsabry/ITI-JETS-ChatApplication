@@ -4,8 +4,11 @@ public class ExceptionMessages {
     public static final String TIMEOUT_USER_EXCEPTION_MESSAGE 
             = "Your session has expired , please login again.";
     
-    public static final String UNREGISTERED_USER 
-            = "Invalid token , please register and retry.";
+    public static final String INVALID_TOKEN_FORMAT
+            = "Invalid token format.";
+    
+    public static final String INVALID_TOKEN 
+            = "Invalid token, token does not map to a registered user.";
     
     public static final String INVALID_INPUT_DATA 
             = "Invalid input data.";

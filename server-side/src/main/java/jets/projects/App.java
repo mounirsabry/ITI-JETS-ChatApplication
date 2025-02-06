@@ -3,7 +3,7 @@ package jets.projects;
 import jets.projects.classes.Delays;
 import jets.projects.classes.ServerCommand;
 import jets.projects.db_connections.ConnectionManager;
-import jets.projects.top_controllers.AdminManager;
+import jets.projects.top_controllers.AdminController;
 
 public class App {
     @SuppressWarnings("SleepWhileInLoop")
@@ -28,7 +28,7 @@ public class App {
         }
         
         ServerManager myManager = new ServerManager();
-        AdminManager.setServerManager(myManager);
+        AdminController.setServerManager(myManager);
         
         System.out.println("Server is up and running.");
         

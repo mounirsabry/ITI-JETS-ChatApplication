@@ -1,7 +1,7 @@
 package jets.projects.entities;
 
 import java.io.Serializable;
-import java.sql.Timestamp;
+import java.time.LocalDateTime;
 
 public class Notification implements Serializable {
     private int notificationID; 
@@ -9,7 +9,7 @@ public class Notification implements Serializable {
     private NotificationType type;
     private String content;
     private boolean isRead;
-    private Timestamp sentAt;
+    private LocalDateTime sentAt;
     
     public Notification() {
         notificationID = -1;
@@ -20,7 +20,8 @@ public class Notification implements Serializable {
         sentAt = null;
     }
 
-    public Notification(int notificationID, int userID, NotificationType type, String content, boolean isRead, Timestamp sentAt) {
+    public Notification(int notificationID, int userID, NotificationType type,
+            String content, boolean isRead, LocalDateTime sentAt) {
         this.notificationID = notificationID;
         this.userID = userID;
         this.type = type;
@@ -49,7 +50,7 @@ public class Notification implements Serializable {
         return isRead;
     }
 
-    public Timestamp getSentAt() {
+    public LocalDateTime getSentAt() {
         return sentAt;
     }
 
@@ -73,7 +74,7 @@ public class Notification implements Serializable {
         this.isRead = isRead;
     }
 
-    public void setSentAt(Timestamp sentAt) {
+    public void setSentAt(LocalDateTime sentAt) {
         this.sentAt = sentAt;
     }
 

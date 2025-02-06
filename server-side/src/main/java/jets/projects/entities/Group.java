@@ -1,7 +1,7 @@
 package jets.projects.entities;
 
 import java.io.Serializable;
-import java.util.Date;
+import java.time.LocalDateTime;
 
 public class Group implements Serializable {
     private int groupID;
@@ -9,7 +9,7 @@ public class Group implements Serializable {
     private String groupDesc;    
     private int groupAdminID;
     private byte[] pic;
-    private Date createdAt;
+    private LocalDateTime createdAt;
     
     public Group() {
         groupID = -1;
@@ -21,7 +21,7 @@ public class Group implements Serializable {
     }
 
     public Group(int groupID, String groupName, String groupDesc,
-            int groupAdminID, byte[] pic, Date createdAt) {
+            int groupAdminID, byte[] pic, LocalDateTime createdAt) {
         this.groupID = groupID;
         this.groupName = groupName;
         this.groupDesc = groupDesc;
@@ -50,7 +50,7 @@ public class Group implements Serializable {
         return pic;
     }
 
-    public Date getCreatedAt() {
+    public LocalDateTime getCreatedAt() {
         return createdAt;
     }
 
@@ -74,7 +74,7 @@ public class Group implements Serializable {
         this.pic = pic;
     }
 
-    public void setCreatedAt(Date createdAt) {
+    public void setCreatedAt(LocalDateTime createdAt) {
         this.createdAt = createdAt;
     }
   

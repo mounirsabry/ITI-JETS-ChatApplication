@@ -1,6 +1,7 @@
 package jets.projects.entities;
 
 import java.io.Serializable;
+import java.time.LocalDateTime;
 import java.util.Date;
 
 public class NormalUser implements Serializable{
@@ -13,7 +14,7 @@ public class NormalUser implements Serializable{
     private Gender gender;
     private String country;
     private Date birthDate;
-    private Date createdAt;
+    private LocalDateTime createdAt;
     private NormalUserStatus status;
     private String bio;
     private boolean isAdminCreated;
@@ -72,7 +73,7 @@ public class NormalUser implements Serializable{
         return birthDate;
     }
 
-    public Date getCreatedAt() {
+    public LocalDateTime getCreatedAt() {
         return createdAt;
     }
 
@@ -84,11 +85,11 @@ public class NormalUser implements Serializable{
         return bio;
     }
 
-    public boolean isIsAdminCreated() {
+    public boolean getIsAdminCreated() {
         return isAdminCreated;
     }
 
-    public boolean isIsPasswordValid() {
+    public boolean getIsPasswordValid() {
         return isPasswordValid;
     }
 
@@ -128,7 +129,7 @@ public class NormalUser implements Serializable{
         this.birthDate = birthDate;
     }
 
-    public void setCreatedAt(Date createdAt) {
+    public void setCreatedAt(LocalDateTime createdAt) {
         this.createdAt = createdAt;
     }
 

@@ -15,6 +15,7 @@ import jets.projects.entities.GroupMessage;
 import jets.projects.entities.NormalUser;
 import jets.projects.entities.NormalUserStatus;
 import jets.projects.entities.Notification;
+import jets.projects.entity_info.AnnouncementInfo;
 import jets.projects.entity_info.ContactInvitationInfo;
 
 public interface NormalUserAPI extends Remote {
@@ -116,7 +117,7 @@ public interface NormalUserAPI extends Remote {
     public boolean sendGroupMessage(ClientToken token,
             GroupMessage message) throws RemoteException;
     
-    public List<Announcement> getAllAnnouncements(
+    public List<AnnouncementInfo> getAllAnnouncements(
             ClientToken token) throws RemoteException;
     
     public List<Announcement> getUnReadAnnouncements(
@@ -140,8 +141,8 @@ public interface NormalUserAPI extends Remote {
     public List<Notification> getUnReadNotifications(
             ClientToken token) throws RemoteException;
     
-    public boolean markNotificationsAsRead(ClientToken token,
-            List<Notification> notifications) throws RemoteException;
+    public boolean markNotificationsAsRead(ClientToken token)
+            throws RemoteException;
     
     public boolean deleteNotification(ClientToken token,
             int notificationID) throws RemoteException;
