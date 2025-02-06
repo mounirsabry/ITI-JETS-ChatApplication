@@ -55,8 +55,10 @@ public class ViewUserDataController {
         countryField.setText(normalUser.getCountry().toString());
         genderField.setText(normalUser.getGender().toString());
         birthdayField.setText(normalUser.getBirthDate().toString());
-        ByteArrayInputStream inputStream = new ByteArrayInputStream(normalUser.getPic());
-        Image image = new Image(inputStream);
-        userProfileImage.setImage(image);
+        if(normalUser.getPic() != null){
+            ByteArrayInputStream inputStream = new ByteArrayInputStream(normalUser.getPic());
+            Image image = new Image(inputStream);
+            userProfileImage.setImage(image);
+        }
     }
 }

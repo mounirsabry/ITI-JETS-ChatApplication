@@ -110,9 +110,6 @@ public class Director{
         }catch (IOException e){
             System.out.println("Error in loading the delete user page");
         }
-
-
-
     }
     
     public void startWorking() {
@@ -324,8 +321,11 @@ public class Director{
             return;
         }
         try{
-            adminAPI.submitNewAnnouncement(adminToken, newAnnouncement);
-            AdminAlerts.invokeInformationAlert("New announcement", " announcement submitted successfully");
+            if(adminAPI.submitNewAnnouncement(adminToken, newAnnouncement)){
+                AdminAlerts.invokeInformationAlert("New announcement", " announcement submitted successfully");
+            }else{
+                AdminAlerts.invokeErrorAlert("Error", "announcement not submitted");
+            }
         } catch (RemoteException e) {
             AdminAlerts.invokeErrorAlert("Error", e.getMessage());
         }
