@@ -26,7 +26,7 @@ CREATE TABLE NormalUser
     email VARCHAR(100) NOT NULL UNIQUE,
     pic MEDIUMBLOB NULL DEFAULT NULL,
     password VARCHAR(255) NOT NULL,
-    gender ENUM('MALE', 'FEMALE'),
+    gender ENUM('MALE', 'FEMALE') NOT NULL,
     country VARCHAR(50) NOT NULL,
     birth_date DATE NULL DEFAULT NULL,
     created_at DATETIME NOT NULL
