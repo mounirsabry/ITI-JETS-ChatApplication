@@ -1,4 +1,4 @@
-package jets.projects.top_controllers;
+package jets.projects.normal_user_controller_helpers;
 
 import java.rmi.RemoteException;
 import java.util.List;
@@ -17,6 +17,7 @@ import jets.projects.shared_ds.OnlineNormalUserInfo;
 import jets.projects.shared_ds.OnlineNormalUserTable;
 
 public class NotificationManager {
+
     ContactDao contactsDao = new ContactDao();
     NotificationDao notificationDao = new NotificationDao();
     UsersDao usersDao = new UsersDao();
@@ -24,64 +25,67 @@ public class NotificationManager {
     NotificatonCallback notificatonCallback;
     Map<Integer, OnlineNormalUserInfo> onlineUsers;
 
-    public NotificationManager(){
-        this.notificatonCallback = new NotificatonCallback(notificationDao , contactsDao);
+    public NotificationManager() {
+        this.notificatonCallback = new NotificatonCallback(notificationDao, contactsDao);
         onlineUsers = OnlineNormalUserTable.getOnlineUsersTable();
     }
-    
-    public RequestResult<List<Notification>> getNotifications(ClientToken token) throws RemoteException {
+
+    public RequestResult<List<Notification>> getNotifications(ClientToken token) {
         boolean validToken = tokenValidator.checkClientToken(token).getResponseData();
         if (!validToken) {
-            return new RequestResult<>(null, ExceptionMessages.UNREGISTERED_USER);
+            return new RequestResult<>(null, ExceptionMessages.INVALID_TOKEN);
         }
-        if(!onlineUsers.containsKey(token.getUserID())){
+        if (!onlineUsers.containsKey(token.getUserID())) {
             return new RequestResult<>(null, ExceptionMessages.TIMEOUT_USER_EXCEPTION_MESSAGE);
         }
-        var result = notificationDao.getAllNotifications(token.getUserID()); 
-        if (result.getErrorMessage()!=null) {
-            throw new RemoteException(result.getErrorMessage());            
+        var result = notificationDao.getAllNotifications(token.getUserID());
+        if (result.getErrorMessage() != null) {
+            throw new RemoteException(result.getErrorMessage());
         }
         return new RequestResult<>(result.getResponseData(), null);
     }
-    public RequestResult<List<Notification>> getUnReadNotifications(ClientToken token) throws RemoteException {
+
+    public RequestResult<List<Notification>> getUnReadNotifications(ClientToken token) {
         boolean validToken = tokenValidator.checkClientToken(token).getResponseData();
         if (!validToken) {
-            return new RequestResult<>(null, ExceptionMessages.UNREGISTERED_USER);
+            return new RequestResult<>(null, ExceptionMessages.INVALID_TOKEN);
         }
-        if(!onlineUsers.containsKey(token.getUserID())){
+        if (!onlineUsers.containsKey(token.getUserID())) {
             return new RequestResult<>(null, ExceptionMessages.TIMEOUT_USER_EXCEPTION_MESSAGE);
         }
         var result = notificationDao.getUnreadNotifications(token.getUserID());
-        if (result.getErrorMessage()!=null) {
-            throw new RemoteException(result.getErrorMessage());            
+        if (result.getErrorMessage() != null) {
+            throw new RemoteException(result.getErrorMessage());
         }
         return new RequestResult<>(result.getResponseData(), null);
     }
-    public RequestResult<Boolean> markNotificationsAsRead(ClientToken token) throws RemoteException {
+
+    public RequestResult<Boolean> markNotificationsAsRead(ClientToken token)  {
         boolean validToken = tokenValidator.checkClientToken(token).getResponseData();
         if (!validToken) {
-            return new RequestResult<>(null, ExceptionMessages.UNREGISTERED_USER);
+            return new RequestResult<>(null, ExceptionMessages.INVALID_TOKEN);
         }
-        if(!onlineUsers.containsKey(token.getUserID())){
+        if (!onlineUsers.containsKey(token.getUserID())) {
             return new RequestResult<>(null, ExceptionMessages.TIMEOUT_USER_EXCEPTION_MESSAGE);
         }
         var result = notificationDao.markNotificationsAsRead(token.getUserID());
-        if (result.getErrorMessage()!=null) {
-            throw new RemoteException(result.getErrorMessage());            
+        if (result.getErrorMessage() != null) {
+            throw new RemoteException(result.getErrorMessage());
         }
         return new RequestResult<>(result.getResponseData(), null);
     }
-    public RequestResult<Boolean> deleteNotification(ClientToken token , int notificationID) throws RemoteException{
+
+    public RequestResult<Boolean> deleteNotification(ClientToken token, int notificationID) {
         boolean validToken = tokenValidator.checkClientToken(token).getResponseData();
         if (!validToken) {
-            return new RequestResult<>(null, ExceptionMessages.UNREGISTERED_USER);
+            return new RequestResult<>(null, ExceptionMessages.INVALID_TOKEN);
         }
-        if(!onlineUsers.containsKey(token.getUserID())){
+        if (!onlineUsers.containsKey(token.getUserID())) {
             return new RequestResult<>(null, ExceptionMessages.TIMEOUT_USER_EXCEPTION_MESSAGE);
         }
-        var result = notificationDao.deleteNotification(token.getUserID() , notificationID);
-        if (result.getErrorMessage()!=null) {
-            throw new RemoteException(result.getErrorMessage());            
+        var result = notificationDao.deleteNotification(token.getUserID(), notificationID);
+        if (result.getErrorMessage() != null) {
+            throw new RemoteException(result.getErrorMessage());
         }
         return new RequestResult<>(result.getResponseData(), null);
 

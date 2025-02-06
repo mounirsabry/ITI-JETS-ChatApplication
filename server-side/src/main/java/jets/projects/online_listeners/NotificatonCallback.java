@@ -38,7 +38,7 @@ public class NotificatonCallback {
                 client = onlineUsers.get(contact.getFirstID()).getImpl();
                 if(client!=null){
                    try {
-                    client.userWentOnline(usersDao.getUserById(userID).getDisplayName()); //notify contacts 
+                    client.userWentOnline(usersDao.getNormalUserByID(userID).getDisplayName()); //notify contacts 
                     } catch (RemoteException e) {
                         System.err.println("Falied to notify contacts: " + e.getMessage());
                     } 
@@ -54,7 +54,7 @@ public class NotificatonCallback {
                 client = onlineUsers.get(contact.getFirstID()).getImpl();
                 if(client!=null){
                    try {
-                    client.userWentOffline(usersDao.getUserById(userID).getDisplayName()); //notify contacts 
+                    client.userWentOffline(usersDao.getNormalUserByID(userID).getDisplayName()); //notify contacts 
                     } catch (RemoteException e) {
                         System.err.println("Falied to notify contacts: " + e.getMessage());
                     } 
@@ -70,7 +70,7 @@ public class NotificatonCallback {
                 client = onlineUsers.get(contact.getFirstID()).getImpl();
                 if(client!=null){
                    try {
-                    client.userStatusChanged(usersDao.getUserById(userID).getDisplayName(), newStatus); //notify contacts 
+                    client.userStatusChanged(usersDao.getNormalUserByID(userID).getDisplayName(), newStatus); //notify contacts 
                     } catch (RemoteException e) {
                         System.err.println("Falied to notify contacts: " + e.getMessage());
                     } 

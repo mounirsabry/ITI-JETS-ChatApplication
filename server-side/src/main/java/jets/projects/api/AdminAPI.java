@@ -33,7 +33,7 @@ public interface AdminAPI extends Remote {
     public NormalUser getNormalUserByID(AdminToken token,
             int userID) throws RemoteException;
     
-    public NormalUser getNormalUserByName(AdminToken token,
+    public List<NormalUser> getNormalUserByName(AdminToken token,
             String displayName) throws RemoteException;
     
     public byte[] getNormlUserPic(AdminToken token,

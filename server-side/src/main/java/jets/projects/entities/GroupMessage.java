@@ -1,13 +1,13 @@
 package jets.projects.entities;
 
 import java.io.Serializable;
-import java.util.Date;
+import java.time.LocalDateTime;
 
 public class GroupMessage implements Serializable {
     private int messageID;
     private int senderID;
     private int groupID;
-    private Date sentAt;
+    private LocalDateTime sentAt;
     private String content;
     private Boolean containsFile;
     private byte[] file;
@@ -22,8 +22,9 @@ public class GroupMessage implements Serializable {
         file = null;
     }
 
-    public GroupMessage(int messageID, int senderID, int groupID, Date sentAt,
-            String content, Boolean containsFile, byte[] file) {
+    public GroupMessage(int messageID, int senderID, int groupID, 
+            LocalDateTime sentAt, String content,
+            Boolean containsFile, byte[] file) {
         this.messageID = messageID;
         this.senderID = senderID;
         this.groupID = groupID;
@@ -45,7 +46,7 @@ public class GroupMessage implements Serializable {
         return groupID;
     }
 
-    public Date getSentAt() {
+    public LocalDateTime getSentAt() {
         return sentAt;
     }
 
@@ -73,7 +74,7 @@ public class GroupMessage implements Serializable {
         this.groupID = groupID;
     }
 
-    public void setSentAt(Date sentAt) {
+    public void setSentAt(LocalDateTime sentAt) {
         this.sentAt = sentAt;
     }
 

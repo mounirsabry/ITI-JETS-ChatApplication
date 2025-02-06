@@ -4,20 +4,15 @@ import java.rmi.Remote;
 import java.rmi.RemoteException;
 
 import jets.projects.entities.Announcement;
-import jets.projects.entities.ContactInvitation;
 import jets.projects.entities.ContactMessage;
 import jets.projects.entities.Group;
 import jets.projects.entities.GroupMessage;
 import jets.projects.entities.Notification;
+import jets.projects.entity_info.ContactInvitationInfo;
 
 public interface ClientAPI extends Remote {
-    /*
-        In order not to alter the ContactInvitation class to add the name, I will
-        send the name separately, the name will represent the other user
-        regardless if he is a sender or receiver.
-    */
     public void contactInvitationReceived(
-            ContactInvitation invitation, String otherDisplayName) throws RemoteException;
+            ContactInvitationInfo invitationInfo) throws RemoteException;
     
     // The action should be removing the contact invitation from the list.
     public void contactInvitationAccepted(

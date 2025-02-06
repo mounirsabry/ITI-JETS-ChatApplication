@@ -1,4 +1,4 @@
-package jets.projects.top_controllers;
+package jets.projects.normal_user_controller_helpers;
 
 import java.rmi.RemoteException;
 import java.sql.Blob;
@@ -22,6 +22,7 @@ import jets.projects.shared_ds.OnlineNormalUserInfo;
 import jets.projects.shared_ds.OnlineNormalUserTable;
 
 public class ContactsManager {
+
     ContactDao contactsDao = new ContactDao();
     UsersDao usersDao = new UsersDao();
     TokenValidatorDao tokenValidator = new TokenValidatorDao();
@@ -33,29 +34,31 @@ public class ContactsManager {
     NotificatonCallback notificatonCallback;
     Map<Integer, OnlineNormalUserInfo> onlineUsers;
 
-    public ContactsManager(){
+    public ContactsManager() {
         onlineUsers = OnlineNormalUserTable.getOnlineUsersTable();
     }
-    public RequestResult<List<ContactInfo>> getContacts(ClientToken token) throws RemoteException {
+
+    public RequestResult<List<ContactInfo>> getContacts(ClientToken token) {
         boolean validToken = tokenValidator.checkClientToken(token).getResponseData();
         if (!validToken) {
-            return new RequestResult<>(null, ExceptionMessages.UNREGISTERED_USER);
+            return new RequestResult<>(null, ExceptionMessages.INVALID_TOKEN);
         }
-        if(!onlineUsers.containsKey(token.getUserID())){
+        if (!onlineUsers.containsKey(token.getUserID())) {
             return new RequestResult<>(null, ExceptionMessages.TIMEOUT_USER_EXCEPTION_MESSAGE);
         }
         var result = contactsDao.getAllContacts(token.getUserID());
-        if (result.getErrorMessage()!=null) {
-            throw new RemoteException(result.getErrorMessage());            
+        if (result.getErrorMessage() != null) {
+            throw new RemoteException(result.getErrorMessage());
         }
         return new RequestResult<>(result.getResponseData(), null);
     }
-    public RequestResult<NormalUser> getContactProfile(ClientToken token, int contactID) throws RemoteException {
+
+    public RequestResult<NormalUser> getContactProfile(ClientToken token, int contactID) {
         boolean validToken = tokenValidator.checkClientToken(token).getResponseData();
         if (!validToken) {
-            return new RequestResult<>(null, ExceptionMessages.UNREGISTERED_USER);
+            return new RequestResult<>(null, ExceptionMessages.INVALID_TOKEN);
         }
-        if(!onlineUsers.containsKey(token.getUserID())){
+        if (!onlineUsers.containsKey(token.getUserID())) {
             return new RequestResult<>(null, ExceptionMessages.TIMEOUT_USER_EXCEPTION_MESSAGE);
         }
         boolean isContactExists = usersDao.isNormalUserExists(contactID).getResponseData();
@@ -67,17 +70,18 @@ public class ContactsManager {
             return new RequestResult<>(null, ExceptionMessages.NOT_CONTACTS);
         }
         var result = contactsDao.getContactProfile(contactID);
-        if (result.getErrorMessage()!=null) {
-            throw new RemoteException(result.getErrorMessage());            
+        if (result.getErrorMessage() != null) {
+            throw new RemoteException(result.getErrorMessage());
         }
         return new RequestResult<>(result.getResponseData(), null);
-    }    
-    public RequestResult<Blob> getContactProfilePic(ClientToken token, int contactID) throws RemoteException {
+    }
+
+    public RequestResult<byte[]> getContactProfilePic(ClientToken token, int contactID) {
         boolean validToken = tokenValidator.checkClientToken(token).getResponseData();
         if (!validToken) {
-            return new RequestResult<>(null, ExceptionMessages.UNREGISTERED_USER);
+            return new RequestResult<>(null, ExceptionMessages.INVALID_TOKEN);
         }
-        if(!onlineUsers.containsKey(token.getUserID())){
+        if (!onlineUsers.containsKey(token.getUserID())) {
             return new RequestResult<>(null, ExceptionMessages.TIMEOUT_USER_EXCEPTION_MESSAGE);
         }
         boolean isContactExists = usersDao.isNormalUserExists(contactID).getResponseData();
@@ -89,8 +93,8 @@ public class ContactsManager {
             return new RequestResult<>(null, ExceptionMessages.NOT_CONTACTS);
         }
         var result = contactsDao.getContactProfilePic(contactID);
-        if (result.getErrorMessage()!=null) {
-            throw new RemoteException(result.getErrorMessage());            
+        if (result.getErrorMessage() != null) {
+            throw new RemoteException(result.getErrorMessage());
         }
         return new RequestResult<>(result.getResponseData(), null);
     }
