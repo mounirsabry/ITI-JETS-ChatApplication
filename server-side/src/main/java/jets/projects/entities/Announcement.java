@@ -1,12 +1,13 @@
 package jets.projects.entities;
 
-import java.util.Date;
+import java.io.Serializable;
+import java.time.LocalDateTime;
 
-public class Announcement {
+public class Announcement implements Serializable {
     private int announcementID;
     private String header;
     private String content;
-    private Date sentAt;
+    private LocalDateTime sentAt;
 
     public Announcement() {
         announcementID = -1;
@@ -16,7 +17,7 @@ public class Announcement {
     }
 
     public Announcement(int announcementID, String header,
-            String content, Date sentAt) {
+            String content, LocalDateTime sentAt) {
         this.announcementID = announcementID;
         this.header = header;
         this.content = content;
@@ -35,7 +36,7 @@ public class Announcement {
         return content;
     }
     
-    public Date getSentAt() {
+    public LocalDateTime getSentAt() {
         return sentAt;
     }
 
@@ -51,7 +52,7 @@ public class Announcement {
         this.content = content;
     }
     
-    public void setSentAt(Date sentAt) {
+    public void setSentAt(LocalDateTime sentAt) {
         this.sentAt = sentAt;
     }
     
@@ -59,7 +60,7 @@ public class Announcement {
     public String toString() {
         StringBuilder builder = new StringBuilder();
         
-        builder.append(Announcement.class.getName());
+        builder.append("Announcement");
         builder.append('{');
         
         builder.append("announcementID=");

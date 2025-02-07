@@ -1,4 +1,4 @@
-package io.tasks.classes;
+package jets.projects.classes;
 
 public enum ServerCommand {
     WAIT,

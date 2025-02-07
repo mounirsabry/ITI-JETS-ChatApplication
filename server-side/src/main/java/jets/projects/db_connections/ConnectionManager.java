@@ -1,4 +1,4 @@
-package jets.projects.dbconnections;
+package jets.projects.db_connections;
 
 import java.io.IOException;
 import java.io.InputStream;
