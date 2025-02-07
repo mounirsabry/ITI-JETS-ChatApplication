@@ -150,7 +150,6 @@ public class Director{
             }
         }
         return true;
-
     }
 
     public void viewAnnouncementPage() {
