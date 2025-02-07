@@ -1,6 +1,10 @@
 package jets.projects.classes;
 
 public class ExceptionMessages {
+    public static final String USER_MUST_CHANGE_PASSWORD_FOR_FIRST_LOGIN
+            = "The user is admin created and this is the first login, use "
+            + "the other login function to change password.";
+    
     public static final String TIMEOUT_USER_EXCEPTION_MESSAGE 
             = "Your session has expired , please login again.";
     
@@ -24,9 +28,6 @@ public class ExceptionMessages {
     
     public static final String ALREADY_CONTACTS
             = "Can't send invitation. User already in contacts list.";
-    
-    public static final String INVALID_MESSAGE
-            = "Message should not be empty.";
     
     public static final String GROUP_DOES_NOT_EXIST
             = "Group does not exist";
