@@ -4,6 +4,9 @@ import java.rmi.RemoteException;
 import java.util.Map;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
+import java.util.concurrent.TimeUnit;
+import jets.projects.classes.Delays;
+import jets.projects.classes.MyExecutorFactory;
 
 import jets.projects.dao.AnnouncementDao;
 import jets.projects.entities.Announcement;
@@ -11,15 +14,40 @@ import jets.projects.shared_ds.OnlineNormalUserInfo;
 import jets.projects.shared_ds.OnlineNormalUserTable;
 
 public class AnnouncementCallback {
-    Map<Integer, OnlineNormalUserInfo> onlineUsers;
-    private final ExecutorService executor;
+    private ExecutorService executor;
+    
     AnnouncementDao announcementDao;
-
-    public AnnouncementCallback(AnnouncementDao announcementDao){
-        this.announcementDao = announcementDao;
-        onlineUsers = OnlineNormalUserTable.getOnlineUsersTable();
-        int onlineCount = (onlineUsers != null) ? onlineUsers.size() : 1;
-        executor = Executors.newFixedThreadPool(onlineCount);
+    
+    private static boolean isInit = false;
+    public AnnouncementCallback() {
+        if (isInit) {
+            throw new UnsupportedOperationException("Object has already been init.");
+        }
+        
+        announcementDao = new AnnouncementDao();
+        
+        isInit = true;
+    }
+    
+    public void start() {
+        if (executor != null) {
+            throw new IllegalStateException(
+                    "The executor is already running.");
+        }
+        executor = MyExecutorFactory.getExecutorService();
+    }
+    
+    public void shutDown() {
+        if (executor == null) {
+            throw new IllegalStateException(
+                    "The executor is already shutdown.");
+        }
+        try {
+            executor.awaitTermination(Delays.EXECUTOR_AWAIT_TERMINATION_TIMEOUT,
+                    TimeUnit.SECONDS);
+        } catch (InterruptedException ex) {
+            System.err.println("Thread interrupted while waiting to terminate the executor.");
+        }
     }
     
     public void newAnnouncementAdded(Announcement announcement){

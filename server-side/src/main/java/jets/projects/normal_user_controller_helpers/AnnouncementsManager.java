@@ -15,14 +15,14 @@ import jets.projects.session.ClientToken;
 import jets.projects.shared_ds.OnlineNormalUserInfo;
 import jets.projects.shared_ds.OnlineNormalUserTable;
 
-public class AnnouncementManager {
+public class AnnouncementsManager {
 
     AnnouncementDao announcementDao;
     TokenValidatorDao tokenValidator;
     AnnouncementCallback announcementCallback;
     Map<Integer, OnlineNormalUserInfo> onlineUsers;
 
-    public AnnouncementManager() {
+    public AnnouncementsManager() {
         announcementDao = new AnnouncementDao();
         announcementCallback = new AnnouncementCallback(announcementDao);
 
@@ -35,7 +35,7 @@ public class AnnouncementManager {
             return new RequestResult<>(null, ExceptionMessages.INVALID_TOKEN);
         }
         if (!onlineUsers.containsKey(token.getUserID())) {
-            return new RequestResult<>(null, ExceptionMessages.TIMEOUT_USER_EXCEPTION_MESSAGE);
+            return new RequestResult<>(null, ExceptionMessages.USER_TIMEOUT);
         }
         var result = announcementDao.getAllAnnouncements(token.getUserID());
         if (result.getErrorMessage() != null) {
@@ -50,7 +50,7 @@ public class AnnouncementManager {
             return new RequestResult<>(null, ExceptionMessages.INVALID_TOKEN);
         }
         if (!onlineUsers.containsKey(token.getUserID())) {
-            return new RequestResult<>(null, ExceptionMessages.TIMEOUT_USER_EXCEPTION_MESSAGE);
+            return new RequestResult<>(null, ExceptionMessages.USER_TIMEOUT);
         }
         var result = announcementDao.getUnreadAnnouncements(token.getUserID());
         if (result.getErrorMessage() != null) {

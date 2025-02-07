@@ -11,22 +11,22 @@ import jets.projects.dao.NotificationDao;
 import jets.projects.dao.TokenValidatorDao;
 import jets.projects.dao.UsersDao;
 import jets.projects.entities.Notification;
-import jets.projects.online_listeners.NotificatonCallback;
+import jets.projects.online_listeners.NotificationCallback;
 import jets.projects.session.ClientToken;
 import jets.projects.shared_ds.OnlineNormalUserInfo;
 import jets.projects.shared_ds.OnlineNormalUserTable;
 
-public class NotificationManager {
+public class NotificationsManager {
 
     ContactDao contactsDao = new ContactDao();
     NotificationDao notificationDao = new NotificationDao();
     UsersDao usersDao = new UsersDao();
     TokenValidatorDao tokenValidator = new TokenValidatorDao();
-    NotificatonCallback notificatonCallback;
+    NotificationCallback notificatonCallback;
     Map<Integer, OnlineNormalUserInfo> onlineUsers;
 
-    public NotificationManager() {
-        this.notificatonCallback = new NotificatonCallback(notificationDao, contactsDao);
+    public NotificationsManager() {
+        this.notificatonCallback = new NotificationCallback(notificationDao, contactsDao);
         onlineUsers = OnlineNormalUserTable.getOnlineUsersTable();
     }
 
@@ -36,7 +36,7 @@ public class NotificationManager {
             return new RequestResult<>(null, ExceptionMessages.INVALID_TOKEN);
         }
         if (!onlineUsers.containsKey(token.getUserID())) {
-            return new RequestResult<>(null, ExceptionMessages.TIMEOUT_USER_EXCEPTION_MESSAGE);
+            return new RequestResult<>(null, ExceptionMessages.USER_TIMEOUT);
         }
         var result = notificationDao.getAllNotifications(token.getUserID());
         if (result.getErrorMessage() != null) {
@@ -51,7 +51,7 @@ public class NotificationManager {
             return new RequestResult<>(null, ExceptionMessages.INVALID_TOKEN);
         }
         if (!onlineUsers.containsKey(token.getUserID())) {
-            return new RequestResult<>(null, ExceptionMessages.TIMEOUT_USER_EXCEPTION_MESSAGE);
+            return new RequestResult<>(null, ExceptionMessages.USER_TIMEOUT);
         }
         var result = notificationDao.getUnreadNotifications(token.getUserID());
         if (result.getErrorMessage() != null) {
@@ -66,7 +66,7 @@ public class NotificationManager {
             return new RequestResult<>(null, ExceptionMessages.INVALID_TOKEN);
         }
         if (!onlineUsers.containsKey(token.getUserID())) {
-            return new RequestResult<>(null, ExceptionMessages.TIMEOUT_USER_EXCEPTION_MESSAGE);
+            return new RequestResult<>(null, ExceptionMessages.USER_TIMEOUT);
         }
         var result = notificationDao.markNotificationsAsRead(token.getUserID());
         if (result.getErrorMessage() != null) {
@@ -81,7 +81,7 @@ public class NotificationManager {
             return new RequestResult<>(null, ExceptionMessages.INVALID_TOKEN);
         }
         if (!onlineUsers.containsKey(token.getUserID())) {
-            return new RequestResult<>(null, ExceptionMessages.TIMEOUT_USER_EXCEPTION_MESSAGE);
+            return new RequestResult<>(null, ExceptionMessages.USER_TIMEOUT);
         }
         var result = notificationDao.deleteNotification(token.getUserID(), notificationID);
         if (result.getErrorMessage() != null) {

@@ -5,7 +5,7 @@ public class ExceptionMessages {
             = "The user is admin created and this is the first login, use "
             + "the other login function to change password.";
     
-    public static final String TIMEOUT_USER_EXCEPTION_MESSAGE 
+    public static final String USER_TIMEOUT 
             = "Your session has expired , please login again.";
     
     public static final String INVALID_TOKEN_FORMAT
@@ -13,6 +13,10 @@ public class ExceptionMessages {
     
     public static final String INVALID_TOKEN 
             = "Invalid token, token does not map to a registered user.";
+    
+    public static final String ALREADY_LOGGED_IN
+            = "You are already logged in,"
+            + " please logout of the other device first.";
     
     public static final String INVALID_INPUT_DATA 
             = "Invalid input data.";
@@ -35,6 +39,6 @@ public class ExceptionMessages {
     public static final String NOT_MEMBER
             = "You are not a member of this group.";
     
-    public static final String NOT_ADMIN
-            = "You have no access on this action. Not an admin.";
+    public static final String NOT_GROUP_ADMIN
+            = "You have no access on this action. Not the group admin.";
 }

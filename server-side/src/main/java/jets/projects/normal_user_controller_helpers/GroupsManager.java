@@ -21,7 +21,7 @@ import jets.projects.session.ClientToken;
 import jets.projects.shared_ds.OnlineNormalUserInfo;
 import jets.projects.shared_ds.OnlineNormalUserTable;
 
-public class GroupManager {
+public class GroupsManager {
 
     GroupDao groupDao = new GroupDao();
     ContactDao contactsDao = new ContactDao();
@@ -32,7 +32,7 @@ public class GroupManager {
     GroupCallback groupCallback;
     Map<Integer, OnlineNormalUserInfo> onlineUsers;
 
-    public GroupManager() {
+    public GroupsManager() {
         this.groupCallback = new GroupCallback(groupDao, groupMemberDao, usersDao);
         onlineUsers = OnlineNormalUserTable.getOnlineUsersTable();
     }
@@ -43,7 +43,7 @@ public class GroupManager {
             return new RequestResult<>(null, ExceptionMessages.INVALID_TOKEN);
         }
         if (!onlineUsers.containsKey(token.getUserID())) {
-            return new RequestResult<>(null, ExceptionMessages.TIMEOUT_USER_EXCEPTION_MESSAGE);
+            return new RequestResult<>(null, ExceptionMessages.USER_TIMEOUT);
         }
         var result = groupDao.getAllGroups(token.getUserID());
         if (result.getErrorMessage() != null) {
@@ -58,7 +58,7 @@ public class GroupManager {
             return new RequestResult<>(null, ExceptionMessages.INVALID_TOKEN);
         }
         if (!onlineUsers.containsKey(token.getUserID())) {
-            return new RequestResult<>(null, ExceptionMessages.TIMEOUT_USER_EXCEPTION_MESSAGE);
+            return new RequestResult<>(null, ExceptionMessages.USER_TIMEOUT);
         }
         boolean isGroupExists = groupDao.isGroupExists(groupID).getResponseData();
         if (!isGroupExists) {
@@ -77,7 +77,7 @@ public class GroupManager {
             return new RequestResult<>(false, ExceptionMessages.INVALID_TOKEN);
         }
         if (!onlineUsers.containsKey(token.getUserID())) {
-            return new RequestResult<>(false, ExceptionMessages.TIMEOUT_USER_EXCEPTION_MESSAGE);
+            return new RequestResult<>(false, ExceptionMessages.USER_TIMEOUT);
         }
         boolean isGroupExists = groupDao.isGroupExists(groupID).getResponseData();
         if (!isGroupExists) {
@@ -99,7 +99,7 @@ public class GroupManager {
             return new RequestResult<>(false, ExceptionMessages.INVALID_TOKEN);
         }
         if (!onlineUsers.containsKey(token.getUserID())) {
-            return new RequestResult<>(false, ExceptionMessages.TIMEOUT_USER_EXCEPTION_MESSAGE);
+            return new RequestResult<>(false, ExceptionMessages.USER_TIMEOUT);
         }
         var result = groupDao.createGroup(newGroup);
         if (result.getErrorMessage() != null) {
@@ -114,7 +114,7 @@ public class GroupManager {
             return new RequestResult<>(null, ExceptionMessages.INVALID_TOKEN);
         }
         if (!onlineUsers.containsKey(token.getUserID())) {
-            return new RequestResult<>(null, ExceptionMessages.TIMEOUT_USER_EXCEPTION_MESSAGE);
+            return new RequestResult<>(null, ExceptionMessages.USER_TIMEOUT);
         }
         boolean isGroupExists = groupDao.isGroupExists(groupID).getResponseData();
         if (!isGroupExists) {
@@ -137,7 +137,7 @@ public class GroupManager {
             return new RequestResult<>(false, ExceptionMessages.INVALID_TOKEN);
         }
         if (!onlineUsers.containsKey(token.getUserID())) {
-            return new RequestResult<>(false, ExceptionMessages.TIMEOUT_USER_EXCEPTION_MESSAGE);
+            return new RequestResult<>(false, ExceptionMessages.USER_TIMEOUT);
         }
         boolean isGroupExists = groupDao.isGroupExists(groupID).getResponseData();
         if (!isGroupExists) {
@@ -153,7 +153,7 @@ public class GroupManager {
         }
         NormalUser admin = groupDao.getGroupAdmin(groupID).getResponseData();
         if (admin.getUserID() != token.getUserID()) {
-            return new RequestResult<>(null, ExceptionMessages.NOT_ADMIN);
+            return new RequestResult<>(null, ExceptionMessages.NOT_GROUP_ADMIN);
         }
         var result = groupMemberDao.addMemberToGroup(groupID, otherID);   //update in database
         groupCallback.addedToGroup(otherID, groupID);  //callback for added member
@@ -169,7 +169,7 @@ public class GroupManager {
             return new RequestResult<>(false, ExceptionMessages.INVALID_TOKEN);
         }
         if (!onlineUsers.containsKey(token.getUserID())) {
-            return new RequestResult<>(false, ExceptionMessages.TIMEOUT_USER_EXCEPTION_MESSAGE);
+            return new RequestResult<>(false, ExceptionMessages.USER_TIMEOUT);
         }
         boolean isGroupExists = groupDao.isGroupExists(groupID).getResponseData();
         if (!isGroupExists) {
@@ -185,7 +185,7 @@ public class GroupManager {
         }
         int AdminID = groupDao.getGroupAdmin(groupID).getResponseData().getUserID();
         if (AdminID != token.getUserID()) {
-            return new RequestResult<>(null, ExceptionMessages.NOT_ADMIN);
+            return new RequestResult<>(null, ExceptionMessages.NOT_GROUP_ADMIN);
         }
         var result = groupMemberDao.removeMemberFromGroup(groupID, otherID);   //update in database
         groupCallback.removedFromGroup(otherID, groupID);  //callback for removed member
@@ -201,7 +201,7 @@ public class GroupManager {
             return new RequestResult<>(false, ExceptionMessages.INVALID_TOKEN);
         }
         if (!onlineUsers.containsKey(token.getUserID())) {
-            return new RequestResult<>(false, ExceptionMessages.TIMEOUT_USER_EXCEPTION_MESSAGE);
+            return new RequestResult<>(false, ExceptionMessages.USER_TIMEOUT);
         }
         boolean isGroupExists = groupDao.isGroupExists(groupID).getResponseData();
         if (!isGroupExists) {
@@ -220,7 +220,7 @@ public class GroupManager {
             return new RequestResult<>(false, ExceptionMessages.INVALID_TOKEN);
         }
         if (!onlineUsers.containsKey(token.getUserID())) {
-            return new RequestResult<>(false, ExceptionMessages.TIMEOUT_USER_EXCEPTION_MESSAGE);
+            return new RequestResult<>(false, ExceptionMessages.USER_TIMEOUT);
         }
         boolean isGroupExists = groupDao.isGroupExists(groupID).getResponseData();
         if (!isGroupExists) {
@@ -228,7 +228,7 @@ public class GroupManager {
         }
         int AdminID = groupDao.getGroupAdmin(groupID).getResponseData().getUserID();
         if (AdminID != token.getUserID()) {
-            return new RequestResult<>(false, ExceptionMessages.NOT_ADMIN);
+            return new RequestResult<>(false, ExceptionMessages.NOT_GROUP_ADMIN);
         }
         var result1 = groupMemberDao.leaveGroupAsAdmin(token.getUserID(), groupID, newAdminID);   //update in database
         var result2 = groupDao.updateAdmin(groupID, newAdminID);   //update in database
@@ -247,7 +247,7 @@ public class GroupManager {
             return new RequestResult<>(false, ExceptionMessages.INVALID_TOKEN);
         }
         if (!onlineUsers.containsKey(token.getUserID())) {
-            return new RequestResult<>(false, ExceptionMessages.TIMEOUT_USER_EXCEPTION_MESSAGE);
+            return new RequestResult<>(false, ExceptionMessages.USER_TIMEOUT);
         }
         boolean isGroupExists = groupDao.isGroupExists(groupID).getResponseData();
         if (!isGroupExists) {
@@ -255,7 +255,7 @@ public class GroupManager {
         }
         int AdminID = groupDao.getGroupAdmin(groupID).getResponseData().getUserID();
         if (AdminID != token.getUserID()) {
-            return new RequestResult<>(false, ExceptionMessages.NOT_ADMIN);
+            return new RequestResult<>(false, ExceptionMessages.NOT_GROUP_ADMIN);
         }
         var result = groupDao.updateAdmin(groupID, newAdminID);   //update in database
         groupCallback.leadershipGained(newAdminID, groupID);  //callback for new admin
@@ -271,7 +271,7 @@ public class GroupManager {
             return new RequestResult<>(false, ExceptionMessages.INVALID_TOKEN);
         }
         if (!onlineUsers.containsKey(token.getUserID())) {
-            return new RequestResult<>(false, ExceptionMessages.TIMEOUT_USER_EXCEPTION_MESSAGE);
+            return new RequestResult<>(false, ExceptionMessages.USER_TIMEOUT);
         }
         boolean isGroupExists = groupDao.isGroupExists(groupID).getResponseData();
         if (!isGroupExists) {
@@ -279,7 +279,7 @@ public class GroupManager {
         }
         int AdminID = groupDao.getGroupAdmin(groupID).getResponseData().getUserID();
         if (AdminID != token.getUserID()) {
-            return new RequestResult<>(false, ExceptionMessages.NOT_ADMIN);
+            return new RequestResult<>(false, ExceptionMessages.NOT_GROUP_ADMIN);
         }
         var result = groupDao.deleteGroup(groupID);         //update in database
         groupCallback.groupDeleted(groupID);              //callback for group members
