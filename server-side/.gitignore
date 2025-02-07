@@ -1,6 +1,9 @@
 # Ignores the configuration file that contains the URL, username and password for the database.
 src/main/resources/db_info.properties
 
+# Ignore Intellij Generated folder.
+.idea/
+
 # Github generated lines.
 target/
 pom.xml.tag
