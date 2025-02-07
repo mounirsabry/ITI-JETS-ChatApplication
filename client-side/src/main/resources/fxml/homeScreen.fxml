@@ -19,7 +19,7 @@
 <?import javafx.scene.layout.VBox?>
 <?import javafx.scene.shape.Circle?>
 
-<GridPane fx:id="mainContainer" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" minHeight="-Infinity" minWidth="-Infinity" prefHeight="600.0" prefWidth="800.0" style="-fx-background-color: f1f2f6;" stylesheets="@../styles/homeScreenStyles.css" xmlns="http://javafx.com/javafx/9.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="jets.projects.Controllers.homeScreenController">
+<GridPane fx:id="mainContainer" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" minHeight="-Infinity" minWidth="-Infinity" prefHeight="600.0" prefWidth="800.0" style="-fx-background-color: f1f2f6;" stylesheets="@../styles/homeScreenStyles.css" xmlns="http://javafx.com/javafx/9.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="jets.projects.Controllers.HomeScreenController">
   <columnConstraints>
     <ColumnConstraints hgrow="ALWAYS" minWidth="10.0" percentWidth="8.0" />
     <ColumnConstraints halignment="LEFT" hgrow="ALWAYS" minWidth="10.0" percentWidth="30.0" prefWidth="100.0" />

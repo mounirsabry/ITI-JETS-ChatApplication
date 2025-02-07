@@ -9,7 +9,7 @@ import javafx.scene.shape.Circle;
 import javafx.scene.text.Text;
 
 
-public class notificationsController {
+public class NotificationsController {
 
     @FXML
     private ListView<HBox> notificationsList;
@@ -18,7 +18,7 @@ public class notificationsController {
     private void initialize(){
         URL fxmlURL= getClass().getResource("/fxml/notificationCard.fxml");
         notificationsList.setCellFactory(lv->jets.projects.Utilities.createCustomCell(fxmlURL, 
-        (notificationCardController controller , HBox item )-> controller.setData(item , notificationsList)));
+        (NotificationCardController controller , HBox item )-> controller.setData(item , notificationsList)));
         populateWithDummyData(notificationsList);
     }
     // for testing purposes only
@@ -37,5 +37,6 @@ public class notificationsController {
 
         notificationsList.getItems().addAll(contentHBox1,contentHBox2);
     }
+
 }
 

@@ -12,13 +12,13 @@ import jets.projects.Controllers.*;
 public class App extends Application {
 
     private Parent signInParent;
-    private signinController signinController;
+    private SigninController signinController;
 
     private Parent signUpParent;
-    private signUpController signUpController;
+    private SignUpController signUpController;
 
     private Parent homeParent;
-    private homeScreenController homeScreenController;
+    private HomeScreenController homeScreenController;
 
     @Override
     public void start(Stage stage) {

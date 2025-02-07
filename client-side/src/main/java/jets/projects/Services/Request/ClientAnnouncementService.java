@@ -10,7 +10,7 @@ import jets.projects.session.ClientToken;
 import java.rmi.RemoteException;
 import java.util.List;
 
-public class ClientAnnouncementService {
+public class ClientAnnouncementService{
     public List<AnnouncementInfo> getAllAnnouncements(){
         if(!ServerConnectivityService.check()){
             ClientAlerts.invokeWarningAlert("Get Announcements", "Can't connect to server");

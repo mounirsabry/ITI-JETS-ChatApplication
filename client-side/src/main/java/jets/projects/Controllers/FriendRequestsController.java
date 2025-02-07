@@ -10,7 +10,7 @@ import javafx.scene.paint.ImagePattern;
 import javafx.scene.shape.Circle;
 
 
-public class friendRequestsController {
+public class FriendRequestsController {
 
     @FXML
     private ListView<HBox> requestsList;
@@ -19,7 +19,7 @@ public class friendRequestsController {
     private void initialize(){
         URL fxmlURL= getClass().getResource("/fxml/requestCard.fxml");
         requestsList.setCellFactory(lv->jets.projects.Utilities.createCustomCell(fxmlURL, 
-        (requestCardController controller , HBox item )-> controller.setData(item)));
+        (RequestCardController controller , HBox item )-> controller.setData(item)));
         populateWithDummyData(requestsList);
     }
     // for testing purposes only

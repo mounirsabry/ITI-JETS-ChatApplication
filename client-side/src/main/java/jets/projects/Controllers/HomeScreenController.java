@@ -26,7 +26,7 @@ import javafx.stage.Stage;
 import jets.projects.Director;
 import javafx.scene.input.MouseEvent;
 
-public class homeScreenController {
+public class HomeScreenController {
 
     @FXML
     private GridPane mainContainer;

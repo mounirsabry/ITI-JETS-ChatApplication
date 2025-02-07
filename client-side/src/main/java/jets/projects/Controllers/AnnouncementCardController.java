@@ -9,7 +9,7 @@ import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
 import javafx.scene.text.Text;
 
-public class announcementCardController {
+public class AnnouncementCardController {
 
     @FXML
     private HBox announcementHbox;   //whole container

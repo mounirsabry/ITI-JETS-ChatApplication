@@ -7,7 +7,7 @@ import javafx.scene.layout.HBox;
 import javafx.scene.shape.Circle;
 import javafx.scene.text.Text;
 
-public class notificationCardController {
+public class NotificationCardController {
 
     @FXML
     private HBox notificationHbox;  //the whole card container

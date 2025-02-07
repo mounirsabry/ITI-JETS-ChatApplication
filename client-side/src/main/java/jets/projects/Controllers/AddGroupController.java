@@ -19,7 +19,7 @@ import java.util.List;
 
 import javafx.event.ActionEvent;
 
-public class addGroupController {
+public class AddGroupController {
 
     @FXML
     private Button addContactButton;

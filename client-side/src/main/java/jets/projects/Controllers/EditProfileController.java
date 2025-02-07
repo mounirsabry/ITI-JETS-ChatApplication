@@ -17,7 +17,7 @@ import javafx.stage.Stage;
 import java.io.File;
 import java.util.Locale;
 
-public class editProfileController {
+public class EditProfileController {
     
         @FXML
         private Circle profilePicture;

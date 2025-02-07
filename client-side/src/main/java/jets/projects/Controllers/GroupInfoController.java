@@ -10,7 +10,7 @@ import javafx.scene.paint.ImagePattern;
 import javafx.scene.shape.Circle;
 import javafx.scene.text.Text;
 
-public class groupInfoController {        
+public class GroupInfoController {
         @FXML
         private Circle groupIcon;
     

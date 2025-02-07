@@ -7,7 +7,7 @@ import javafx.scene.layout.VBox;
 import javafx.scene.text.Text;
 import javafx.scene.control.Label;;
 
-public class announcementsController {
+public class AnnouncementsController {
 
     @FXML
     private ListView<HBox> announcementsList;
@@ -16,7 +16,7 @@ public class announcementsController {
     private void initialize(){
         URL fxmlURL= getClass().getResource("/fxml/announcementCard.fxml");
         announcementsList.setCellFactory(lv->jets.projects.Utilities.createCustomCell(fxmlURL, 
-        (announcementCardController controller , HBox item )-> controller.setData(item , announcementsList)));
+        (AnnouncementCardController controller , HBox item )-> controller.setData(item , announcementsList)));
         populateWithDummyData(announcementsList);
     }
     // for testing purposes only

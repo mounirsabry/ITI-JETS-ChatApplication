@@ -11,7 +11,7 @@ import javafx.stage.Stage;
 import jets.projects.Director;
 import jets.projects.Services.Request.ClientAuthenticationService;
 
-public class signinController {
+public class SigninController {
 
     @FXML
     private ToggleButton signinToggleButton;
@@ -43,10 +43,10 @@ public class signinController {
     void handleSignInButton(ActionEvent event) throws IOException {
         if(clientAuthenticationService.login(phoneField.getText(), passwordField.getText())){
             //
-            myDirector.home();
+
         }
         //validate data and navigate to home screen
-
+        myDirector.home();
     }
 
     @FXML
