@@ -153,7 +153,7 @@ public class GroupManager {
         }
         NormalUser admin = groupDao.getGroupAdmin(groupID).getResponseData();
         if (admin.getUserID() != token.getUserID()) {
-            return new RequestResult<>(null, ExceptionMessages.NOT_ADMIN);
+            return new RequestResult<>(null, ExceptionMessages.NOT_GROUP_ADMIN);
         }
         var result = groupMemberDao.addMemberToGroup(groupID, otherID);   //update in database
         groupCallback.addedToGroup(otherID, groupID);  //callback for added member
@@ -185,7 +185,7 @@ public class GroupManager {
         }
         int AdminID = groupDao.getGroupAdmin(groupID).getResponseData().getUserID();
         if (AdminID != token.getUserID()) {
-            return new RequestResult<>(null, ExceptionMessages.NOT_ADMIN);
+            return new RequestResult<>(null, ExceptionMessages.NOT_GROUP_ADMIN);
         }
         var result = groupMemberDao.removeMemberFromGroup(groupID, otherID);   //update in database
         groupCallback.removedFromGroup(otherID, groupID);  //callback for removed member
@@ -228,7 +228,7 @@ public class GroupManager {
         }
         int AdminID = groupDao.getGroupAdmin(groupID).getResponseData().getUserID();
         if (AdminID != token.getUserID()) {
-            return new RequestResult<>(false, ExceptionMessages.NOT_ADMIN);
+            return new RequestResult<>(false, ExceptionMessages.NOT_GROUP_ADMIN);
         }
         var result1 = groupMemberDao.leaveGroupAsAdmin(token.getUserID(), groupID, newAdminID);   //update in database
         var result2 = groupDao.updateAdmin(groupID, newAdminID);   //update in database
@@ -255,7 +255,7 @@ public class GroupManager {
         }
         int AdminID = groupDao.getGroupAdmin(groupID).getResponseData().getUserID();
         if (AdminID != token.getUserID()) {
-            return new RequestResult<>(false, ExceptionMessages.NOT_ADMIN);
+            return new RequestResult<>(false, ExceptionMessages.NOT_GROUP_ADMIN);
         }
         var result = groupDao.updateAdmin(groupID, newAdminID);   //update in database
         groupCallback.leadershipGained(newAdminID, groupID);  //callback for new admin
@@ -279,7 +279,7 @@ public class GroupManager {
         }
         int AdminID = groupDao.getGroupAdmin(groupID).getResponseData().getUserID();
         if (AdminID != token.getUserID()) {
-            return new RequestResult<>(false, ExceptionMessages.NOT_ADMIN);
+            return new RequestResult<>(false, ExceptionMessages.NOT_GROUP_ADMIN);
         }
         var result = groupDao.deleteGroup(groupID);         //update in database
         groupCallback.groupDeleted(groupID);              //callback for group members

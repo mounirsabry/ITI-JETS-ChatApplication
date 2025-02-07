@@ -26,12 +26,8 @@ public class UsersQueryDao {
         }
         return new RequestResult<>(false, "Unexpected error occurred.");
     }
-    
-    public RequestResult<List<NormalUser>> getAllNormalUsers() {
-        throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
-    }
 
-    public RequestResult<NormalUser> getNormalUserByID(int userID) {
+    public RequestResult<NormalUser> getNormalUserByPhoneNumber(String phoneNumber) {
         String query = "SELECT * FROM NormalUser WHERE user_ID = ?";
         try (PreparedStatement stmt = ConnectionManager.getConnection().prepareStatement(query)) {
             stmt.setInt(1, userID);
@@ -58,10 +54,6 @@ public class UsersQueryDao {
         } catch (SQLException e) {
             System.err.println("Database error: " + e.getMessage());
         }
-        return null;
-    }
-    
-    public RequestResult<List<NormalUser>> getNormalUserByName(String displayName) {
         return null;
     }
 }

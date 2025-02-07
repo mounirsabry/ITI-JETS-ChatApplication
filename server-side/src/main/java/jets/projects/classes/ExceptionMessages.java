@@ -35,6 +35,6 @@ public class ExceptionMessages {
     public static final String NOT_MEMBER
             = "You are not a member of this group.";
     
-    public static final String NOT_ADMIN
-            = "You have no access on this action. Not an admin.";
+    public static final String NOT_GROUP_ADMIN
+            = "You have no access on this action. Not the group admin.";
 }

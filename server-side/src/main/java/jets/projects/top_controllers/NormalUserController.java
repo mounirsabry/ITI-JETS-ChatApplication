@@ -1,5 +1,6 @@
 package jets.projects.top_controllers;
 
+import java.util.Date;
 import jets.projects.normal_user_controller_helpers.AnnouncementManager;
 import jets.projects.normal_user_controller_helpers.ContactsManager;
 import jets.projects.normal_user_controller_helpers.NotificationManager;
@@ -75,9 +76,12 @@ public class NormalUserController {
         return profileManager.getMyProfile(token);
     }
     
-    public RequestResult<Boolean> editProfile(ClientToken token, String username,
+    public RequestResult<Boolean> editProfile(ClientToken token,
+            String username,
+            Date birthDate,
             String bio, byte[] profilePic) {
-        return profileManager.editProfile(token, username, bio, profilePic);
+        return profileManager.editProfile(token, username, birthDate, 
+                bio, profilePic);
     }
     
     public RequestResult<Boolean> changePassword(ClientToken token, String oldPassword,
@@ -126,8 +130,8 @@ public class NormalUserController {
     }
     
     public RequestResult<Boolean> markContactMessagesAsRead(ClientToken token,
-            List<Integer> messages) {
-        return contactMessagesManager.markContactMessagesAsRead(token, messages);
+            int contactID) {
+        return contactMessagesManager.markContactMessagesAsRead(token, contactID);
     }
     
     public RequestResult<List<Group>> getAllGroups(ClientToken token) {

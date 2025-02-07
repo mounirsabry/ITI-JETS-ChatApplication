@@ -1,5 +1,6 @@
 package jets.projects.classes;
 
+import jets.projects.entities.NormalUserStatus;
 import jets.projects.entities.Notification;
 
 public class NotificationFactory {
@@ -8,41 +9,111 @@ public class NotificationFactory {
         throw new UnsupportedOperationException("Do not create object.");
     }
     
+    public static Notification createIsOnlineNotification(
+            String displayName) {
+        Notification notification = new Notification();
+        notification.setContent(displayName + " is now Online.");
+        return notification;
+    }
+    
+    public static Notification createIsOfflineNotification(
+            String displayName) {
+        StringBuilder contentBuilder = new StringBuilder();
+        contentBuilder.append(displayName);
+        contentBuilder.append(" has gone Offline.");
+        
+        Notification notification = new Notification();
+        notification.setContent(contentBuilder.toString());
+        return notification;
+    }
+    
+    public static Notification createStatusChangeNotification(
+            String displayName, NormalUserStatus newStatus) {
+        if (newStatus == NormalUserStatus.OFFLINE) {
+            throw new IllegalArgumentException("New status cannot be offline.");
+        }
+        
+        StringBuilder contentBuilder = new StringBuilder();
+        contentBuilder.append(displayName);
+        contentBuilder.append(" has changed status, ");
+        contentBuilder.append("new status is ");
+        contentBuilder.append(newStatus.toString());
+        
+        Notification notification = new Notification();
+        notification.setContent(contentBuilder.toString());
+        return notification;
+    }
+    
     public static Notification createInvitationReceiverNotification(
             String senderName) {
-        // ... has send you a contact invitation.
-        return null;
+        StringBuilder contentBuilder = new StringBuilder();
+        contentBuilder.append(senderName);
+        contentBuilder.append(" has sent you a contact invitaion.");
+        
+        Notification notification = new Notification();
+        notification.setContent(contentBuilder.toString());
+        return notification;
     }
     
     public static Notification createInvitationSenderNotification(
             String receiverName) {
-        // You have sent ... a contact invitation.
-        return null;
+        StringBuilder contentBuilder = new StringBuilder();
+        contentBuilder.append("You have sent ");
+        contentBuilder.append(receiverName);
+        contentBuilder.append(" a contact invitation.");
+        
+        Notification notification = new Notification();
+        notification.setContent(contentBuilder.toString());
+        return notification;
     }
     
     public static Notification createAcceptedInvitationReceiverNotification(
             String senderName) {
-        // You have accepted ... contact invitation, ... was added to your
-        // contacts list.
-        return null;
+        StringBuilder contentBuilder = new StringBuilder();
+        contentBuilder.append("You have accepted ");
+        contentBuilder.append(senderName);
+        contentBuilder.append(" contact invitation, ");
+        contentBuilder.append(senderName);
+        contentBuilder.append(" was added to your contacts list.");
+        
+        Notification notification = new Notification();
+        notification.setContent(contentBuilder.toString());
+        return notification;
     }
     
     public static Notification createAcceptedInvitationSenderNotification(
-            String receiveName) {
-        // ... has accepted your contact invitation, ... was added to your
-        // contacts list.
-        return null;
+            String receiverName) {
+        StringBuilder contentBuilder = new StringBuilder();
+        contentBuilder.append(receiverName);
+        contentBuilder.append(" has accepted your contact invitation, ");
+        contentBuilder.append(receiverName);
+        contentBuilder.append(" was added to your contacts list.");
+        
+        Notification notification = new Notification();
+        notification.setContent(contentBuilder.toString());
+        return notification;
     }
     
     public static Notification createRejectedInvitationReceiverNotification(
             String senderName) {
-        // You have rejected ... contact invitation.
-        return null;
+        StringBuilder contentBuilder = new StringBuilder();
+        contentBuilder.append("You have rejected ");
+        contentBuilder.append(senderName);
+        contentBuilder.append(" contact invitation.");
+        
+        Notification notification = new Notification();
+        notification.setContent(contentBuilder.toString());
+        return notification;
     }
     
     public static Notification createRejectedInvitationSenderNotification(
             String receiverName) {
-        // ... has rejected your contact invitation.
-        return null;
+        StringBuilder contentBuilder = new StringBuilder();
+        contentBuilder.append(receiverName);
+        contentBuilder.append(" has rejected your contact invitation.");
+
+        Notification notification = new Notification();
+        notification.setContent(contentBuilder.toString());
+        return notification;
     }
 }

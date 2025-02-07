@@ -4,42 +4,42 @@ import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.ArrayList;
-import java.util.Date;
 import jets.projects.classes.RequestResult;
 
 import jets.projects.db_connections.ConnectionManager;
 import jets.projects.entities.Announcement;
+import jets.projects.entity_info.AnnouncementInfo;
 
 public class AnnouncementDao {
+//    public RequestResult<Announcement> getLastAnnouncement() {
+//        try (Connection connection = ConnectionManager.getConnection()) {
+//            PreparedStatement preparedStatement = connection.prepareStatement(
+//                "SELECT * FROM Announcement ORDER BY announcement_ID DESC LIMIT 1"
+//            );
+//            ResultSet resultSet = preparedStatement.executeQuery();
+//
+//            
+//            if (resultSet.next()) {
+//                int announcementID = resultSet.getInt("announcement_ID");
+//                String header = resultSet.getString("header");
+//                String content = resultSet.getString("content");
+//                Date sentAt = resultSet.getDate("sent_at");
+//                Announcement announcement = new Announcement(announcementID, header, content, sentAt);
+//                return new RequestResult<>(announcement, null);
+//            } else {
+//                return new RequestResult<>(null, null);
+//            }
+//
+//        } catch (SQLException e) {
+//            return new RequestResult<>(null, 
+//                    e.getMessage());
+//        }
+//    }
 
-    public RequestResult<Announcement> getLastAnnouncement() {
-        try (Connection connection = ConnectionManager.getConnection()) {
-            PreparedStatement preparedStatement = connection.prepareStatement(
-                "SELECT * FROM Announcement ORDER BY announcement_ID DESC LIMIT 1"
-            );
-            ResultSet resultSet = preparedStatement.executeQuery();
-
-            
-            if (resultSet.next()) {
-                int announcementID = resultSet.getInt("announcement_ID");
-                String header = resultSet.getString("header");
-                String content = resultSet.getString("content");
-                Date sentAt = resultSet.getDate("sent_at");
-                Announcement announcement = new Announcement(announcementID, header, content, sentAt);
-                return new RequestResult<>(announcement, null);
-            } else {
-                return new RequestResult<>(null, null);
-            }
-
-        } catch (SQLException e) {
-            return new RequestResult<>(null, 
-                    e.getMessage());
-        }
-    }
-
-     public RequestResult<List<Announcement>> getAllSubmitedAnnouncements() {
+    public RequestResult<List<Announcement>> getAllAnnouncements() {
         List<Announcement> announcements = new ArrayList<>();
 
         try (Connection connection = ConnectionManager.getConnection()) {
@@ -52,9 +52,10 @@ public class AnnouncementDao {
                 int announcementID = resultSet.getInt("announcement_ID");
                 String header = resultSet.getString("header");
                 String content = resultSet.getString("content");
-                Date sentAt = resultSet.getDate("sent_at");
+                LocalDateTime sentAt = resultSet.getDate("sent_at");
 
-                Announcement announcement = new Announcement(announcementID, header, content, sentAt);
+                Announcement announcement = new Announcement(announcementID,
+                        header, content, sentAt);
                 announcements.add(announcement);
             }
         } catch (SQLException e) {
@@ -87,7 +88,8 @@ public class AnnouncementDao {
         return new RequestResult<>(isSuccess, null);
     }
 
-    public RequestResult<List<Announcement>> getAllAnnouncements(int userID) {
+    // All the announcements but relative to the normal user.
+    public RequestResult<List<AnnouncementInfo>> getAllAnnouncements(int userID) {
         // TODO Auto-generated method stub
         throw new UnsupportedOperationException("Unimplemented method 'getAllAnnouncements'");
     }
@@ -96,5 +98,4 @@ public class AnnouncementDao {
         // TODO Auto-generated method stub
         throw new UnsupportedOperationException("Unimplemented method 'getUnreadAnnouncements'");
     }
-    
 }

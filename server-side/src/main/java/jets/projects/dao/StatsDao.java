@@ -11,6 +11,7 @@ import java.util.Map;
 import jets.projects.classes.RequestResult;
 
 import jets.projects.db_connections.ConnectionManager;
+import jets.projects.entities.Country;
 
 public class StatsDao {
 
@@ -82,7 +83,7 @@ public class StatsDao {
         return new RequestResult<>(stats, null);
     }
 
-     public RequestResult<Map<String, Integer>> getTopCountries() {
+     public RequestResult<Map<Country, Integer>> getTopCountries() {
         Map<String, Integer> topCountries = new HashMap<>();
 
         try (Connection connection = ConnectionManager.getConnection()) {
@@ -110,34 +111,32 @@ public class StatsDao {
         return new RequestResult<>(topCountries, null);
     }
 
-    public RequestResult<Map<String, Integer>> getAllCountries() {
-        Map<String, Integer> countries = new HashMap<>();
+//    public RequestResult<Map<String, Integer>> getAllCountries() {
+//        Map<String, Integer> countries = new HashMap<>();
+//
+//        try (Connection connection = ConnectionManager.getConnection()) {
+//            String query = "SELECT `country`, COUNT(*) AS user_count " +
+//                           "FROM `User` " +
+//                           "GROUP BY `country` " +
+//                           "ORDER BY `country` ASC";
+//            PreparedStatement preparedStatement = connection.prepareStatement(query);
+//
+//            ResultSet resultSet = preparedStatement.executeQuery();
+//
+//            while (resultSet.next()) {
+//                String country = resultSet.getString("country");
+//                int userCount = resultSet.getInt("user_count");
+//
+//                countries.put(country, userCount);
+//            }
+//        } catch (SQLException e) {
+//            return new RequestResult<>(null,
+//                    e.getMessage());
+//        }
+//        return new RequestResult<>(countries, null);
+//    }
 
-        try (Connection connection = ConnectionManager.getConnection()) {
-            String query = "SELECT `country`, COUNT(*) AS user_count " +
-                           "FROM `User` " +
-                           "GROUP BY `country` " +
-                           "ORDER BY `country` ASC";
-            PreparedStatement preparedStatement = connection.prepareStatement(query);
-
-            ResultSet resultSet = preparedStatement.executeQuery();
-
-            while (resultSet.next()) {
-                String country = resultSet.getString("country");
-                int userCount = resultSet.getInt("user_count");
-
-                countries.put(country, userCount);
-            }
-
-        } catch (SQLException e) {
-            return new RequestResult<>(null,
-                    e.getMessage());
-        }
-
-        return new RequestResult<>(countries, null);
-    }
-
-    public RequestResult<Integer> getCountryUsers(String countryName) {
+    public RequestResult<Integer> getCountryUsers(Country country) {
         Integer userCount = 0;
 
         try (Connection connection = ConnectionManager.getConnection()) {
@@ -147,7 +146,7 @@ public class StatsDao {
             PreparedStatement preparedStatement = connection.prepareStatement(query);
 
         
-            preparedStatement.setString(1, countryName);
+            preparedStatement.setString(1, country.toString());
 
             ResultSet resultSet = preparedStatement.executeQuery();
 
