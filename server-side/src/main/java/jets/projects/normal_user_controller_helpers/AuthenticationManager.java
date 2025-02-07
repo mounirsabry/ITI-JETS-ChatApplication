@@ -1,45 +1,38 @@
 package jets.projects.normal_user_controller_helpers;
 
-import java.util.Map;
-
 import jets.projects.api.ClientAPI;
 import jets.projects.classes.ExceptionMessages;
 import jets.projects.classes.RequestResult;
-import jets.projects.dao.ContactDao;
-import jets.projects.dao.NotificationDao;
 import jets.projects.dao.TokenValidatorDao;
 import jets.projects.dao.UsersDao;
 import jets.projects.entities.NormalUser;
-import jets.projects.online_listeners.NotificatonCallback;
+import jets.projects.online_listeners.NotificationCallback;
+import jets.projects.online_listeners.OnlineTracker;
 import jets.projects.session.ClientSessionData;
 import jets.projects.session.ClientToken;
-import jets.projects.shared_ds.OnlineNormalUserInfo;
-import jets.projects.shared_ds.OnlineNormalUserTable;
 
 public class AuthenticationManager {
-
     UsersDao usersDao = new UsersDao();
-    ContactDao contactsDao = new ContactDao();
-    NotificationDao notificationDao = new NotificationDao();
-    
     TokenValidatorDao tokenValidator = new TokenValidatorDao();
-    NotificatonCallback notificatonCallback;
-    Map<Integer, OnlineNormalUserInfo> onlineUsers;
 
     public AuthenticationManager() {
-        this.notificatonCallback = new NotificatonCallback(notificationDao, contactsDao);
-        onlineUsers = OnlineNormalUserTable.getOnlineUsersTable();
     }
 
     public RequestResult<ClientSessionData> login(String phoneNumber,
             String password, ClientAPI impl) {
+        if (OnlineTracker.isOnline(false)) {
+            return new RequestResult<>(null,
+                    ExceptionMessages.ALREADY_LOGGED_IN);
+        }
+        
         var result = usersDao.clientLogin(phoneNumber, password);
         if (result.getErrorMessage() != null) {
-            return new RequestResult<>(null, result.getErrorMessage());
+            return result;
         }
 
-        notificatonCallback.userWentOnline(
-                result.getResponseData().getUserID());   //callback for contacts
+        int userID = result.getResponseData().getUserID();
+        OnlineTracker.track(userID, impl);
+        NotificationCallback.userWentOnline(userID);
         return result;
     }
 
@@ -47,39 +40,50 @@ public class AuthenticationManager {
             String phoneNumber,
             String oldPassword, String newPassword,
             ClientAPI impl) {
+        if (OnlineTracker.isOnline(false)) {
+            return new RequestResult<>(null,
+                    ExceptionMessages.ALREADY_LOGGED_IN);
+        }
 
         var result = usersDao.adminAccountCreatedFirstLogin(phoneNumber,
                 oldPassword, newPassword);
         if (result.getErrorMessage() != null) {
-            return new RequestResult<>(null, result.getErrorMessage());
+            return result;
         }
 
-        notificatonCallback.userWentOnline(
-                result.getResponseData().getUserID());   //callback for contacts
+        int userID = result.getResponseData().getUserID();
+        OnlineTracker.track(userID, impl);
+        NotificationCallback.userWentOnline(userID);
         return result;
     }
 
     public RequestResult<Boolean> registerNormalUser(NormalUser user) {
         var result = usersDao.registerNormalUser(user);
-        if (result.getErrorMessage() != null) {
-            return new RequestResult(null, result.getErrorMessage());
-        }
-        return new RequestResult<>(true, null);
+        return result;
     }
 
     public RequestResult<Boolean> logout(ClientToken token) {
-        boolean validToken = tokenValidator.checkClientToken(token).getResponseData();
-        if (!validToken) {
-            return new RequestResult<>(false, ExceptionMessages.INVALID_TOKEN);
+        var validationResult = tokenValidator.checkClientToken(token);
+        if (validationResult.getErrorMessage() != null) {
+            return validationResult;
         }
-        if (!onlineUsers.containsKey(token.getUserID())) {
-            return new RequestResult<>(false, ExceptionMessages.TIMEOUT_USER_EXCEPTION_MESSAGE);
+        boolean isTokenValid = validationResult.getResponseData();
+        if (!isTokenValid) {
+            return new RequestResult<>(false,
+                    ExceptionMessages.INVALID_TOKEN);
         }
-        var result = usersDao.clientLogout(token.getUserID()); //update database
-        notificatonCallback.userWentOffline(token.getUserID());//callback for contacts
+        
+        // The user is already logged out or timeout.
+        if (!OnlineTracker.isOnline(true)) {
+            return new RequestResult<>(true, null);
+        }
+        
+        var result = usersDao.clientLogout(token.getUserID());
         if (result.getErrorMessage() != null) {
-            return new RequestResult(null, result.getErrorMessage());
+            return result;
         }
-        return new RequestResult<>(true, null);
+        
+        NotificationCallback.userWentOffline(token.getUserID());
+        return result;
     }
 }

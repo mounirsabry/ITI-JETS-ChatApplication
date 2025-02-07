@@ -8,7 +8,6 @@ import java.util.List;
 import jets.projects.entities.Announcement;
 import jets.projects.session.ClientToken;
 import jets.projects.entity_info.ContactInfo;
-import jets.projects.entities.ContactInvitation;
 import jets.projects.entities.ContactMessage;
 import jets.projects.entities.Group;
 import jets.projects.entities.GroupMessage;
@@ -24,10 +23,6 @@ import jets.projects.entity_info.AnnouncementInfo;
 import jets.projects.entity_info.ContactInvitationInfo;
 import jets.projects.top_controllers.NormalUserController;
 
-/**
- * @author Mounir If the ResultSet is null, then either the database is down, or
- * an unhandled problem happens in the server.
- */
 public class NormalUserAPIImpl extends UnicastRemoteObject
         implements NormalUserAPI {
     private final NormalUserController controller;

@@ -16,7 +16,7 @@ import jets.projects.online_listeners.ContactInvitationCallback;
 import jets.projects.online_listeners.ContactMessageCallback;
 import jets.projects.online_listeners.GroupCallback;
 import jets.projects.online_listeners.GroupMessageCallback;
-import jets.projects.online_listeners.NotificatonCallback;
+import jets.projects.online_listeners.NotificationCallback;
 import jets.projects.session.ClientToken;
 import jets.projects.shared_ds.OnlineNormalUserInfo;
 import jets.projects.shared_ds.OnlineNormalUserTable;
@@ -31,7 +31,7 @@ public class ContactsManager {
     ContactMessageCallback contactMessageCallback;
     GroupMessageCallback groupMessageCallback;
     GroupCallback groupCallback;
-    NotificatonCallback notificatonCallback;
+    NotificationCallback notificatonCallback;
     Map<Integer, OnlineNormalUserInfo> onlineUsers;
 
     public ContactsManager() {
@@ -44,7 +44,7 @@ public class ContactsManager {
             return new RequestResult<>(null, ExceptionMessages.INVALID_TOKEN);
         }
         if (!onlineUsers.containsKey(token.getUserID())) {
-            return new RequestResult<>(null, ExceptionMessages.TIMEOUT_USER_EXCEPTION_MESSAGE);
+            return new RequestResult<>(null, ExceptionMessages.USER_TIMEOUT);
         }
         var result = contactsDao.getAllContacts(token.getUserID());
         if (result.getErrorMessage() != null) {
@@ -59,7 +59,7 @@ public class ContactsManager {
             return new RequestResult<>(null, ExceptionMessages.INVALID_TOKEN);
         }
         if (!onlineUsers.containsKey(token.getUserID())) {
-            return new RequestResult<>(null, ExceptionMessages.TIMEOUT_USER_EXCEPTION_MESSAGE);
+            return new RequestResult<>(null, ExceptionMessages.USER_TIMEOUT);
         }
         boolean isContactExists = usersDao.isNormalUserExists(contactID).getResponseData();
         if (!isContactExists) {
@@ -82,7 +82,7 @@ public class ContactsManager {
             return new RequestResult<>(null, ExceptionMessages.INVALID_TOKEN);
         }
         if (!onlineUsers.containsKey(token.getUserID())) {
-            return new RequestResult<>(null, ExceptionMessages.TIMEOUT_USER_EXCEPTION_MESSAGE);
+            return new RequestResult<>(null, ExceptionMessages.USER_TIMEOUT);
         }
         boolean isContactExists = usersDao.isNormalUserExists(contactID).getResponseData();
         if (!isContactExists) {

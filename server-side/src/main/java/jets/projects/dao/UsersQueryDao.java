@@ -3,7 +3,6 @@ package jets.projects.dao;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.util.List;
 import jets.projects.classes.RequestResult;
 import jets.projects.db_connections.ConnectionManager;
 import jets.projects.entities.Gender;

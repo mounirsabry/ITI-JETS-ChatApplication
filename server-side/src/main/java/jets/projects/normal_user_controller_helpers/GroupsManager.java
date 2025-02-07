@@ -21,7 +21,7 @@ import jets.projects.session.ClientToken;
 import jets.projects.shared_ds.OnlineNormalUserInfo;
 import jets.projects.shared_ds.OnlineNormalUserTable;
 
-public class GroupManager {
+public class GroupsManager {
 
     GroupDao groupDao = new GroupDao();
     ContactDao contactsDao = new ContactDao();
@@ -32,7 +32,7 @@ public class GroupManager {
     GroupCallback groupCallback;
     Map<Integer, OnlineNormalUserInfo> onlineUsers;
 
-    public GroupManager() {
+    public GroupsManager() {
         this.groupCallback = new GroupCallback(groupDao, groupMemberDao, usersDao);
         onlineUsers = OnlineNormalUserTable.getOnlineUsersTable();
     }
@@ -43,7 +43,7 @@ public class GroupManager {
             return new RequestResult<>(null, ExceptionMessages.INVALID_TOKEN);
         }
         if (!onlineUsers.containsKey(token.getUserID())) {
-            return new RequestResult<>(null, ExceptionMessages.TIMEOUT_USER_EXCEPTION_MESSAGE);
+            return new RequestResult<>(null, ExceptionMessages.USER_TIMEOUT);
         }
         var result = groupDao.getAllGroups(token.getUserID());
         if (result.getErrorMessage() != null) {
@@ -58,7 +58,7 @@ public class GroupManager {
             return new RequestResult<>(null, ExceptionMessages.INVALID_TOKEN);
         }
         if (!onlineUsers.containsKey(token.getUserID())) {
-            return new RequestResult<>(null, ExceptionMessages.TIMEOUT_USER_EXCEPTION_MESSAGE);
+            return new RequestResult<>(null, ExceptionMessages.USER_TIMEOUT);
         }
         boolean isGroupExists = groupDao.isGroupExists(groupID).getResponseData();
         if (!isGroupExists) {
@@ -77,7 +77,7 @@ public class GroupManager {
             return new RequestResult<>(false, ExceptionMessages.INVALID_TOKEN);
         }
         if (!onlineUsers.containsKey(token.getUserID())) {
-            return new RequestResult<>(false, ExceptionMessages.TIMEOUT_USER_EXCEPTION_MESSAGE);
+            return new RequestResult<>(false, ExceptionMessages.USER_TIMEOUT);
         }
         boolean isGroupExists = groupDao.isGroupExists(groupID).getResponseData();
         if (!isGroupExists) {
@@ -99,7 +99,7 @@ public class GroupManager {
             return new RequestResult<>(false, ExceptionMessages.INVALID_TOKEN);
         }
         if (!onlineUsers.containsKey(token.getUserID())) {
-            return new RequestResult<>(false, ExceptionMessages.TIMEOUT_USER_EXCEPTION_MESSAGE);
+            return new RequestResult<>(false, ExceptionMessages.USER_TIMEOUT);
         }
         var result = groupDao.createGroup(newGroup);
         if (result.getErrorMessage() != null) {
@@ -114,7 +114,7 @@ public class GroupManager {
             return new RequestResult<>(null, ExceptionMessages.INVALID_TOKEN);
         }
         if (!onlineUsers.containsKey(token.getUserID())) {
-            return new RequestResult<>(null, ExceptionMessages.TIMEOUT_USER_EXCEPTION_MESSAGE);
+            return new RequestResult<>(null, ExceptionMessages.USER_TIMEOUT);
         }
         boolean isGroupExists = groupDao.isGroupExists(groupID).getResponseData();
         if (!isGroupExists) {
@@ -137,7 +137,7 @@ public class GroupManager {
             return new RequestResult<>(false, ExceptionMessages.INVALID_TOKEN);
         }
         if (!onlineUsers.containsKey(token.getUserID())) {
-            return new RequestResult<>(false, ExceptionMessages.TIMEOUT_USER_EXCEPTION_MESSAGE);
+            return new RequestResult<>(false, ExceptionMessages.USER_TIMEOUT);
         }
         boolean isGroupExists = groupDao.isGroupExists(groupID).getResponseData();
         if (!isGroupExists) {
@@ -169,7 +169,7 @@ public class GroupManager {
             return new RequestResult<>(false, ExceptionMessages.INVALID_TOKEN);
         }
         if (!onlineUsers.containsKey(token.getUserID())) {
-            return new RequestResult<>(false, ExceptionMessages.TIMEOUT_USER_EXCEPTION_MESSAGE);
+            return new RequestResult<>(false, ExceptionMessages.USER_TIMEOUT);
         }
         boolean isGroupExists = groupDao.isGroupExists(groupID).getResponseData();
         if (!isGroupExists) {
@@ -201,7 +201,7 @@ public class GroupManager {
             return new RequestResult<>(false, ExceptionMessages.INVALID_TOKEN);
         }
         if (!onlineUsers.containsKey(token.getUserID())) {
-            return new RequestResult<>(false, ExceptionMessages.TIMEOUT_USER_EXCEPTION_MESSAGE);
+            return new RequestResult<>(false, ExceptionMessages.USER_TIMEOUT);
         }
         boolean isGroupExists = groupDao.isGroupExists(groupID).getResponseData();
         if (!isGroupExists) {
@@ -220,7 +220,7 @@ public class GroupManager {
             return new RequestResult<>(false, ExceptionMessages.INVALID_TOKEN);
         }
         if (!onlineUsers.containsKey(token.getUserID())) {
-            return new RequestResult<>(false, ExceptionMessages.TIMEOUT_USER_EXCEPTION_MESSAGE);
+            return new RequestResult<>(false, ExceptionMessages.USER_TIMEOUT);
         }
         boolean isGroupExists = groupDao.isGroupExists(groupID).getResponseData();
         if (!isGroupExists) {
@@ -247,7 +247,7 @@ public class GroupManager {
             return new RequestResult<>(false, ExceptionMessages.INVALID_TOKEN);
         }
         if (!onlineUsers.containsKey(token.getUserID())) {
-            return new RequestResult<>(false, ExceptionMessages.TIMEOUT_USER_EXCEPTION_MESSAGE);
+            return new RequestResult<>(false, ExceptionMessages.USER_TIMEOUT);
         }
         boolean isGroupExists = groupDao.isGroupExists(groupID).getResponseData();
         if (!isGroupExists) {
@@ -271,7 +271,7 @@ public class GroupManager {
             return new RequestResult<>(false, ExceptionMessages.INVALID_TOKEN);
         }
         if (!onlineUsers.containsKey(token.getUserID())) {
-            return new RequestResult<>(false, ExceptionMessages.TIMEOUT_USER_EXCEPTION_MESSAGE);
+            return new RequestResult<>(false, ExceptionMessages.USER_TIMEOUT);
         }
         boolean isGroupExists = groupDao.isGroupExists(groupID).getResponseData();
         if (!isGroupExists) {

@@ -24,13 +24,21 @@ import jets.projects.entities.NormalUser;
 public class AdminController {
     private static ServerManager serverManager;
     
-    private final TokenValidatorDao validatorDao = new TokenValidatorDao();
-    private final UsersQueryDao usersQueryDao = new UsersQueryDao();
-    private final UsersManipulationDao usersManipulationDao =
-            new UsersManipulationDao();
-    private final AdminDao adminDao = new AdminDao();
-    private final AnnouncementDao announcementDao = new AnnouncementDao();
-    private final StatsDao statsDao = new StatsDao();
+    private final TokenValidatorDao validatorDao;
+    private final UsersQueryDao usersQueryDao;
+    private final UsersManipulationDao usersManipulationDao;
+    private final AdminDao adminDao;
+    private final AnnouncementDao announcementDao;
+    private final StatsDao statsDao;
+    
+    public AdminController() {
+        validatorDao = new TokenValidatorDao();
+        usersQueryDao = new UsersQueryDao();
+        usersManipulationDao = new UsersManipulationDao();
+        adminDao = new AdminDao();
+        announcementDao = new AnnouncementDao();
+        statsDao = new StatsDao();
+    }
     
     public static void setServerManager(ServerManager manager) {
         serverManager = manager;

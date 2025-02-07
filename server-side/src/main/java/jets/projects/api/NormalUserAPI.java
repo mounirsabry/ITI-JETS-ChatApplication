@@ -8,7 +8,6 @@ import jets.projects.session.ClientSessionData;
 import jets.projects.session.ClientToken;
 import jets.projects.entities.Announcement;
 import jets.projects.entity_info.ContactInfo;
-import jets.projects.entities.ContactInvitation;
 import jets.projects.entities.ContactMessage;
 import jets.projects.entities.Group;
 import jets.projects.entity_info.GroupMemberInfo;
@@ -32,6 +31,8 @@ public interface NormalUserAPI extends Remote {
             NormalUser normalUser) throws RemoteException;
     
     public boolean logout(ClientToken token) throws RemoteException;
+    
+    public void sendPulse(ClientToken token) throws RemoteException;
     
     // Including the pic.
     public NormalUser getMyProfile(ClientToken token) throws RemoteException;

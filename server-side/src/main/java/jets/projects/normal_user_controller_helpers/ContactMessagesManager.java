@@ -36,7 +36,7 @@ public class ContactMessagesManager {
             return new RequestResult<>(null, ExceptionMessages.INVALID_TOKEN);
         }
         if (!onlineUsers.containsKey(token.getUserID())) {
-            return new RequestResult<>(null, ExceptionMessages.TIMEOUT_USER_EXCEPTION_MESSAGE);
+            return new RequestResult<>(null, ExceptionMessages.USER_TIMEOUT);
         }
         boolean isContactExists = usersDao.isNormalUserExists(otherID).getResponseData();
         if (!isContactExists) {
@@ -63,7 +63,7 @@ public class ContactMessagesManager {
             return new RequestResult<>(null, ExceptionMessages.INVALID_TOKEN);
         }
         if (!onlineUsers.containsKey(token.getUserID())) {
-            return new RequestResult<>(null, ExceptionMessages.TIMEOUT_USER_EXCEPTION_MESSAGE);
+            return new RequestResult<>(null, ExceptionMessages.USER_TIMEOUT);
         }
         boolean isContactExists = usersDao.isNormalUserExists(otherID).getResponseData();
         if (!isContactExists) {
@@ -86,7 +86,7 @@ public class ContactMessagesManager {
             return new RequestResult<>(false, ExceptionMessages.INVALID_TOKEN);
         }
         if (!onlineUsers.containsKey(token.getUserID())) {
-            return new RequestResult<>(false, ExceptionMessages.TIMEOUT_USER_EXCEPTION_MESSAGE);
+            return new RequestResult<>(false, ExceptionMessages.USER_TIMEOUT);
         }
         if (message.getContent() == null) {
             return new RequestResult<>(false, ExceptionMessages.INVALID_MESSAGE);
@@ -113,7 +113,7 @@ public class ContactMessagesManager {
             return new RequestResult<>(false, ExceptionMessages.INVALID_TOKEN);
         }
         if (!onlineUsers.containsKey(token.getUserID())) {
-            return new RequestResult<Boolean>(false, ExceptionMessages.TIMEOUT_USER_EXCEPTION_MESSAGE);
+            return new RequestResult<>(false, ExceptionMessages.USER_TIMEOUT);
         }
         if (file == null || file.isBlank()) {
             return new RequestResult<Boolean>(false, ExceptionMessages.INVALID_MESSAGE);
@@ -134,18 +134,16 @@ public class ContactMessagesManager {
         return new RequestResult<>(true, null);
     }
 
-    public RequestResult<Boolean> markContactMessagesAsRead(ClientToken token, List<Integer> messages) {
+    public RequestResult<Boolean> markContactMessagesAsRead(ClientToken token,
+            int contactID) {
         boolean validToken = tokenValidator.checkClientToken(token).getResponseData();
         if (!validToken) {
             return new RequestResult<>(false, ExceptionMessages.INVALID_TOKEN);
         }
         if (!onlineUsers.containsKey(token.getUserID())) {
-            return new RequestResult<>(false, ExceptionMessages.TIMEOUT_USER_EXCEPTION_MESSAGE);
+            return new RequestResult<>(false, ExceptionMessages.USER_TIMEOUT);
         }
-        if (messages == null) {
-            return new RequestResult<>(false, ExceptionMessages.INVALID_MESSAGE);
-        }
-        var result = contactMessagesDao.markContactMessagesAsRead(messages);   //update in database
+        var result = contactMessagesDao.markContactMessagesAsRead(contactID);   //update in database
         if (result.getErrorMessage() != null) {
             throw new RemoteException(result.getErrorMessage());
         }
