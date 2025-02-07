@@ -18,7 +18,7 @@ import jets.projects.session.ClientToken;
 import jets.projects.shared_ds.OnlineNormalUserInfo;
 import jets.projects.shared_ds.OnlineNormalUserTable;
 
-public class ContactInvitationManager {
+public class ContactInvitationsManager {
 
     ContactDao contactsDao = new ContactDao();
     ContactInvitationDao contactInvitationDao = new ContactInvitationDao();
@@ -28,7 +28,7 @@ public class ContactInvitationManager {
     ContactInvitationCallback contactInvitationCallback;
     Map<Integer, OnlineNormalUserInfo> onlineUsers;
 
-    public ContactInvitationManager() {
+    public ContactInvitationsManager() {
         this.contactInvitationCallback = new ContactInvitationCallback(contactInvitationDao);
         onlineUsers = OnlineNormalUserTable.getOnlineUsersTable();
     }
@@ -39,7 +39,7 @@ public class ContactInvitationManager {
             return new RequestResult<>(null, ExceptionMessages.INVALID_TOKEN);
         }
         if (!onlineUsers.containsKey(token.getUserID())) {
-            return new RequestResult<>(null, ExceptionMessages.TIMEOUT_USER_EXCEPTION_MESSAGE);
+            return new RequestResult<>(null, ExceptionMessages.USER_TIMEOUT);
         }
         var result = contactInvitationDao.getAllInvitations(token.getUserID());
         if (result.getErrorMessage() != null) {
@@ -48,13 +48,14 @@ public class ContactInvitationManager {
         return new RequestResult<>(result.getResponseData(), null);
     }
 
-    public RequestResult<Boolean> sendContactInvitation(ClientToken token, ContactInvitation invitation) {
+    public RequestResult<Boolean> sendContactInvitation(ClientToken token, 
+            String userPhoneNumber) {
         boolean validToken = tokenValidator.checkClientToken(token).getResponseData();
         if (!validToken) {
             return new RequestResult<>(false, ExceptionMessages.INVALID_TOKEN);
         }
         if (!onlineUsers.containsKey(token.getUserID())) {
-            return new RequestResult<>(false, ExceptionMessages.TIMEOUT_USER_EXCEPTION_MESSAGE);
+            return new RequestResult<>(false, ExceptionMessages.USER_TIMEOUT);
         }
         if (invitation == null) {
             return new RequestResult<>(false, ExceptionMessages.INVALID_INPUT_DATA);
@@ -84,7 +85,7 @@ public class ContactInvitationManager {
             return new RequestResult<>(false, ExceptionMessages.INVALID_INPUT_DATA);
         }
         if (!onlineUsers.containsKey(token.getUserID())) {
-            return new RequestResult<>(false, ExceptionMessages.TIMEOUT_USER_EXCEPTION_MESSAGE);
+            return new RequestResult<>(false, ExceptionMessages.USER_TIMEOUT);
         }
         boolean isUserExists = usersDao.isNormalUserExists(invitation.getReceiverID()).getResponseData();
         if (!isUserExists) {
@@ -108,7 +109,7 @@ public class ContactInvitationManager {
             return new RequestResult<>(false, ExceptionMessages.INVALID_TOKEN);
         }
         if (!onlineUsers.containsKey(token.getUserID())) {
-            return new RequestResult<>(false, ExceptionMessages.TIMEOUT_USER_EXCEPTION_MESSAGE);
+            return new RequestResult<>(false, ExceptionMessages.USER_TIMEOUT);
         }
         if (invitation == null) {
             return new RequestResult<>(false, ExceptionMessages.INVALID_INPUT_DATA);

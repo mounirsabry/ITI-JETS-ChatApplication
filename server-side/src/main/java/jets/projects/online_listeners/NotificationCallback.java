@@ -2,35 +2,55 @@ package jets.projects.online_listeners;
 
 import java.rmi.RemoteException;
 import java.util.List;
-import java.util.Map;
 import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
+import java.util.concurrent.TimeUnit;
 
 import jets.projects.api.ClientAPI;
+import jets.projects.classes.Delays;
+import jets.projects.classes.MyExecutorFactory;
 import jets.projects.dao.ContactDao;
-import jets.projects.dao.NotificationDao;
 import jets.projects.dao.UsersDao;
 import jets.projects.entity_info.ContactInfo;
 import jets.projects.entities.NormalUserStatus;
-import jets.projects.shared_ds.OnlineNormalUserInfo;
-import jets.projects.shared_ds.OnlineNormalUserTable;
 
-public class NotificatonCallback {
-    Map<Integer, OnlineNormalUserInfo> onlineUsers;
-    private final ExecutorService executor;
-    NotificationDao notificationDao ;
-    ContactDao contactDao;
-    UsersDao usersDao;
-
-    public NotificatonCallback(NotificationDao notificationDao , ContactDao contactDao) {
-        this.notificationDao = notificationDao;
-        this.contactDao = contactDao;
-        usersDao = new UsersDao();
-        onlineUsers = OnlineNormalUserTable.getOnlineUsersTable();
-        int onlineCount = (onlineUsers != null) ? onlineUsers.size() : 1;
-        executor = Executors.newFixedThreadPool(onlineCount);
+public class NotificationCallback {
+    private static ExecutorService executor;
+    
+    private static final ContactDao contactDao = new ContactDao();
+    private static final UsersDao usersDao = new UsersDao();
+    
+    private static boolean isInit = false;
+    public NotificationCallback() {
+        if (isInit) {
+            throw new UnsupportedOperationException("Object has already been init.");
+        }
+        isInit = true;
     }
-    public void userWentOnline(int userID) {
+    
+    public void start() {
+        if (executor != null) {
+            throw new IllegalStateException(
+                    "The executor is already running.");
+        }
+        executor = MyExecutorFactory.getExecutorService();
+    }
+    
+    public void shutDown() {
+        if (executor == null) {
+            throw new IllegalStateException(
+                    "The executor is already shutdown.");
+        }
+        try {
+            executor.awaitTermination(Delays.EXECUTOR_AWAIT_TERMINATION_TIMEOUT,
+                    TimeUnit.SECONDS);
+        } catch (InterruptedException ex) {
+            System.err.println("Thread interrupted while waiting to terminate the executor.");
+        } finally {
+            executor = null;
+        }
+    }
+    
+    public static void userWentOnline(int userID) {
         executor.submit(()->{
             ClientAPI client;
             List<ContactInfo> contacts = contactDao.getAllContacts(userID).getResponseData();
@@ -46,7 +66,8 @@ public class NotificatonCallback {
             }
         });
     }
-    public void userWentOffline(int userID) {
+    
+    public static void userWentOffline(int userID) {
         executor.submit(()->{
             ClientAPI client;
             List<ContactInfo> contacts = contactDao.getAllContacts(userID).getResponseData();
@@ -62,7 +83,8 @@ public class NotificatonCallback {
             }
         });      
     }
-    public void userStatusChanged(int userID, NormalUserStatus newStatus) {
+    
+    public static void userStatusChanged(int userID, NormalUserStatus newStatus) {
         executor.submit(()->{
             ClientAPI client;
             List<ContactInfo> contacts = contactDao.getAllContacts(userID).getResponseData();
@@ -78,5 +100,4 @@ public class NotificatonCallback {
             }
         });       
     }
-    
 }

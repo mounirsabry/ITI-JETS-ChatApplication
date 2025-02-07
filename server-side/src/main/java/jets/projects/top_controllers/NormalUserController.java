@@ -1,11 +1,12 @@
 package jets.projects.top_controllers;
 
-import jets.projects.normal_user_controller_helpers.AnnouncementManager;
+import java.util.Date;
+import jets.projects.normal_user_controller_helpers.AnnouncementsManager;
 import jets.projects.normal_user_controller_helpers.ContactsManager;
-import jets.projects.normal_user_controller_helpers.NotificationManager;
-import jets.projects.normal_user_controller_helpers.ContactInvitationManager;
-import jets.projects.normal_user_controller_helpers.GroupManager;
-import jets.projects.normal_user_controller_helpers.ProfileManager;
+import jets.projects.normal_user_controller_helpers.NotificationsManager;
+import jets.projects.normal_user_controller_helpers.ContactInvitationsManager;
+import jets.projects.normal_user_controller_helpers.GroupsManager;
+import jets.projects.normal_user_controller_helpers.ProfilesManager;
 import jets.projects.normal_user_controller_helpers.GroupMessagesManager;
 import jets.projects.normal_user_controller_helpers.AuthenticationManager;
 import jets.projects.normal_user_controller_helpers.ContactMessagesManager;
@@ -13,7 +14,6 @@ import java.util.List;
 import jets.projects.api.ClientAPI;
 import jets.projects.classes.RequestResult;
 import jets.projects.entities.Announcement;
-import jets.projects.entities.ContactInvitation;
 import jets.projects.entities.ContactMessage;
 import jets.projects.entities.Group;
 import jets.projects.entities.GroupMessage;
@@ -29,25 +29,25 @@ import jets.projects.session.ClientToken;
 
 public class NormalUserController {
     private final AuthenticationManager authenticationManager;
-    private final ProfileManager profileManager;
+    private final ProfilesManager profilesManager;
     private final ContactsManager contactsManager;
     private final ContactMessagesManager contactMessagesManager;
-    private final GroupManager groupManager;
+    private final GroupsManager groupsManager;
     private final GroupMessagesManager groupMessagesManager;
-    private final AnnouncementManager announcementManager;
-    private final ContactInvitationManager contactInvitationManager;
-    private final NotificationManager notificationManager;
+    private final AnnouncementsManager announcementsManager;
+    private final ContactInvitationsManager contactInvitationsManager;
+    private final NotificationsManager notificationsManager;
 
     public NormalUserController() {
         authenticationManager = new AuthenticationManager();
-        profileManager = new ProfileManager();
+        profilesManager = new ProfilesManager();
         contactsManager = new ContactsManager();
         contactMessagesManager = new ContactMessagesManager();
-        groupManager = new GroupManager();
+        groupsManager = new GroupsManager();
         groupMessagesManager = new GroupMessagesManager();
-        announcementManager = new AnnouncementManager();
-        contactInvitationManager = new ContactInvitationManager();
-        notificationManager = new NotificationManager();  
+        announcementsManager = new AnnouncementsManager();
+        contactInvitationsManager = new ContactInvitationsManager();
+        notificationsManager = new NotificationsManager();  
     }
     
     public RequestResult<ClientSessionData> login(String phoneNumber, String password,
@@ -72,26 +72,29 @@ public class NormalUserController {
     }
     
     public RequestResult<NormalUser> getMyProfile(ClientToken token) {
-        return profileManager.getMyProfile(token);
+        return profilesManager.getMyProfile(token);
     }
     
-    public RequestResult<Boolean> editProfile(ClientToken token, String username,
+    public RequestResult<Boolean> editProfile(ClientToken token,
+            String username,
+            Date birthDate,
             String bio, byte[] profilePic) {
-        return profileManager.editProfile(token, username, bio, profilePic);
+        return profilesManager.editProfile(token, username, birthDate, 
+                bio, profilePic);
     }
     
     public RequestResult<Boolean> changePassword(ClientToken token, String oldPassword,
             String newPassword) {
-        return profileManager.changePassword(token, oldPassword, newPassword);
+        return profilesManager.changePassword(token, oldPassword, newPassword);
     }
     
     public RequestResult<byte[]> getMyProfilePic(ClientToken token) {
-        return profileManager.getProfilePic(token);
+        return profilesManager.getProfilePic(token);
     }
     
     public RequestResult<Boolean> setOnlineStatus(ClientToken token,
             NormalUserStatus newStatus) {
-        return profileManager.setOnlineStatus(token, newStatus);
+        return profilesManager.setOnlineStatus(token, newStatus);
     }
     
     public RequestResult<List<ContactInfo>> getContacts(ClientToken token) {
@@ -126,56 +129,56 @@ public class NormalUserController {
     }
     
     public RequestResult<Boolean> markContactMessagesAsRead(ClientToken token,
-            List<Integer> messages) {
-        return contactMessagesManager.markContactMessagesAsRead(token, messages);
+            int contactID) {
+        return contactMessagesManager.markContactMessagesAsRead(token, contactID);
     }
     
     public RequestResult<List<Group>> getAllGroups(ClientToken token) {
-        return groupManager.getAllGroups(token);
+        return groupsManager.getAllGroups(token);
     }
     
     public RequestResult<Boolean> setGroupPic(ClientToken token, int groupID,
             byte[] pic) {
-        return groupManager.setGroupPic(token, groupID, pic);
+        return groupsManager.setGroupPic(token, groupID, pic);
     }
     
     public RequestResult<Boolean> createGroup(ClientToken token, Group newGroup) {
-        return groupManager.createGroup(token, newGroup);
+        return groupsManager.createGroup(token, newGroup);
     }
     
     public RequestResult<List<GroupMemberInfo>> getGroupMembers(ClientToken token,
             int groupID) {
-        return groupManager.getGroupMembers(token, groupID);
+        return groupsManager.getGroupMembers(token, groupID);
     }
     
     public RequestResult<Boolean> addMemberToGroup(ClientToken token, int groupID,
             int contactID) {
-        return groupManager.addMemberToGroup(token, groupID, contactID);
+        return groupsManager.addMemberToGroup(token, groupID, contactID);
     }
     
     public RequestResult<Boolean> removeMemberFromGroup(ClientToken token, int groupID,
             int contactID) {
-        return groupManager.removeMemberFromGroup(token, groupID, contactID);
+        return groupsManager.removeMemberFromGroup(token, groupID, contactID);
     }
     
     public RequestResult<Boolean> leaveGroupAsMember(ClientToken token,
             int groupID) {
-        return groupManager.leaveGroupAsMember(token, groupID);
+        return groupsManager.leaveGroupAsMember(token, groupID);
     }
     
     public RequestResult<Boolean> leaveGroupAsAdmin(ClientToken token, int groupID,
             int newAdminID) {
-        return groupManager.leaveGroupAsAdmin(token, groupID, newAdminID);
+        return groupsManager.leaveGroupAsAdmin(token, groupID, newAdminID);
     }
     
     public RequestResult<Boolean> assignGroupLeadership(ClientToken token,
             int groupID, int newAdminID) {
-        return groupManager.assignGroupLeadership(token, groupID, newAdminID);
+        return groupsManager.assignGroupLeadership(token, groupID, newAdminID);
     }
     
     public RequestResult<Boolean> deleteGroup(ClientToken token,
             int groupID) {
-        return groupManager.deleteGroup(token, groupID);
+        return groupsManager.deleteGroup(token, groupID);
     }
     
     public RequestResult<List<GroupMessage>> getGroupMessages(ClientToken token,
@@ -194,45 +197,46 @@ public class NormalUserController {
     }
     
     public RequestResult<List<AnnouncementInfo>> getAllAnnouncements(ClientToken token) {
-        return announcementManager.getAllAnnouncements(token);
+        return announcementsManager.getAllAnnouncements(token);
     }
     
     public RequestResult<List<Announcement>> getUnReadAnnouncements(
             ClientToken token) {
-        return announcementManager.getUnReadAnnouncements(token);
+        return announcementsManager.getUnReadAnnouncements(token);
     }
     
     public RequestResult<List<ContactInvitationInfo>> getContactInvitations(
             ClientToken token) {
-        return contactInvitationManager.getContactInvitations(token);
+        return contactInvitationsManager.getContactInvitations(token);
     }
     
-    public RequestResult<Boolean> sendContactInvitation(ClientToken token, ContactInvitation invitation) {
-        return contactInvitationManager.sendContactInvitation(token, invitation);
+    public RequestResult<Boolean> sendContactInvitation(ClientToken token,
+            String userPhoneNumber) {
+        return contactInvitationsManager.sendContactInvitation(token, userPhoneNumber);
     }
     
     public RequestResult<Boolean> acceptContactInvitation(ClientToken token, int invitationID) {
-        return contactInvitationManager.acceptContactInvitation(token, invitationID);
+        return contactInvitationsManager.acceptContactInvitation(token, invitationID);
     }
     
     public RequestResult<Boolean> rejectContactInvitation(ClientToken token, int invitationID) {
-        return contactInvitationManager.rejectContactInvitation(token, invitationID);
+        return contactInvitationsManager.rejectContactInvitation(token, invitationID);
     }
     
     public RequestResult<List<Notification>> getNotifications(ClientToken token) {
-        return notificationManager.getNotifications(token);
+        return notificationsManager.getNotifications(token);
     }
     
     public RequestResult<List<Notification>> getUnReadNotifications(ClientToken token) {
-        return notificationManager.getUnReadNotifications(token);
+        return notificationsManager.getUnReadNotifications(token);
     }
     
     public RequestResult<Boolean> markNotificationsAsRead(ClientToken token) {
-        return notificationManager.markNotificationsAsRead(token);
+        return notificationsManager.markNotificationsAsRead(token);
     }
     
     public RequestResult<Boolean> deleteNotification(ClientToken token,
             int notificationID) {
-        return notificationManager.deleteNotification(token, notificationID);
+        return notificationsManager.deleteNotification(token, notificationID);
     }
 }

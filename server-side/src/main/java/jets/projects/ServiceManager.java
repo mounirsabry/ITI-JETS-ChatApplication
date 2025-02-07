@@ -145,4 +145,12 @@ public class ServiceManager {
         isAdminServiceOnline = false;
         return true;
     }
+    
+    public static boolean getIsNormalUserServiceOnline() {
+        return isNormalUserServiceOnline;
+    }
+    
+    public static boolean getIsAdminServiceOnline() {
+        return isAdminServiceOnline;
+    }
 }

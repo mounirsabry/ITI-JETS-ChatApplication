@@ -97,12 +97,12 @@ CREATE TABLE ContactMessage
     message_file MEDIUMBLOB NULL DEFAULT NULL,
     CONSTRAINT `contact_message_sender_ID`
         FOREIGN KEY (sender_ID)
-        REFERENCES CONTACT(user_ID)
+        REFERENCES CONTACT(first_ID)
         ON UPDATE CASCADE
         ON DELETE CASCADE,
     CONSTRAINT `contact_message_receiver_ID`
         FOREIGN KEY (receiver_ID)
-        REFERENCES CONTACT(user_ID)
+        REFERENCES CONTACT(second_ID)
         ON UPDATE CASCADE
         ON DELETE CASCADE
 );

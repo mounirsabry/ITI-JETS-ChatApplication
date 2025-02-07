@@ -8,7 +8,6 @@ import jets.projects.session.ClientSessionData;
 import jets.projects.session.ClientToken;
 import jets.projects.entities.Announcement;
 import jets.projects.entity_info.ContactInfo;
-import jets.projects.entities.ContactInvitation;
 import jets.projects.entities.ContactMessage;
 import jets.projects.entities.Group;
 import jets.projects.entity_info.GroupMemberInfo;
@@ -33,10 +32,13 @@ public interface NormalUserAPI extends Remote {
     
     public boolean logout(ClientToken token) throws RemoteException;
     
+    public void sendPulse(ClientToken token) throws RemoteException;
+    
     // Including the pic.
     public NormalUser getMyProfile(ClientToken token) throws RemoteException;
     
-    public boolean editProfile(ClientToken token, String displayName, Date birthDate,
+    public boolean editProfile(ClientToken token, String displayName,
+            Date birthDate, 
             String bio, byte[] profilePic) throws RemoteException;
     
     public boolean changePassword(ClientToken token,
@@ -69,7 +71,7 @@ public interface NormalUserAPI extends Remote {
             ContactMessage message) throws RemoteException;
     
     public boolean markContactMessagesAsRead(ClientToken token, 
-            List<Integer> messagesIDs) throws RemoteException;
+            int contactID) throws RemoteException;
     
     // Pic will be included.
     public List<Group> getGroups(ClientToken token) throws RemoteException;
@@ -128,7 +130,7 @@ public interface NormalUserAPI extends Remote {
             ClientToken token) throws RemoteException;
     
     public boolean sendContactInvitation(ClientToken token,
-            ContactInvitation invitation) throws RemoteException;
+            String userPhoneNumber) throws RemoteException;
     
     public boolean acceptContactInvitation( ClientToken token,
             int invitationID) throws RemoteException;

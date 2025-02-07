@@ -4,32 +4,33 @@ import java.io.Serializable;
 import java.time.LocalDateTime;
 
 public class ContactInvitation implements Serializable {
-    private int invitation_ID;
+    private int invitationID;
     private int senderID;
     private int receiverID;
     private LocalDateTime sentAt;
     
     public ContactInvitation() {
+        invitationID = -1;
         senderID = -1;
         receiverID = -1;
         sentAt = null;
     }
 
-    public ContactInvitation(int senderID, int receiverID, LocalDateTime sentAt) {
+    public ContactInvitation(int invitationID, int senderID, int receiverID, LocalDateTime sentAt) {
+        this.invitationID = invitationID;
         this.senderID = senderID;
         this.receiverID = receiverID;
         this.sentAt = sentAt;
     }
+
+    public int getInvitationID() {
+        return invitationID;
+    }
+
     public int getSenderID() {
         return senderID;
     }
-    public int getInvitation_ID() {
-        return this.invitation_ID;
-    }
 
-    public void setInvitation_ID(int invitation_ID) {
-        this.invitation_ID = invitation_ID;
-    }
     public int getReceiverID() {
         return receiverID;
     }
@@ -37,6 +38,11 @@ public class ContactInvitation implements Serializable {
     public LocalDateTime getSentAt() {
         return sentAt;
     }
+
+    public void setInvitationID(int invitationID) {
+        this.invitationID = invitationID;
+    }
+
     public void setSenderID(int senderID) {
         this.senderID = senderID;
     }
@@ -48,15 +54,18 @@ public class ContactInvitation implements Serializable {
     public void setSentAt(LocalDateTime sentAt) {
         this.sentAt = sentAt;
     }
-    
+
     @Override
     public String toString() {
         StringBuilder builder = new StringBuilder();
         
         builder.append("ContactInvitation");
         builder.append('{');
+        
+        builder.append("invitationID=");
+        builder.append(invitationID);
 
-        builder.append("senderID=");
+        builder.append(", senderID=");
         builder.append(senderID);
         
         builder.append(", receiverID=");
