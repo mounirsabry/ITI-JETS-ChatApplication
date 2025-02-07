@@ -41,4 +41,9 @@ public class ExceptionMessages {
     
     public static final String NOT_GROUP_ADMIN
             = "You have no access on this action. Not the group admin.";
+
+    /*******************************************************************************/
+    //Hashim
+    public static final String NULL_Data
+            = "Null data sent form Server.";
 }
