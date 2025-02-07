@@ -242,7 +242,6 @@ public class Director{
         newstage.showAndWait(); // Show and wait for the dialog to close
     }
 
-    
     public void logOut() {
         if(adminToken == null || adminAPI == null){
             AdminAlerts.invokeErrorAlert("Logout Failed", "Logout failed");

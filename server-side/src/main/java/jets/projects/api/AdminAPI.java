@@ -7,7 +7,6 @@ import java.util.Map;
 import jets.projects.session.AdminSessionData;
 import jets.projects.session.AdminToken;
 import jets.projects.entities.Announcement;
-import jets.projects.entities.Country;
 import jets.projects.entities.NormalUser;
 
 public interface AdminAPI extends Remote {
@@ -15,9 +14,6 @@ public interface AdminAPI extends Remote {
             int userID, String password) throws RemoteException;
 
     public boolean logout(
-            AdminToken token) throws RemoteException;
-    
-    public boolean getNormalUserServiceStatus(
             AdminToken token) throws RemoteException;
 
     public boolean startNormalUserService(
@@ -29,14 +25,28 @@ public interface AdminAPI extends Remote {
     public boolean shutDown(
             AdminToken token) throws RemoteException;
     
-    public NormalUser getNormalUserByPhoneNumber(AdminToken token,
-            String phoneNumber) throws RemoteException;
+    // Get methods all the data about the users except
+    // for pic and password.
+    public List<NormalUser> getAllNormalUsers(
+            AdminToken token) throws RemoteException;
+    
+    public NormalUser getNormalUserByID(AdminToken token,
+            int userID) throws RemoteException;
+    
+    public List<NormalUser> getNormalUserByName(AdminToken token,
+            String displayName) throws RemoteException;
+    
+    public byte[] getNormlUserPic(AdminToken token,
+            int userID) throws RemoteException;
     
     public boolean addNormalUser(AdminToken token,
             NormalUser user) throws RemoteException;
     
     public boolean deleteNormalUser(AdminToken token,
             int userID) throws RemoteException;
+
+    public Announcement getLastAnnouncement(
+            AdminToken token) throws RemoteException;
 
     public List<Announcement> getAllAnnouncements(
             AdminToken token) throws RemoteException;
@@ -50,9 +60,12 @@ public interface AdminAPI extends Remote {
     public List<Integer> getMaleFemaleStats(
             AdminToken token) throws RemoteException;
 
-    public Map<Country,Integer> getTopCountries(
+    public Map<String,Integer> getTopCountries(
             AdminToken token) throws RemoteException;
-    
+
+    public Map<String,Integer> getAllCountries(
+            AdminToken token) throws RemoteException;
+
     public int getCountryUsers(AdminToken token,
-            Country country) throws RemoteException;
+            String countryName) throws RemoteException;
 }

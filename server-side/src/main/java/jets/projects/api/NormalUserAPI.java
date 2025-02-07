@@ -2,7 +2,6 @@ package jets.projects.api;
 
 import java.rmi.Remote;
 import java.rmi.RemoteException;
-import java.util.Date;
 import java.util.List;
 import jets.projects.session.ClientSessionData;
 import jets.projects.session.ClientToken;
@@ -36,7 +35,7 @@ public interface NormalUserAPI extends Remote {
     // Including the pic.
     public NormalUser getMyProfile(ClientToken token) throws RemoteException;
     
-    public boolean editProfile(ClientToken token, String displayName, Date birthDate,
+    public boolean editProfile(ClientToken token, String displayName,
             String bio, byte[] profilePic) throws RemoteException;
     
     public boolean changePassword(ClientToken token,
@@ -90,7 +89,7 @@ public interface NormalUserAPI extends Remote {
             int groupID, int contactID) throws RemoteException;
 
     public boolean removeMemberFromGroup(ClientToken token,
-            int groupID, int userID) throws RemoteException;
+            int groupID, int contactID) throws RemoteException;
 
     public boolean leaveGroupAsMember(ClientToken token,
             int groupID) throws RemoteException;
@@ -137,7 +136,7 @@ public interface NormalUserAPI extends Remote {
             int invitationID) throws RemoteException;
     
     public List<Notification> getNotifications(
-            ClientToken token) throws RemoteException;
+            ClientToken token)throws RemoteException;
     
     public List<Notification> getUnReadNotifications(
             ClientToken token) throws RemoteException;
