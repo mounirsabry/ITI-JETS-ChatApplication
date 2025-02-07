@@ -10,6 +10,7 @@ import jets.projects.session.ClientToken;
 
 import java.rmi.Remote;
 import java.rmi.RemoteException;
+import java.util.Date;
 import java.util.List;
 
 public interface NormalUserAPI extends Remote {
@@ -26,10 +27,13 @@ public interface NormalUserAPI extends Remote {
     
     public boolean logout(ClientToken token) throws RemoteException;
     
+    public void sendPulse(ClientToken token) throws RemoteException;
+    
     // Including the pic.
     public NormalUser getMyProfile(ClientToken token) throws RemoteException;
     
     public boolean editProfile(ClientToken token, String displayName,
+            Date birthDate, 
             String bio, byte[] profilePic) throws RemoteException;
     
     public boolean changePassword(ClientToken token,
@@ -62,7 +66,7 @@ public interface NormalUserAPI extends Remote {
             ContactMessage message) throws RemoteException;
     
     public boolean markContactMessagesAsRead(ClientToken token, 
-            List<Integer> messagesIDs) throws RemoteException;
+            int contactID) throws RemoteException;
     
     // Pic will be included.
     public List<Group> getGroups(ClientToken token) throws RemoteException;
@@ -83,7 +87,7 @@ public interface NormalUserAPI extends Remote {
             int groupID, int contactID) throws RemoteException;
 
     public boolean removeMemberFromGroup(ClientToken token,
-            int groupID, int contactID) throws RemoteException;
+            int groupID, int userID) throws RemoteException;
 
     public boolean leaveGroupAsMember(ClientToken token,
             int groupID) throws RemoteException;
@@ -121,7 +125,7 @@ public interface NormalUserAPI extends Remote {
             ClientToken token) throws RemoteException;
     
     public boolean sendContactInvitation(ClientToken token,
-            ContactInvitation invitation) throws RemoteException;
+            String userPhoneNumber) throws RemoteException;
     
     public boolean acceptContactInvitation( ClientToken token,
             int invitationID) throws RemoteException;
@@ -130,7 +134,7 @@ public interface NormalUserAPI extends Remote {
             int invitationID) throws RemoteException;
     
     public List<Notification> getNotifications(
-            ClientToken token)throws RemoteException;
+            ClientToken token) throws RemoteException;
     
     public List<Notification> getUnReadNotifications(
             ClientToken token) throws RemoteException;

@@ -1,5 +1,6 @@
 package jets.projects.Services.Request;
 
+import jets.projects.Classes.ExceptionMessages;
 import jets.projects.Controllers.ClientAlerts;
 import jets.projects.ServiceManager;
 import jets.projects.api.NormalUserAPI;
@@ -36,6 +37,9 @@ public class ClientAuthenticationService {
              serviceManager.setClientSessionData(mySession);
              return true;
          } catch (RemoteException e) {
+             if(e.getMessage().equals((ExceptionMessages.USER_MUST_CHANGE_PASSWORD_FOR_FIRST_LOGIN))){
+                 //
+             }
              ClientAlerts.invokeWarningAlert("Server Warning", e.getMessage());
              return false;
          }

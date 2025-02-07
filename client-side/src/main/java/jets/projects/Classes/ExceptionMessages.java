@@ -1,4 +1,4 @@
-package jets.projects.classes;
+package jets.projects.Classes;
 
 public class ExceptionMessages {
     public static final String USER_MUST_CHANGE_PASSWORD_FOR_FIRST_LOGIN
