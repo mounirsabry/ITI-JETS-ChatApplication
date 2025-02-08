@@ -47,7 +47,6 @@ public class InvitationCardController {
     void handleAcceptButton(ActionEvent event) {
 
     }
-
     @FXML
     void handleRejectButton(ActionEvent event) {
 

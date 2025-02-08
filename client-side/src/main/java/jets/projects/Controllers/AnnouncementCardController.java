@@ -24,7 +24,6 @@ public class AnnouncementCardController {
     private ListView<AnnouncementInfo> parentListView;
 
     public void setData(AnnouncementInfo announcement, ListView<AnnouncementInfo> listView) {
-        System.out.println("Setting data for: " + announcement.getAnnouncement().getHeader());
         title.setText(announcement.getAnnouncement().getHeader());
         content.setText(announcement.getAnnouncement().getContent());
         this.currentItem = announcement;

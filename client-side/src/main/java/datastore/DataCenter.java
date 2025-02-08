@@ -1,5 +1,6 @@
 package datastore;
 
+import javafx.beans.property.IntegerProperty;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import jets.projects.entities.*;
@@ -69,7 +70,7 @@ public class DataCenter {
     private final Map<Integer, ObservableList<ContactMessage>> contactMessagesMap =
             Collections.synchronizedMap(new HashMap<>());
 
-    private final Map<Integer, Integer> unreadContactMessages =
+    private final Map<Integer, IntegerProperty> unreadContactMessages =
             Collections.synchronizedMap(new HashMap<>());
 
     private final ObservableList<Group> groupList =
@@ -116,5 +117,6 @@ public class DataCenter {
         return notificationList;
     }
 
+    public Map<Integer, IntegerProperty> getUnreadContactMessages() {return unreadContactMessages;}
 
 }

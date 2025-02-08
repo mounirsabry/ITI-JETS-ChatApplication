@@ -6,6 +6,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.function.BiConsumer;
 
+import datastore.DataCenter;
+import javafx.beans.property.IntegerProperty;
 import javafx.fxml.FXMLLoader;
 import javafx.geometry.Pos;
 import javafx.scene.Node;
@@ -13,6 +15,7 @@ import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.control.Label;
 import javafx.scene.control.ListCell;
+import javafx.scene.control.ListView;
 import javafx.scene.control.TreeItem;
 import javafx.scene.effect.GaussianBlur;
 import javafx.scene.image.Image;
@@ -21,8 +24,10 @@ import javafx.scene.layout.GridPane;
 import javafx.scene.layout.HBox;
 import javafx.scene.text.Font;
 import javafx.scene.text.FontWeight;
+import javafx.scene.text.Text;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
+import jets.projects.entities.Group;
 import jets.projects.entity_info.ContactInfo;
 import jets.projects.entity_info.ContactMessagesInfo;
 
@@ -44,7 +49,6 @@ public class Utilities {
         };
     }
     public static <T, U> ListCell<T> createCustomCell(URL fxmlURL, BiConsumer<U, T> controllerSetup) {
-        System.out.println("custom cell is called");
         return new ListCell<T>(){
             @Override
             protected void updateItem(T item,boolean empty){
@@ -58,7 +62,7 @@ public class Utilities {
                         Node cellContent = loader.load();
                         U controller = loader.getController();
                         controllerSetup.accept(controller , item);
-                        setGraphic(cellContent); 
+                        setGraphic(cellContent);
                     } catch (IOException e) {
                         e.printStackTrace();
                         setText("Error loading item.");
@@ -104,14 +108,16 @@ public class Utilities {
         }
         return null; //node not found
     }
-    public static void populateTree(TreeItem<String> rootItem, List<ContactInfo> contactList, Map<Integer, ContactMessagesInfo> messagesInfoMap) {
+
+    // creates contacts list treeview based on category
+    public static void populateTree(TreeItem<String> rootItem, List<ContactInfo> contactList) {
         for (ContactInfo contact : contactList) {
-            ContactMessagesInfo currentMessagesInfo = messagesInfoMap.get(contact.getContact().getSecondID());
-            rootItem.getChildren().add(createContactItem(contact,currentMessagesInfo.getUnread()));
+            rootItem.getChildren().add(createContactItem(contact));
         }
     }
-    private static TreeItem<String> createContactItem(ContactInfo contact , int unread) {
-        // Load profile picture (default if not available)
+    private static TreeItem<String> createContactItem(ContactInfo contact){
+        Map<Integer , IntegerProperty> unreadMessagesMap = DataCenter.getInstance().getUnreadContactMessages();
+
         ImageView profileImage = new ImageView();
         if (contact.getPic() != null){
             profileImage.setImage(new Image(new ByteArrayInputStream(contact.getPic())));
@@ -125,6 +131,7 @@ public class Utilities {
         nameLabel.setFont(Font.font("Arial", FontWeight.BOLD, 14));
 
         // Unread messages icon
+        int unread = unreadMessagesMap.get(contact.getContact().getSecondID()).get();
         Label unreadLabel = new Label(String.valueOf(unread));
         unreadLabel.setStyle("-fx-text-fill: white; -fx-background-color: #80ced7;" +
                 "-fx-min-width: 20px; -fx-min-height: 20px;" +
@@ -135,6 +142,26 @@ public class Utilities {
 
         // Create TreeItem with HBox as its display node
         return new TreeItem<>(String.valueOf(contact.getContact().getSecondID()), contactBox);
+    }
+    // populate group List with all user's groups
+    public static void populateGroupsList(ListView<HBox> groupListView , List<Group> groupsList) {
+        for(Group group : groupsList){
+            HBox groupHbox = new HBox(10);
+            ImageView groupPic = new ImageView();
+            if (group.getPic() != null){
+                groupPic.setImage(new Image(new ByteArrayInputStream(group.getPic())));
+            } else {
+                groupPic.setImage(new Image(Utilities.class.getResource("/images/blank-group-picture.png").toExternalForm()));
+            }
+            groupPic.setFitWidth(25);
+            groupPic.setFitHeight(25);
+            Text groupname = new Text(group.getGroupName());
+            Text groupID = new Text(String.valueOf(group.getGroupID()));
+            groupID.setVisible(false);
+            groupHbox.getChildren().addAll(groupPic,groupname,groupID);
+            groupListView.getItems().add(groupHbox);
+        }
+
     }
 }
     

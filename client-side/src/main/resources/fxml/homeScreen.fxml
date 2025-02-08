@@ -84,7 +84,7 @@
       </HBox>
       <HBox alignment="CENTER" prefHeight="75.0" prefWidth="375.0" GridPane.columnIndex="1" GridPane.halignment="CENTER" GridPane.valignment="CENTER">
          <children>
-            <TextField fx:id="searchTextField" minHeight="-Infinity" minWidth="100.0" onAction="#handleSeacrchTextField" prefHeight="35.0" prefWidth="300.0" promptText="Search" styleClass="textField" stylesheets="@../styles/mainStyles.css">
+            <TextField fx:id="searchTextField" minHeight="-Infinity" minWidth="100.0" onAction="#handleSearchTextField" prefHeight="35.0" prefWidth="300.0" promptText="Search" styleClass="textField" stylesheets="@../styles/mainStyles.css">
                <HBox.margin>
                   <Insets />
                </HBox.margin>
@@ -171,7 +171,7 @@
                   <Insets top="30.0" />
                </VBox.margin>
             </Button>
-            <Button fx:id="announcementButton" mnemonicParsing="false" onAction="#handleAnnouncemnetButton" styleClass="sideBarButtons" stylesheets="@../styles/mainStyles.css">
+            <Button fx:id="announcementButton" mnemonicParsing="false" onAction="#handleAnnouncementButton" styleClass="sideBarButtons" stylesheets="@../styles/mainStyles.css">
                <VBox.margin>
                   <Insets top="30.0" />
                </VBox.margin>
