@@ -8,38 +8,31 @@ import javafx.scene.control.ListView;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
 import javafx.scene.text.Text;
+import jets.projects.entities.Announcement;
+import jets.projects.entity_info.AnnouncementInfo;
 
 public class AnnouncementCardController {
-
-    @FXML
-    private HBox announcementHbox;   //whole container
-    @FXML
-    private VBox announcementVbox;
 
     @FXML
     private Label title;
     @FXML
     private Text content;
-
     @FXML
     private Button deleteButton;
 
-    private HBox currentItem;
-    private ListView<?> parentListView;
+    private AnnouncementInfo currentItem;
+    private ListView<AnnouncementInfo> parentListView;
 
-    <T> void setData(HBox currentItem , ListView<T> listView){
-        VBox announcementContent = (VBox)currentItem.getChildren().get(0);
-        Label currentTitle= (Label)announcementContent.getChildren().get(0);
-        Text currentContent = (Text) announcementContent.getChildren().get(1);
-        title.setText(currentTitle.getText());
-        content.setText(currentContent.getText());
-        this.currentItem = currentItem;
-        parentListView = listView;
+    public void setData(AnnouncementInfo announcement, ListView<AnnouncementInfo> listView) {
+        System.out.println("Setting data for: " + announcement.getAnnouncement().getHeader());
+        title.setText(announcement.getAnnouncement().getHeader());
+        content.setText(announcement.getAnnouncement().getContent());
+        this.currentItem = announcement;
+        this.parentListView = listView;
     }
 
     @FXML
     void handleDeleteButton(ActionEvent event) {
         parentListView.getItems().remove(currentItem);
     }
-
 }

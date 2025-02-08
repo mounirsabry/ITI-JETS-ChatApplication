@@ -6,6 +6,7 @@ import javafx.scene.control.ListView;
 import javafx.scene.layout.HBox;
 import javafx.scene.shape.Circle;
 import javafx.scene.text.Text;
+import jets.projects.entities.Notification;
 
 public class NotificationCardController {
 
@@ -14,25 +15,18 @@ public class NotificationCardController {
     @FXML
     private HBox contentHbox;
     @FXML
-    private Circle userprofilepicture;
-    @FXML
     private Text content;
     @FXML
     private Button deleteButton;
 
-    private HBox currentItem;
-    private ListView<?> parentListView;
+    private Notification currentItem;
+    private ListView<Notification> parentListView;
 
-    <T>void setData(HBox currentItem , ListView<T> listView){    
-        // Extract the child components from the provided Hbox
-        Circle profilePicture = (Circle) currentItem.getChildren().get(0);
-        Text contentText = (Text) currentItem.getChildren().get(1);
-        userprofilepicture.setFill(profilePicture.getFill());
-        content.setText(contentText.getText());  
-        this.currentItem = currentItem; 
+    public  void setData(Notification notification , ListView<Notification> listView){
+        content.setText(notification.getContent());
+        this.currentItem = notification;
         parentListView = listView;    
     }
-
     @FXML
     void handleDeleteButton(ActionEvent event) {
         parentListView.getItems().remove(currentItem);
