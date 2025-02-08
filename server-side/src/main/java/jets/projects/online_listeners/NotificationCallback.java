@@ -22,7 +22,8 @@ public class NotificationCallback {
     private static boolean isInit = false;
     public NotificationCallback() {
         if (isInit) {
-            throw new UnsupportedOperationException("Object has already been init.");
+            throw new UnsupportedOperationException(
+                    "Object has already been init.");
         }
         isInit = true;
     }
@@ -41,10 +42,15 @@ public class NotificationCallback {
                     "The executor is already shutdown.");
         }
         try {
-            executor.awaitTermination(Delays.EXECUTOR_AWAIT_TERMINATION_TIMEOUT,
-                    TimeUnit.SECONDS);
+            executor.shutdown();
+            if (!executor.awaitTermination(
+                    Delays.EXECUTOR_AWAIT_TERMINATION_TIMEOUT,
+                    TimeUnit.SECONDS)) {
+                executor.shutdownNow();
+            }
         } catch (InterruptedException ex) {
-            System.err.println("Thread interrupted while waiting to terminate the executor.");
+            System.err.println("Thread interrupted while waiting "
+                    + "to terminate the executor.");
         } finally {
             executor = null;
         }

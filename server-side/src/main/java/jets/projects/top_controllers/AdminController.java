@@ -177,7 +177,7 @@ public class AdminController {
         }
         
         RequestResult<Boolean> isUsersExists = 
-                usersQueryDao.isNormalUserExists(userID);
+                usersQueryDao.isNormalUserExistsByID(userID);
         if (isUsersExists.getErrorMessage() != null) {
             return new RequestResult<>(null,
                     isUsersExists.getErrorMessage());

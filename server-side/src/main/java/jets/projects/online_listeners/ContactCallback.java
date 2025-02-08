@@ -1,14 +1,11 @@
 package jets.projects.online_listeners;
 
-import java.rmi.RemoteException;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.TimeUnit;
-
 import jets.projects.classes.Delays;
 import jets.projects.classes.MyExecutorFactory;
-import jets.projects.entities.ContactMessage;
 
-public class ContactMessageCallback {
+public class ContactCallback {
     private static ExecutorService executor;
     
     private static boolean isInit = false;
@@ -45,22 +42,6 @@ public class ContactMessageCallback {
                     + "to terminate the executor.");
         } finally {
             executor = null;
-        }
-    }
-    
-    public static void contactMessageReceived(ContactMessage message) {
-        int receiverID = message.getReceiverID();
-
-        //ClientAPI client = OnlineNormalUserTable.getOnlineUsersTable().get(receiverID).getImpl();
-        if (client != null) {
-            executor.submit(() -> {
-                try {
-                    client.contactMessageReceived(message); 
-                } catch (RemoteException e) {
-                    System.err.println("Failed to send contact message callback: " 
-                            + e.getMessage());
-                }
-            });
         }
     }
 }

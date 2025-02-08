@@ -32,7 +32,7 @@ public class GroupMessagesManager {
     public GroupMessagesManager() {
         this.groupMessageCallback = new GroupMessageCallback(groupMessagesDao, groupMemberDao);
         this.groupCallback = new GroupCallback(groupDao, groupMemberDao, usersDao);
-        onlineUsers = OnlineNormalUserTable.getOnlineUsersTable();
+        onlineUsers = OnlineNormalUserTable.getTable();
     }
 
     public RequestResult<List<GroupMessage>> getGroupMessages(ClientToken token, int groupID) {

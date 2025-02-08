@@ -32,7 +32,7 @@ public interface NormalUserAPI extends Remote {
     
     public boolean logout(ClientToken token) throws RemoteException;
     
-    public void sendPulse(ClientToken token) throws RemoteException;
+    public void registerPulse(ClientToken token) throws RemoteException;
     
     // Including the pic.
     public NormalUser getMyProfile(ClientToken token) throws RemoteException;

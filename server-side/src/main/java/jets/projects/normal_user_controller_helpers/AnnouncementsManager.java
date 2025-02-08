@@ -2,7 +2,6 @@ package jets.projects.normal_user_controller_helpers;
 
 import java.rmi.RemoteException;
 import java.util.List;
-import java.util.Map;
 
 import jets.projects.classes.ExceptionMessages;
 import jets.projects.classes.RequestResult;
@@ -10,23 +9,15 @@ import jets.projects.dao.AnnouncementDao;
 import jets.projects.dao.TokenValidatorDao;
 import jets.projects.entities.Announcement;
 import jets.projects.entity_info.AnnouncementInfo;
-import jets.projects.online_listeners.AnnouncementCallback;
 import jets.projects.session.ClientToken;
-import jets.projects.shared_ds.OnlineNormalUserInfo;
-import jets.projects.shared_ds.OnlineNormalUserTable;
 
 public class AnnouncementsManager {
-
-    AnnouncementDao announcementDao;
-    TokenValidatorDao tokenValidator;
-    AnnouncementCallback announcementCallback;
-    Map<Integer, OnlineNormalUserInfo> onlineUsers;
-
+    private final AnnouncementDao announcementDao;
+    private final TokenValidatorDao tokenValidator;
+    
     public AnnouncementsManager() {
         announcementDao = new AnnouncementDao();
-        announcementCallback = new AnnouncementCallback(announcementDao);
-
-        onlineUsers = OnlineNormalUserTable.getOnlineUsersTable();
+        tokenValidator = new TokenValidatorDao();
     }
 
     public RequestResult<List<AnnouncementInfo>> getAllAnnouncements(ClientToken token) {
