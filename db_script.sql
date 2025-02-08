@@ -26,7 +26,7 @@ CREATE TABLE NormalUser
     email VARCHAR(100) NOT NULL UNIQUE,
     pic MEDIUMBLOB NULL DEFAULT NULL,
     password VARCHAR(255) NOT NULL,
-    gender ENUM('MALE', 'FEMALE') NOT NULL,
+    gender ENUM('MALE', 'FEMALE'),
     country VARCHAR(50) NOT NULL,
     birth_date DATE NULL DEFAULT NULL,
     created_at DATETIME NOT NULL
@@ -97,12 +97,12 @@ CREATE TABLE ContactMessage
     message_file MEDIUMBLOB NULL DEFAULT NULL,
     CONSTRAINT `contact_message_sender_ID`
         FOREIGN KEY (sender_ID)
-        REFERENCES CONTACT(user_ID)
+        REFERENCES CONTACT(first_ID)
         ON UPDATE CASCADE
         ON DELETE CASCADE,
     CONSTRAINT `contact_message_receiver_ID`
         FOREIGN KEY (receiver_ID)
-        REFERENCES CONTACT(user_ID)
+        REFERENCES CONTACT(second_ID)
         ON UPDATE CASCADE
         ON DELETE CASCADE
 );

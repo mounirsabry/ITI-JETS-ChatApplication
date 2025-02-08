@@ -13,7 +13,7 @@ public class OnlineNormalUserTable {
         table = Collections.synchronizedMap(new HashMap<>());
     }
     
-    public static Map<Integer , OnlineNormalUserInfo> getOnlineUsersTable(){
+    public static Map<Integer , OnlineNormalUserInfo> getTable(){
 		return table;
 	}
 }

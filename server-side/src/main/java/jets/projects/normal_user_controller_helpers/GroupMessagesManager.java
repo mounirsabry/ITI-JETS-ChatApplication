@@ -32,7 +32,7 @@ public class GroupMessagesManager {
     public GroupMessagesManager() {
         this.groupMessageCallback = new GroupMessageCallback(groupMessagesDao, groupMemberDao);
         this.groupCallback = new GroupCallback(groupDao, groupMemberDao, usersDao);
-        onlineUsers = OnlineNormalUserTable.getOnlineUsersTable();
+        onlineUsers = OnlineNormalUserTable.getTable();
     }
 
     public RequestResult<List<GroupMessage>> getGroupMessages(ClientToken token, int groupID) {
@@ -41,7 +41,7 @@ public class GroupMessagesManager {
             return new RequestResult<>(null, ExceptionMessages.INVALID_TOKEN);
         }
         if (!onlineUsers.containsKey(token.getUserID())) {
-            return new RequestResult<>(null, ExceptionMessages.TIMEOUT_USER_EXCEPTION_MESSAGE);
+            return new RequestResult<>(null, ExceptionMessages.USER_TIMEOUT);
         }
         var result = groupMessagesDao.getGroupMessages(token.getUserID());
         if (result.getErrorMessage() != null) {
@@ -60,7 +60,7 @@ public class GroupMessagesManager {
             return new RequestResult<>(false, ExceptionMessages.INVALID_TOKEN);
         }
         if (!onlineUsers.containsKey(token.getUserID())) {
-            return new RequestResult<>(false, ExceptionMessages.TIMEOUT_USER_EXCEPTION_MESSAGE);
+            return new RequestResult<>(false, ExceptionMessages.USER_TIMEOUT);
         }
         if (message.getContent() == null) {
             return new RequestResult<>(false, ExceptionMessages.INVALID_MESSAGE);
@@ -87,7 +87,7 @@ public class GroupMessagesManager {
             return new RequestResult<>(false, ExceptionMessages.INVALID_TOKEN);
         }
         if (!onlineUsers.containsKey(token.getUserID())) {
-            return new RequestResult<>(false, ExceptionMessages.TIMEOUT_USER_EXCEPTION_MESSAGE);
+            return new RequestResult<>(false, ExceptionMessages.USER_TIMEOUT);
         }
         if (file == null || file.isBlank()) {
             return new RequestResult<>(false, ExceptionMessages.INVALID_MESSAGE);

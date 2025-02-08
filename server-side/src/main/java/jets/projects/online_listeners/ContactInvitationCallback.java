@@ -1,54 +1,91 @@
 package jets.projects.online_listeners;
 
 import java.rmi.RemoteException;
-import java.util.Map;
 import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
+import java.util.concurrent.TimeUnit;
 
 import jets.projects.api.ClientAPI;
+import jets.projects.classes.Delays;
+import jets.projects.classes.MyExecutorFactory;
 import jets.projects.dao.ContactInvitationDao;
 import jets.projects.entities.ContactInvitation;
-import jets.projects.shared_ds.OnlineNormalUserInfo;
-import jets.projects.shared_ds.OnlineNormalUserTable;
 
 public class ContactInvitationCallback {
-    Map<Integer, OnlineNormalUserInfo> onlineUsers;
-    private final ExecutorService executor;
-    ContactInvitationDao contactInvitationDao;
-
-    public ContactInvitationCallback(ContactInvitationDao contactInvitationDao) {
-        this.contactInvitationDao = contactInvitationDao;
-        onlineUsers = OnlineNormalUserTable.getOnlineUsersTable();
-        int onlineCount = (onlineUsers != null) ? onlineUsers.size() : 1;
-        executor = Executors.newFixedThreadPool(onlineCount);
+    private static ExecutorService executor;
+    private static final ContactInvitationDao contactInvitationDao
+            = new ContactInvitationDao();
+    
+    private static boolean isInit = false;
+    public ContactCallback() {
+        if (isInit) {
+            throw new UnsupportedOperationException(
+                    "Object has already been init.");
+        }
+        isInit = true;
     }
-    public void contactInvitationReceived(ContactInvitation invitation) {
-        int receiverID = invitation.getReceiverID();
+    
+    public void start() {
+        if (executor != null) {
+            throw new IllegalStateException(
+                    "The executor is already running.");
+        }
+        executor = MyExecutorFactory.getExecutorService();
+    }
+    
+    public void shutDown() {
+        if (executor == null) {
+            throw new IllegalStateException(
+                    "The executor is already shutdown.");
+        }
+        try {
+            executor.shutdown();
+            if (!executor.awaitTermination(
+                    Delays.EXECUTOR_AWAIT_TERMINATION_TIMEOUT,
+                    TimeUnit.SECONDS)) {
+                executor.shutdownNow();
+            }
+        } catch (InterruptedException ex) {
+            System.err.println("Thread interrupted while waiting "
+                    + "to terminate the executor.");
+        } finally {
+            executor = null;
+        }
+    }
+    
+    // Use the ContactInvitationDao to query the contact invitation.
+    // If the invitation does not exist, then maybe it was a two way
+    // contact invtation, in this case, do nothing.
+    public static void contactInvitationReceived(int senderID, int receiverID) {
+        contactInvitationDao
+        
         ClientAPI client = onlineUsers.get(receiverID).getImpl();
         executor.submit(()->{
-            if(client!=null){
+            if(client != null){
                 try {
                     client.contactInvitationReceived(invitation);
                 } catch (RemoteException e) {
-                    System.err.println("Failed to send invitation " + e.getMessage());
+                    System.err.println("Failed to send invitation " 
+                            + e.getMessage());
                 }
             }
         });
     }
-    public void contactInvitationAccepted(ContactInvitation invitation) {
+    
+    public static void contactInvitationAccepted(ContactInvitation invitation) {
         int receiverID = invitation.getReceiverID();
         ClientAPI client = onlineUsers.get(receiverID).getImpl();
         executor.submit(()->{
             if(client!=null){
                 try {
-                    client.contactInvitationAccepted(invitation);;
+                    client.contactInvitationAccepted(invitation);
                 } catch (RemoteException e) {
                     System.err.println("Failed to send invitation " + e.getMessage());
                 }
             }
         });        
     }
-    public void contactInvitationRejected(ContactInvitation invitation) {
+    
+    public static void contactInvitationRejected(ContactInvitation invitation) {
         int receiverID = invitation.getReceiverID();
         ClientAPI client = onlineUsers.get(receiverID).getImpl();
         executor.submit(()->{

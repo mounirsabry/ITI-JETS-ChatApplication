@@ -13,7 +13,7 @@
 <?import javafx.scene.layout.VBox?>
 <?import javafx.scene.shape.Circle?>
 
-<HBox alignment="CENTER" prefHeight="600.0" prefWidth="800.0" xmlns="http://javafx.com/javafx/9.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="jets.projects.Controllers.signUpController">
+<HBox alignment="CENTER" prefHeight="600.0" prefWidth="800.0" xmlns="http://javafx.com/javafx/9.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="jets.projects.Controllers.SignUpController">
    <children>
       <Pane prefHeight="600.0" prefWidth="200.0" style="-fx-background-color: linear-gradient(to top, #9ad1d4, #80ced7, #007ea7);" HBox.hgrow="ALWAYS" />
       <VBox alignment="CENTER" prefHeight="600.0" prefWidth="400.0" spacing="20.0" style="-fx-background-color: white; -fx-padding: 10;" stylesheets="@../styles/mainStyles.css" HBox.hgrow="ALWAYS">

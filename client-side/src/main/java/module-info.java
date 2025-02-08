@@ -3,6 +3,7 @@ module jets.projects {
     requires javafx.fxml;
     requires javafx.base;
     requires javafx.graphics;
+    requires java.rmi;
     exports jets.projects;
     exports jets.projects.Controllers;    
     opens jets.projects to javafx.fxml;

@@ -3,23 +3,26 @@ package jets.projects.online_listeners;
 import jets.projects.api.ClientAPI;
 
 public class OnlineTracker {
-    public void start() {
-        
+    private OnlineTracker() {
+        throw new UnsupportedOperationException("Do not create object.");
     }
     
-    public void shutDown() {
-        
-    }
-    
-    public boolean isExists(boolean valueToGiveBack) {
+    // If the user exists, return true, and refresh the pulse (extra safety).
+    public static boolean isOnline(boolean valueToGiveBack) {
         return valueToGiveBack;
     }
     
-    public boolean track(int userID, ClientAPI impl) {
+    // Throw exception if asked to track already tracked user.
+    public static boolean track(int userID, ClientAPI impl) {
         return true;
     }
     
-    public boolean untrack(int userID) {
+    public static boolean untrack(int userID) {
         return true;
+    }
+    
+    // Do nothing if the user was not found.
+    public static void registerPulse(int userID) {
+        
     }
 }

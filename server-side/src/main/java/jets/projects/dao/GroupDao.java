@@ -14,7 +14,6 @@ import jets.projects.entities.Group;
 import jets.projects.entities.NormalUser;
 
 public class GroupDao {
-
     public RequestResult<Boolean> isGroupExists(int groupID) {
         String query = "SELECT * FROM UsersGroup WHERE group_ID = ?";
         try (PreparedStatement preparedStatement = DBConnection.getConnection().prepareStatement(query)){;
@@ -25,6 +24,7 @@ public class GroupDao {
             return new RequestResult<>(false, e.getMessage());
         }
     }
+    
     public Group getGroupById(int groupID) {
         String query = "SELECT * FROM UsersGroup WHERE group_ID = ?";
     
@@ -47,6 +47,7 @@ public class GroupDao {
         }
         return null; 
     }    
+    
     public Group getGroupByName(String groupName) {
         String query = "SELECT * FROM UsersGroup WHERE group_name = ?";
     
@@ -69,6 +70,7 @@ public class GroupDao {
         }
         return null; 
     }    
+    
     public RequestResult<NormalUser> getGroupAdmin(int groupID) {
         String query = "SELECT u.* FROM NormalUser u " +
                        "JOIN UsersGroup g ON u.user_ID = g.group_admin_ID " +
@@ -95,6 +97,7 @@ public class GroupDao {
             return new RequestResult<>(null, e.getMessage());
         }
     }   
+    
     public RequestResult<String> getGroupName(int groupID) {
         String query = "SELECT group_name FROM UsersGroup WHERE group_ID = ?";
         try (PreparedStatement preparedStatement = DBConnection.getConnection().prepareStatement(query)){
@@ -119,6 +122,7 @@ public class GroupDao {
             return new RequestResult<>(false, e.getMessage());
         }
     }
+    
     public RequestResult<List<Group>> getAllGroups(int userID) {
         List<Group> groups = new ArrayList<>();
         String query = "SELECT g.group_ID, g.group_name, g.pic FROM UsersGroup g " +
@@ -138,6 +142,8 @@ public class GroupDao {
             return new RequestResult<>(null, e.getMessage());
         }
     }
+    
+    /*
     public RequestResult<Blob> getGroupPic(int groupID) {
         String query = "SELECT pic FROM UsersGroup WHERE group_ID = ?";
         try (PreparedStatement preparedStatement = DBConnection.getConnection().prepareStatement(query)){
@@ -162,6 +168,12 @@ public class GroupDao {
             return new RequestResult<>(false, e.getMessage());
         }
     }
+    */
+    
+    public RequestResult<Boolean> setGroupPic(int groupID, byte[] pic) {
+        
+    }
+
     public RequestResult<Boolean> createGroup(Group newGroup) {
         String query = "INSERT INTO UsersGroup (group_name, group_desc, group_admin_ID, pic) VALUES (?, ?, ?, ?)";
         try (PreparedStatement preparedStatement = DBConnection.getConnection().prepareStatement(query)){

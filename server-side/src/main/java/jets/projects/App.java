@@ -27,6 +27,9 @@ public class App {
             return;
         }
         
+        ExecutorsManager executorsManager = new ExecutorsManager();
+        executorsManager.startExecutors();
+        
         ServerManager myManager = new ServerManager();
         AdminController.setServerManager(myManager);
         
@@ -38,14 +41,17 @@ public class App {
             
             if (nextCommand == ServerCommand.START_NORMAL_USER_SERVICE) {
                 ServiceManager.startNormalUserService();
+                executorsManager.startExecutors();
             }
             
             if (nextCommand == ServerCommand.STOP_NORMAL_USER_SERVICE) {
                 ServiceManager.stopNormalUserService();
+                executorsManager.stopExecutors();
             }
             
             if (nextCommand == ServerCommand.SHUT_DOWN) {
                 ServiceManager.stopNormalUserService();
+                executorsManager.stopExecutors();
                 ServiceManager.stopAdminService();
                 break;
             }

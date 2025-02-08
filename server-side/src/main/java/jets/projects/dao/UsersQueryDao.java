@@ -3,7 +3,6 @@ package jets.projects.dao;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.util.List;
 import jets.projects.classes.RequestResult;
 import jets.projects.db_connections.ConnectionManager;
 import jets.projects.entities.Gender;
@@ -11,8 +10,7 @@ import jets.projects.entities.NormalUser;
 import jets.projects.entities.NormalUserStatus;
 
 public class UsersQueryDao {
-
-    public RequestResult<Boolean> isNormalUserExists(int userID) {
+    public RequestResult<Boolean> isNormalUserExistsByID(int userID) {
         String query = "SELECT * FROM NormalUser WHERE user_ID = ?";
         try (PreparedStatement stmt = ConnectionManager.getConnection().prepareStatement(query)) {
             stmt.setInt(1, userID);
@@ -27,11 +25,14 @@ public class UsersQueryDao {
         return new RequestResult<>(false, "Unexpected error occurred.");
     }
     
-    public RequestResult<List<NormalUser>> getAllNormalUsers() {
-        throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
+    // Returns the ID of the normal user if exists.
+    // Otherwise, returns null for the integer value.
+    public RequestResult<Integer> isNormalUserExistsByPhoneNumber(
+            String phoneNumber) {
+        
     }
 
-    public RequestResult<NormalUser> getNormalUserByID(int userID) {
+    public RequestResult<NormalUser> getNormalUserByPhoneNumber(String phoneNumber) {
         String query = "SELECT * FROM NormalUser WHERE user_ID = ?";
         try (PreparedStatement stmt = ConnectionManager.getConnection().prepareStatement(query)) {
             stmt.setInt(1, userID);
@@ -58,10 +59,6 @@ public class UsersQueryDao {
         } catch (SQLException e) {
             System.err.println("Database error: " + e.getMessage());
         }
-        return null;
-    }
-    
-    public RequestResult<List<NormalUser>> getNormalUserByName(String displayName) {
         return null;
     }
 }

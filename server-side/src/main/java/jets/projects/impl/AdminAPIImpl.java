@@ -12,6 +12,7 @@ import jets.projects.top_controllers.AdminController;
 import jets.projects.entities.Announcement;
 import jets.projects.api.AdminAPI;
 import jets.projects.classes.ExceptionMessages;
+import jets.projects.entities.Country;
 import jets.projects.entities.NormalUser;
 
 /** 
@@ -59,6 +60,20 @@ public class AdminAPIImpl extends UnicastRemoteObject
     }
     
     @Override
+    public boolean getNormalUserServiceStatus(
+            AdminToken token) throws RemoteException {
+        if (!validToken(token)) {
+            throw new RemoteException(ExceptionMessages.INVALID_TOKEN_FORMAT);
+        }
+        var result = controller.getNormalUserServiceStatus(token);
+        if (result.getErrorMessage() != null) {
+            throw new RemoteException(result.getErrorMessage());
+        }
+        return result.getResponseData();
+    }
+
+    
+    @Override
     public boolean startNormalUserService(AdminToken token) 
             throws RemoteException {
         if (!validToken(token)) {
@@ -96,63 +111,17 @@ public class AdminAPIImpl extends UnicastRemoteObject
         }
         return result.getResponseData();
     }
-    // Get methods all the data about the users except
-    // for pic and password.
-    @Override
-    public List<NormalUser> getAllNormalUsers(
-            AdminToken token) throws RemoteException {
-        if (!validToken(token)) {
-            throw new RemoteException(ExceptionMessages.INVALID_TOKEN_FORMAT);
-        }
-        var result = controller.getAllNormalUsers(token);
-        if (result.getErrorMessage() != null) {
-            throw new RemoteException(result.getErrorMessage());
-        }
-        return result.getResponseData();
-    }
     
     @Override
-    public NormalUser getNormalUserByID(AdminToken token,
-            int userID) throws RemoteException {
+    public NormalUser getNormalUserByPhoneNumber(AdminToken token,
+            String phoneNumber) throws RemoteException {
         if (!validToken(token)) {
             throw new RemoteException(ExceptionMessages.INVALID_TOKEN_FORMAT);
         }
-        if (userID <= 0) {
+        if (phoneNumber == null || phoneNumber.isBlank()) {
             throw new RemoteException(ExceptionMessages.INVALID_INPUT_DATA);
         }
-        var result = controller.getNormalUserByID(token, userID);
-        if (result.getErrorMessage() != null) {
-            throw new RemoteException(result.getErrorMessage());
-        }
-        return result.getResponseData();
-    }
-    
-    @Override
-    public List<NormalUser> getNormalUserByName(AdminToken token,
-            String displayName) throws RemoteException {
-        if (!validToken(token)) {
-            throw new RemoteException(ExceptionMessages.INVALID_TOKEN_FORMAT);
-        }
-        if (displayName == null || displayName.isBlank()) {
-            throw new RemoteException(ExceptionMessages.INVALID_INPUT_DATA);
-        }
-        var result = controller.getNormalUserByName(token, displayName);
-        if (result.getErrorMessage() != null) {
-            throw new RemoteException(result.getErrorMessage());
-        }
-        return result.getResponseData();
-    }
-    
-    @Override
-    public byte[] getNormlUserPic(AdminToken token,
-            int userID) throws RemoteException {
-        if (!validToken(token)) {
-            throw new RemoteException(ExceptionMessages.INVALID_TOKEN_FORMAT);
-        }
-        if (userID <= 0) {
-            throw new RemoteException(ExceptionMessages.INVALID_INPUT_DATA);
-        }
-        var result = controller.getNormalUserPic(token, userID);
+        var result = controller.getNormalUserByPhoneNumber(token, phoneNumber);
         if (result.getErrorMessage() != null) {
             throw new RemoteException(result.getErrorMessage());
         }
@@ -171,7 +140,8 @@ public class AdminAPIImpl extends UnicastRemoteObject
         ||  user.getEmail() == null || user.getEmail().isBlank()
         ||  user.getPassword() == null || user.getPassword().isBlank()
         ||  user.getCountry() == null
-        ||  user.getBirthDate().compareTo(Date.from(Instant.MIN)) <= 0
+        || (user.getBirthDate() != null 
+        &&  user.getBirthDate().compareTo(Date.from(Instant.MIN)) <= 0)
         ||  user.getIsAdminCreated() == false
         ||  user.getIsPasswordValid() == true) {
             throw new RemoteException(ExceptionMessages.INVALID_INPUT_DATA);
@@ -180,6 +150,7 @@ public class AdminAPIImpl extends UnicastRemoteObject
         if (user.getBio() == null) {
             user.setBio("");
         }
+        
         var result = controller.addNormalUser(token, user);
         if (result.getErrorMessage() != null) {
             throw new RemoteException(result.getErrorMessage());
@@ -196,20 +167,8 @@ public class AdminAPIImpl extends UnicastRemoteObject
         if (userID <= 0) {
             throw new RemoteException(ExceptionMessages.INVALID_INPUT_DATA);
         }
+        
         var result = controller.deleteNormalUser(token, userID);
-        if (result.getErrorMessage() != null) {
-            throw new RemoteException(result.getErrorMessage());
-        }
-        return result.getResponseData();
-    }
-    
-    @Override
-    public Announcement getLastAnnouncement(
-            AdminToken token) throws RemoteException {
-        if (!validToken(token)) {
-            throw new RemoteException(ExceptionMessages.INVALID_TOKEN_FORMAT);
-        }
-        var result = controller.getLastAnnouncement(token);
         if (result.getErrorMessage() != null) {
             throw new RemoteException(result.getErrorMessage());
         }
@@ -222,6 +181,7 @@ public class AdminAPIImpl extends UnicastRemoteObject
         if (!validToken(token)) {
             throw new RemoteException(ExceptionMessages.INVALID_TOKEN_FORMAT);
         }
+        
         var result = controller.getAllAnnouncements(token);
         if (result.getErrorMessage() != null) {
             throw new RemoteException(result.getErrorMessage());
@@ -254,6 +214,7 @@ public class AdminAPIImpl extends UnicastRemoteObject
         if (!validToken(token)) {
             throw new RemoteException(ExceptionMessages.INVALID_TOKEN_FORMAT);
         }
+        
         var result = controller.getOnlineOfflineStats(token);
         if (result.getErrorMessage() != null) {
             throw new RemoteException(result.getErrorMessage());
@@ -267,6 +228,7 @@ public class AdminAPIImpl extends UnicastRemoteObject
         if (!validToken(token)) {
             throw new RemoteException(ExceptionMessages.INVALID_TOKEN_FORMAT);
         }
+        
         var result = controller.getMaleFemaleStats(token);
         if (result.getErrorMessage() != null) {
             throw new RemoteException(result.getErrorMessage());
@@ -275,11 +237,12 @@ public class AdminAPIImpl extends UnicastRemoteObject
     }
     
     @Override
-    public Map<String,Integer> getTopCountries(
+    public Map<Country,Integer> getTopCountries(
             AdminToken token) throws RemoteException {
         if (!validToken(token)) {
             throw new RemoteException(ExceptionMessages.INVALID_TOKEN_FORMAT);
         }
+        
         var result = controller.getTopCountries(token);
         if (result.getErrorMessage() != null) {
             throw new RemoteException(result.getErrorMessage());
@@ -288,25 +251,13 @@ public class AdminAPIImpl extends UnicastRemoteObject
     }
     
     @Override
-    public Map<String,Integer> getAllCountries(
-            AdminToken token) throws RemoteException {
-        if (!validToken(token)) {
-            throw new RemoteException(ExceptionMessages.INVALID_TOKEN_FORMAT);
-        }
-        var result = controller.getAllCountries(token);
-        if (result.getErrorMessage() != null) {
-            throw new RemoteException(result.getErrorMessage());
-        }
-        return result.getResponseData();
-    }
-    
-    @Override
     public int getCountryUsers(AdminToken token,
-            String countryName) throws RemoteException {
+            Country country) throws RemoteException {
         if (!validToken(token)) {
             throw new RemoteException(ExceptionMessages.INVALID_TOKEN_FORMAT);
         }
-        var result = controller.getCountryUsers(token, countryName);
+        
+        var result = controller.getCountryUsers(token, country);
         if (result.getErrorMessage() != null) {
             throw new RemoteException(result.getErrorMessage());
         }

@@ -10,7 +10,7 @@
 <?import javafx.scene.layout.Region?>
 <?import javafx.scene.layout.VBox?>
 
-<HBox alignment="CENTER" prefHeight="600.0" prefWidth="800.0" xmlns="http://javafx.com/javafx/9.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="jets.projects.Controllers.signinController">
+<HBox alignment="CENTER" prefHeight="600.0" prefWidth="800.0" xmlns="http://javafx.com/javafx/9.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="jets.projects.Controllers.SigninController">
    <children>
       <Pane prefHeight="200.0" prefWidth="300.0" style="-fx-background-color: linear-gradient(to top, #9ad1d4, #80ced7, #007ea7);" HBox.hgrow="ALWAYS" />
       <VBox alignment="CENTER" fillWidth="true" prefHeight="600.0" prefWidth="500.0" spacing="20.0" style="-fx-padding: 20; -fx-background-color: white;" HBox.hgrow="ALWAYS">

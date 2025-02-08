@@ -1,0 +1,52 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.ToggleButton?>
+<?import javafx.scene.control.ToggleGroup?>
+<?import javafx.scene.layout.HBox?>
+<?import javafx.scene.layout.Pane?>
+<?import javafx.scene.layout.StackPane?>
+<?import javafx.scene.layout.VBox?>
+<?import javafx.scene.text.Font?>
+<?import javafx.scene.text.Text?>
+
+<VBox maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="600.0" prefWidth="580.0" styleClass="announcementBackground" stylesheets="@../Styles/sidebar.css" xmlns="http://javafx.com/javafx/9.0.1" xmlns:fx="http://javafx.com/fxml/1" 
+fx:controller="jets.projects.Controllers.AdminStatisticsController">
+   <children>
+      <Pane minHeight="60.0" prefHeight="61.0" prefWidth="580.0" VBox.vgrow="ALWAYS" />
+      <Text fill="#59769c" strokeType="OUTSIDE" strokeWidth="0.0" text="Statistics" textAlignment="CENTER" wrappingWidth="580.0">
+         <font>
+            <Font name="Arial" size="40.0" />
+         </font>
+      </Text>
+      <Pane maxHeight="50.0" minHeight="23.0" prefHeight="23.0" prefWidth="580.0" styleClass="sideBar" VBox.vgrow="ALWAYS" />
+      <HBox prefHeight="40.0" prefWidth="530.0" styleClass="buttonBar">
+         <children>
+            <ToggleButton mnemonicParsing="false" onAction="#userStatusAction" styleClass="uniform-button" text="User Status">
+               <toggleGroup>
+                  <ToggleGroup fx:id="h" />
+               </toggleGroup>
+               <HBox.margin>
+                  <Insets left="40.0" top="5.0" />
+               </HBox.margin>
+            </ToggleButton>
+            <ToggleButton mnemonicParsing="false" onAction="#genderStatusAction" styleClass="uniform-button" text="Gender" toggleGroup="$h">
+               <HBox.margin>
+                  <Insets top="5.0" />
+               </HBox.margin>
+            </ToggleButton>
+            <ToggleButton mnemonicParsing="false" onAction="#countryStatusAction" styleClass="uniform-button" text="Country" toggleGroup="$h">
+               <HBox.margin>
+                  <Insets top="5.0" />
+               </HBox.margin>
+            </ToggleButton>
+         </children>
+         <VBox.margin>
+            <Insets right="50.0" />
+         </VBox.margin>
+      </HBox>
+      <Pane minHeight="23.0" prefHeight="23.0" prefWidth="580.0" VBox.vgrow="NEVER" />
+      <StackPane fx:id="stackPane" prefHeight="394.0" prefWidth="580.0" />
+      <Pane layoutX="10.0" layoutY="186.0" minHeight="23.0" prefHeight="25.0" prefWidth="580.0" VBox.vgrow="ALWAYS" />
+   </children>
+</VBox>

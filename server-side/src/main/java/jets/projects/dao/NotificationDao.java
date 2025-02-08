@@ -42,6 +42,7 @@ public class NotificationDao {
             return new RequestResult<>(null, "Database error: " + e.getMessage());
         }
     }
+    
     public RequestResult<Boolean> markNotificationsAsRead(int userID) {
         try (Connection connection = ConnectionManager.getConnection()) {
             String query = "UPDATE notification SET is_read = 1 WHERE user_ID = ?";
@@ -59,6 +60,7 @@ public class NotificationDao {
             return new RequestResult<>(false, "Database error: " + e.getMessage());
         }
     }
+    
     public RequestResult<List<Notification>> getUnreadNotifications(int userID) {
         List<Notification> notifications = new ArrayList<>();
         try (Connection connection = ConnectionManager.getConnection()) {
@@ -87,25 +89,22 @@ public class NotificationDao {
        
     }
 
-    public RequestResult<Boolean> deleteNotification(int userID, int notificationID) {
-        try (Connection connection = ConnectionManager.getConnection()) {
-            String query = "DELETE FROM notification WHERE notification_ID = ? AND user_ID = ?";
-            PreparedStatement deleteStatement = connection.prepareStatement(query);
+    public RequestResult<Boolean> deleteNotification(int userID,
+            int notificationID) {
+        String query = "DELETE FROM notification WHERE "
+                    + "notification_ID = ? AND user_ID = ?";
+        
+        try (Connection connection = ConnectionManager.getConnection();
+            PreparedStatement deleteStatement 
+                    = connection.prepareStatement(query);) {
             deleteStatement.setInt(1, notificationID);
             deleteStatement.setInt(2, userID);
 
             int rowsAffected = deleteStatement.executeUpdate();
-
-            if (rowsAffected == 1) {
-                return new RequestResult<>(true, null);
-            } else {
-                return new RequestResult<>(false, "Notification not found or already deleted.");
-            }
+            return new RequestResult<>((rowsAffected == 1), null);
         } catch (SQLException e) {
-            return new RequestResult<>(false, "Database error: " + e.getMessage());
+            return new RequestResult<>(false, "Database error: " 
+                    + e.getMessage());
         }
-
-        
     }
-    
 }

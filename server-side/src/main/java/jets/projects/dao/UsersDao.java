@@ -82,40 +82,7 @@ public class UsersDao {
             return new RequestResult<>(false, "Error registering user: " + e.getMessage());
         }
     }
-
-    public RequestResult<Boolean> setOnlineStatus(int userID, NormalUserStatus newStatus) {
-        String query = "UPDATE NormalUser SET status = ? WHERE user_ID = ?";
-        try (PreparedStatement preparedStatement = ConnectionManager.getConnection().prepareStatement(query)) {
-            preparedStatement.setString(1, newStatus.toString());
-            preparedStatement.setInt(2, userID);
-            int rowsAffected = preparedStatement.executeUpdate();
-            if (rowsAffected == 1) {
-                return new RequestResult<>(true, null);
-            } else {
-                return new RequestResult<>(false, null);
-            }
-        } catch (SQLException e) {
-            return new RequestResult<>(false, "Error updating online status: " + e.getMessage());
-        }
-    }
-
-    public RequestResult<byte[]> getNormalUserProfilePic(int userID) {
-        String query = "SELECT pic FROM NormalUser WHERE user_ID = ?";
-        try (PreparedStatement preparedStatement = ConnectionManager.getConnection().prepareStatement(query)) {
-            preparedStatement.setInt(1, userID);
-            ResultSet resultSet = preparedStatement.executeQuery();
-            if (resultSet.next()) {
-                Blob picBlob = resultSet.getBlob("pic");
-                byte[] pic = picBlob.getBytes(0, (int) picBlob.length());
-                return new RequestResult<>(pic, null);
-            } else {
-                return new RequestResult<>(null, null);
-            }
-        } catch (SQLException e) {
-            return new RequestResult<>(null, null);
-        }
-    }
-
+    
     public RequestResult<NormalUser> getNormalUserProfile(int userID) {
         String query = "SELECT * FROM NormalUser WHERE user_ID = ?";
         try (PreparedStatement preparedStatement = ConnectionManager.getConnection().prepareStatement(query)) {
@@ -140,17 +107,36 @@ public class UsersDao {
         }
     }
 
-    public RequestResult<Boolean> saveProfileChanges(int userID, String username, String bio, Blob pic) {
+    public RequestResult<Boolean> editProfile(int userID, String username,
+            Date birthDate, String bio, byte[] pic) {
         String query = "UPDATE NormalUser SET display_name = ?, bio = ? ,pic = ? WHERE user_ID = ?";
         try (PreparedStatement updateStatement = ConnectionManager.getConnection().prepareStatement(query)) {
             updateStatement.setString(1, username);
             updateStatement.setString(2, bio);
+            birthDate;
             updateStatement.setBlob(3, pic);
             updateStatement.setInt(4, userID);
             int rowsAffected = updateStatement.executeUpdate();
             return new RequestResult<>(rowsAffected > 0, null);
         } catch (SQLException e) {
             return new RequestResult<>(false, "Error updating profile: " + e.getMessage());
+        }
+    }
+
+    public RequestResult<byte[]> getNormalUserProfilePic(int userID) {
+        String query = "SELECT pic FROM NormalUser WHERE user_ID = ?";
+        try (PreparedStatement preparedStatement = ConnectionManager.getConnection().prepareStatement(query)) {
+            preparedStatement.setInt(1, userID);
+            ResultSet resultSet = preparedStatement.executeQuery();
+            if (resultSet.next()) {
+                Blob picBlob = resultSet.getBlob("pic");
+                byte[] pic = picBlob.getBytes(0, (int) picBlob.length());
+                return new RequestResult<>(pic, null);
+            } else {
+                return new RequestResult<>(null, null);
+            }
+        } catch (SQLException e) {
+            return new RequestResult<>(null, null);
         }
     }
 
@@ -178,6 +164,22 @@ public class UsersDao {
             return new RequestResult<>(rowsAffected > 0, null);
         } catch (SQLException e) {
             return new RequestResult<>(false, "Error updating password: " + e.getMessage());
+        }
+    }
+    
+    public RequestResult<Boolean> setOnlineStatus(int userID, NormalUserStatus newStatus) {
+        String query = "UPDATE NormalUser SET status = ? WHERE user_ID = ?";
+        try (PreparedStatement preparedStatement = ConnectionManager.getConnection().prepareStatement(query)) {
+            preparedStatement.setString(1, newStatus.toString());
+            preparedStatement.setInt(2, userID);
+            int rowsAffected = preparedStatement.executeUpdate();
+            if (rowsAffected == 1) {
+                return new RequestResult<>(true, null);
+            } else {
+                return new RequestResult<>(false, null);
+            }
+        } catch (SQLException e) {
+            return new RequestResult<>(false, "Error updating online status: " + e.getMessage());
         }
     }
 }

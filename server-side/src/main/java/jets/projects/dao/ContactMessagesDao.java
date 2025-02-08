@@ -1,6 +1,5 @@
 package jets.projects.dao;
 
-import java.io.Serializable;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
@@ -9,11 +8,11 @@ import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 import jets.projects.classes.RequestResult;
-import jets.projects.dbconnections.DBConnection;
 import jets.projects.entities.ContactMessage;
 
 public class ContactMessagesDao{
-    public RequestResult<List<ContactMessage>> getContactMessages(int userID, int contactID) {
+    public RequestResult<List<ContactMessage>> getContactMessages(int userID,
+            int contactID) {
         String query = "SELECT * FROM ContactMessage " +
                         "WHERE (sender_ID = ? AND receiver_ID = ?) " +
                         "OR (sender_ID = ? AND receiver_ID = ?) " +
@@ -46,6 +45,11 @@ public class ContactMessagesDao{
             return new RequestResult<>(null, "Database error: " + e.getMessage());
         }
     }
+    
+    public RequestResult<byte[]> getContactMessageFile(int messageID) {
+        throw new UnsupportedOperationException("Not supported yet.");
+    }
+    
     public RequestResult<List<ContactMessage>> getUnReadContactMessages(int senderID, int receiverID) {
         String query = "SELECT * FROM ContactMessage " +
                         "WHERE ((sender_ID = ? AND receiver_ID = ?) " +
@@ -77,6 +81,7 @@ public class ContactMessagesDao{
             return new RequestResult<>(null, "Database error: " + e.getMessage());
         }
     }
+    
     public RequestResult<Boolean> sendContactMessage(ContactMessage message) {
         String query = "INSERT INTO ContactMessage (sender_ID, receiver_ID, sent_at, content, is_read , is_file ,message_file) " +
                         "VALUES (?, ?, ?, ?, ?, ?, ?)";
@@ -100,7 +105,8 @@ public class ContactMessagesDao{
             return new RequestResult<>(false, "Database error: " + e.getMessage());
         }
     }
-    public RequestResult<Boolean> markContactMessagesAsRead(List<ContactMessage> messages) {
+    
+    public RequestResult<Boolean> markContactMessagesAsRead(int contactID) {
         String query = "UPDATE ContactMessage SET is_read = 1 " +
                         "WHERE receiver_ID = ? AND sender_ID = ?";
         try (PreparedStatement stmt = DBConnection.getConnection().prepareStatement(query)) {
@@ -112,21 +118,9 @@ public class ContactMessagesDao{
             return new RequestResult<>(false, "Database error: " + e.getMessage());
         }
     }
-    public RequestResult<Boolean> sendContactFileMessage(int senderID, String file, int receiverID) {
-        String query = "INSERT INTO ContactMessage (sender_ID, receiver_ID, sent_at, content, is_read , is_file ,message_file) " +
-                        "VALUES (?, ?, NOW(), null, 0, 1, ?)";
-        try (PreparedStatement stmt = DBConnection.getConnection().prepareStatement(query)) {
-            stmt.setInt(1, senderID);
-            stmt.setInt(2, receiverID);
-            stmt.setString(3, file);
-
-            int rowsAffected = stmt.executeUpdate();
-            return new RequestResult<>(rowsAffected == 1, null);
-
-        } catch (SQLException e) {
-            return new RequestResult<>(false, "Database error: " + e.getMessage());
-        }
-    }
+    
+    // Not an available feature for now.
+    /*
     public RequestResult<Boolean> deleteContactMessage(ContactMessage message){
         String query = "DELETE FROM ContactMessage WHERE message_ID = ?";
         try (PreparedStatement statement = DBConnection.getConnection().prepareStatement(query)) {
@@ -134,7 +128,8 @@ public class ContactMessagesDao{
             int rowsAffected = statement.executeUpdate();
             return new RequestResult<>(rowsAffected > 0, null);
         } catch (SQLException e) {
-            return new RequestResult<Boolean>(false, e.getMessage());
+            return new RequestResult<>(false, e.getMessage());
         }
     } 
+    */
 }

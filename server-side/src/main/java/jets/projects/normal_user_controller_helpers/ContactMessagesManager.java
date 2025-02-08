@@ -1,154 +1,261 @@
 package jets.projects.normal_user_controller_helpers;
 
-import java.rmi.RemoteException;
 import java.util.List;
-import java.util.Map;
 
 import jets.projects.classes.ExceptionMessages;
 import jets.projects.classes.RequestResult;
 import jets.projects.dao.ContactDao;
 import jets.projects.dao.ContactMessagesDao;
 import jets.projects.dao.TokenValidatorDao;
-import jets.projects.dao.UsersDao;
+import jets.projects.dao.UsersQueryDao;
 import jets.projects.entities.ContactMessage;
 import jets.projects.online_listeners.ContactMessageCallback;
+import jets.projects.online_listeners.OnlineTracker;
 import jets.projects.session.ClientToken;
-import jets.projects.shared_ds.OnlineNormalUserInfo;
-import jets.projects.shared_ds.OnlineNormalUserTable;
 
 public class ContactMessagesManager {
 
-    ContactDao contactsDao = new ContactDao();
-    ContactMessagesDao contactMessagesDao = new ContactMessagesDao();
-    UsersDao usersDao = new UsersDao();
-    TokenValidatorDao tokenValidator = new TokenValidatorDao();
-    ContactMessageCallback contactMessageCallback;
-    Map<Integer, OnlineNormalUserInfo> onlineUsers;
-
+    private final UsersQueryDao usersQueryDao;
+    private final ContactDao contactsDao;
+    private final ContactMessagesDao contactMessagesDao;
+    private final TokenValidatorDao tokenValidator;
+    
     public ContactMessagesManager() {
-        this.contactMessageCallback = new ContactMessageCallback(contactMessagesDao);
-        onlineUsers = OnlineNormalUserTable.getOnlineUsersTable();
+        usersQueryDao = new UsersQueryDao();
+        contactsDao = new ContactDao();
+        contactMessagesDao = new ContactMessagesDao();
+        tokenValidator = new TokenValidatorDao();
     }
 
-    public RequestResult<List<ContactMessage>> getContactMessages(ClientToken token, int otherID) {
-        boolean validToken = tokenValidator.checkClientToken(token).getResponseData();
-        if (!validToken) {
-            return new RequestResult<>(null, ExceptionMessages.INVALID_TOKEN);
+    public RequestResult<List<ContactMessage>> getContactMessages(
+            ClientToken token, int otherID) {
+        var validationResult = tokenValidator.checkClientToken(token);
+        if (validationResult.getErrorMessage() != null) {
+            return new RequestResult<>(null,
+                    validationResult.getErrorMessage());
         }
-        if (!onlineUsers.containsKey(token.getUserID())) {
-            return new RequestResult<>(null, ExceptionMessages.TIMEOUT_USER_EXCEPTION_MESSAGE);
+        boolean isTokenValid = validationResult.getResponseData();
+        if (!isTokenValid) {
+            return new RequestResult<>(null,
+                    ExceptionMessages.INVALID_TOKEN);
         }
-        boolean isContactExists = usersDao.isNormalUserExists(otherID).getResponseData();
-        if (!isContactExists) {
-            return new RequestResult<>(null, ExceptionMessages.CONTACT_DOES_NOT_EXIST);
+        
+        if (!OnlineTracker.isOnline(true)) {
+            return new RequestResult<>(null,
+                    ExceptionMessages.USER_TIMEOUT);
         }
-        boolean isContacts = contactsDao.isContacts(token.getUserID(), otherID).getResponseData();
+        
+        var isUserExistsResult = usersQueryDao.isNormalUserExistsByID(
+                otherID);
+        if (isUserExistsResult.getErrorMessage() != null) {
+            return new RequestResult<>(null,
+                    isUserExistsResult.getErrorMessage());
+        }
+        boolean isUserExists = isUserExistsResult.getResponseData();
+        if (!isUserExists) {
+            return new RequestResult<>(null,
+                    ExceptionMessages.USER_DOES_NOT_EXIST);
+        }
+        
+        var isContactResult = contactsDao.isContacts(token.getUserID(),
+                otherID);
+        if (isContactResult.getErrorMessage() != null) {
+            return new RequestResult<>(null,
+                    isContactResult.getErrorMessage());
+        }
+        boolean isContacts = isContactResult.getResponseData();
         if (!isContacts) {
-            return new RequestResult<>(null, ExceptionMessages.NOT_CONTACTS);
+            return new RequestResult<>(null,
+                    ExceptionMessages.NOT_CONTACTS);
         }
-        var result = contactMessagesDao.getContactMessages(token.getUserID(), otherID);
-        if (result.getErrorMessage() != null) {
-            throw new RemoteException(result.getErrorMessage());
-        }
-        return new RequestResult<>(result.getResponseData(), null);
+        
+        return contactMessagesDao.getContactMessages(token.getUserID(), otherID);
     }
     
-    public RequestResult<byte[]> getContactMessageFile(ClientToken token, int contactID, int messageID) {
-        throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
-    }
-
-    public RequestResult<List<ContactMessage>> getUnReadContactMessages(ClientToken token, int otherID) {
-        boolean validToken = tokenValidator.checkClientToken(token).getResponseData();
-        if (!validToken) {
-            return new RequestResult<>(null, ExceptionMessages.INVALID_TOKEN);
+    public RequestResult<byte[]> getContactMessageFile(ClientToken token,
+            int contactID, int messageID) {
+        var validationResult = tokenValidator.checkClientToken(token);
+        if (validationResult.getErrorMessage() != null) {
+            return new RequestResult<>(null,
+                    validationResult.getErrorMessage());
         }
-        if (!onlineUsers.containsKey(token.getUserID())) {
-            return new RequestResult<>(null, ExceptionMessages.TIMEOUT_USER_EXCEPTION_MESSAGE);
+        boolean isTokenValid = validationResult.getResponseData();
+        if (!isTokenValid) {
+            return new RequestResult<>(null,
+                    ExceptionMessages.INVALID_TOKEN);
         }
-        boolean isContactExists = usersDao.isNormalUserExists(otherID).getResponseData();
-        if (!isContactExists) {
-            return new RequestResult<>(null, ExceptionMessages.CONTACT_DOES_NOT_EXIST);
+        
+        if (!OnlineTracker.isOnline(true)) {
+            return new RequestResult<>(null,
+                    ExceptionMessages.USER_TIMEOUT);
         }
-        boolean isContacts = contactsDao.isContacts(token.getUserID(), otherID).getResponseData();
+        
+        var isUserExistsResult = usersQueryDao.isNormalUserExistsByID(
+                contactID);
+        if (isUserExistsResult.getErrorMessage() != null) {
+            return new RequestResult<>(null,
+                    isUserExistsResult.getErrorMessage());
+        }
+        boolean isUserExists = isUserExistsResult.getResponseData();
+        if (!isUserExists) {
+            return new RequestResult<>(null,
+                    ExceptionMessages.USER_DOES_NOT_EXIST);
+        }
+        
+        var isContactResult = contactsDao.isContacts(token.getUserID(),
+                contactID);
+        if (isContactResult.getErrorMessage() != null) {
+            return new RequestResult<>(null,
+                    isContactResult.getErrorMessage());
+        }
+        boolean isContacts = isContactResult.getResponseData();
         if (!isContacts) {
-            return new RequestResult<>(null, ExceptionMessages.NOT_CONTACTS);
+            return new RequestResult<>(null,
+                    ExceptionMessages.NOT_CONTACTS);
         }
-        var result = contactMessagesDao.getUnReadContactMessages(otherID, token.getUserID());
-        if (result.getErrorMessage() != null) {
-            throw new RemoteException(result.getErrorMessage());
-        }
-        return new RequestResult<>(result.getResponseData(), null);
+        
+        return contactMessagesDao.getContactMessageFile(messageID);
     }
 
-    public RequestResult<Boolean> sendContactMessage(ClientToken token, ContactMessage message) {
-        boolean validToken = tokenValidator.checkClientToken(token).getResponseData();
-        if (!validToken) {
-            return new RequestResult<>(false, ExceptionMessages.INVALID_TOKEN);
+    public RequestResult<List<ContactMessage>> getUnReadContactMessages(
+            ClientToken token, int otherID) {
+        var validationResult = tokenValidator.checkClientToken(token);
+        if (validationResult.getErrorMessage() != null) {
+            return new RequestResult<>(null,
+                    validationResult.getErrorMessage());
         }
-        if (!onlineUsers.containsKey(token.getUserID())) {
-            return new RequestResult<>(false, ExceptionMessages.TIMEOUT_USER_EXCEPTION_MESSAGE);
+        boolean isTokenValid = validationResult.getResponseData();
+        if (!isTokenValid) {
+            return new RequestResult<>(null,
+                    ExceptionMessages.INVALID_TOKEN);
         }
-        if (message.getContent() == null) {
-            return new RequestResult<>(false, ExceptionMessages.INVALID_MESSAGE);
+        
+        if (!OnlineTracker.isOnline(true)) {
+            return new RequestResult<>(null,
+                    ExceptionMessages.USER_TIMEOUT);
         }
-        boolean isContactExists = usersDao.isNormalUserExists(message.getReceiverID()).getResponseData();
-        if (!isContactExists) {
-            return new RequestResult<>(false, ExceptionMessages.CONTACT_DOES_NOT_EXIST);
+        
+        var isUserExistsResult = usersQueryDao.isNormalUserExistsByID(
+                otherID);
+        if (isUserExistsResult.getErrorMessage() != null) {
+            return new RequestResult<>(null,
+                    isUserExistsResult.getErrorMessage());
         }
-        boolean isContacts = contactsDao.isContacts(token.getUserID(), message.getReceiverID()).getResponseData();
+        boolean isUserExists = isUserExistsResult.getResponseData();
+        if (!isUserExists) {
+            return new RequestResult<>(null,
+                    ExceptionMessages.USER_DOES_NOT_EXIST);
+        }
+        
+        var isContactResult = contactsDao.isContacts(token.getUserID(),
+                otherID);
+        if (isContactResult.getErrorMessage() != null) {
+            return new RequestResult<>(null,
+                    isContactResult.getErrorMessage());
+        }
+        boolean isContacts = isContactResult.getResponseData();
         if (!isContacts) {
-            return new RequestResult<>(false, ExceptionMessages.NOT_CONTACTS);
+            return new RequestResult<>(null,
+                    ExceptionMessages.NOT_CONTACTS);
         }
-        var result = contactMessagesDao.sendContactMessage(message);   //save in database
-        contactMessageCallback.contactMessageReceived(message);  //callback for receiver
-        if (result.getErrorMessage() != null) {
-            throw new RemoteException(result.getErrorMessage());
-        }
-        return new RequestResult<>(true, null);
+        
+        return contactMessagesDao.getUnReadContactMessages(otherID,
+                token.getUserID());
     }
 
-    public RequestResult<Boolean> sendContactFileMessage(ClientToken token, String file, int receiverID) {
-        boolean validToken = tokenValidator.checkClientToken(token).getResponseData();
-        if (!validToken) {
-            return new RequestResult<>(false, ExceptionMessages.INVALID_TOKEN);
+    public RequestResult<Boolean> sendContactMessage(ClientToken token,
+            ContactMessage message) {
+        var validationResult = tokenValidator.checkClientToken(token);
+        if (validationResult.getErrorMessage() != null) {
+            return new RequestResult<>(null,
+                    validationResult.getErrorMessage());
         }
-        if (!onlineUsers.containsKey(token.getUserID())) {
-            return new RequestResult<Boolean>(false, ExceptionMessages.TIMEOUT_USER_EXCEPTION_MESSAGE);
+        boolean isTokenValid = validationResult.getResponseData();
+        if (!isTokenValid) {
+            return new RequestResult<>(null,
+                    ExceptionMessages.INVALID_TOKEN);
         }
-        if (file == null || file.isBlank()) {
-            return new RequestResult<Boolean>(false, ExceptionMessages.INVALID_MESSAGE);
+        
+        if (!OnlineTracker.isOnline(true)) {
+            return new RequestResult<>(null,
+                    ExceptionMessages.USER_TIMEOUT);
         }
-        boolean isContactExists = usersDao.isNormalUserExists(receiverID).getResponseData();
-        if (!isContactExists) {
-            return new RequestResult<>(false, ExceptionMessages.CONTACT_DOES_NOT_EXIST);
+        
+        var isUserExistsResult = usersQueryDao.isNormalUserExistsByID(
+                message.getReceiverID());
+        if (isUserExistsResult.getErrorMessage() != null) {
+            return new RequestResult<>(null,
+                    isUserExistsResult.getErrorMessage());
         }
-        boolean isContacts = contactsDao.isContacts(token.getUserID(), receiverID).getResponseData();
+        boolean isUserExists = isUserExistsResult.getResponseData();
+        if (!isUserExists) {
+            return new RequestResult<>(null,
+                    ExceptionMessages.USER_DOES_NOT_EXIST);
+        }
+        
+        var isContactResult = contactsDao.isContacts(token.getUserID(),
+                message.getReceiverID());
+        if (isContactResult.getErrorMessage() != null) {
+            return new RequestResult<>(null,
+                    isContactResult.getErrorMessage());
+        }
+        boolean isContacts = isContactResult.getResponseData();
         if (!isContacts) {
-            return new RequestResult<>(false, ExceptionMessages.NOT_CONTACTS);
+            return new RequestResult<>(null,
+                    ExceptionMessages.NOT_CONTACTS);
         }
-        var result = contactMessagesDao.sendContactFileMessage(token.getUserID(), file, receiverID);   //save in database
-        contactMessageCallback.fileContactMessageReceived(token.getUserID(), receiverID, file); //callback for receiver
+        
+        var result = contactMessagesDao.sendContactMessage(message);
         if (result.getErrorMessage() != null) {
-            throw new RemoteException(result.getErrorMessage());
+            return result;
         }
-        return new RequestResult<>(true, null);
+        
+        ContactMessageCallback.contactMessageReceived(message);
+        return result;
     }
 
-    public RequestResult<Boolean> markContactMessagesAsRead(ClientToken token, List<Integer> messages) {
-        boolean validToken = tokenValidator.checkClientToken(token).getResponseData();
-        if (!validToken) {
-            return new RequestResult<>(false, ExceptionMessages.INVALID_TOKEN);
+    public RequestResult<Boolean> markContactMessagesAsRead(ClientToken token,
+            int contactID) {
+        var validationResult = tokenValidator.checkClientToken(token);
+        if (validationResult.getErrorMessage() != null) {
+            return new RequestResult<>(null,
+                    validationResult.getErrorMessage());
         }
-        if (!onlineUsers.containsKey(token.getUserID())) {
-            return new RequestResult<>(false, ExceptionMessages.TIMEOUT_USER_EXCEPTION_MESSAGE);
+        boolean isTokenValid = validationResult.getResponseData();
+        if (!isTokenValid) {
+            return new RequestResult<>(null,
+                    ExceptionMessages.INVALID_TOKEN);
         }
-        if (messages == null) {
-            return new RequestResult<>(false, ExceptionMessages.INVALID_MESSAGE);
+        
+        if (!OnlineTracker.isOnline(true)) {
+            return new RequestResult<>(null,
+                    ExceptionMessages.USER_TIMEOUT);
         }
-        var result = contactMessagesDao.markContactMessagesAsRead(messages);   //update in database
-        if (result.getErrorMessage() != null) {
-            throw new RemoteException(result.getErrorMessage());
+        
+        var isUserExistsResult = usersQueryDao.isNormalUserExistsByID(
+                contactID);
+        if (isUserExistsResult.getErrorMessage() != null) {
+            return new RequestResult<>(null,
+                    isUserExistsResult.getErrorMessage());
         }
-        return new RequestResult<>(true, null);
+        boolean isUserExists = isUserExistsResult.getResponseData();
+        if (!isUserExists) {
+            return new RequestResult<>(null,
+                    ExceptionMessages.USER_DOES_NOT_EXIST);
+        }
+        
+        var isContactResult = contactsDao.isContacts(token.getUserID(),
+                contactID);
+        if (isContactResult.getErrorMessage() != null) {
+            return new RequestResult<>(null,
+                    isContactResult.getErrorMessage());
+        }
+        boolean isContacts = isContactResult.getResponseData();
+        if (!isContacts) {
+            return new RequestResult<>(null,
+                    ExceptionMessages.NOT_CONTACTS);
+        }
+        
+        return contactMessagesDao.markContactMessagesAsRead(contactID);
     }
 }
