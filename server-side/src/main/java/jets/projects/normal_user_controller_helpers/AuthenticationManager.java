@@ -12,10 +12,12 @@ import jets.projects.session.ClientSessionData;
 import jets.projects.session.ClientToken;
 
 public class AuthenticationManager {
-    UsersDao usersDao = new UsersDao();
-    TokenValidatorDao tokenValidator = new TokenValidatorDao();
+    private final UsersDao usersDao;
+    private final TokenValidatorDao tokenValidator;
 
     public AuthenticationManager() {
+        usersDao = new UsersDao();
+        tokenValidator = new TokenValidatorDao();
     }
 
     public RequestResult<ClientSessionData> login(String phoneNumber,
@@ -85,5 +87,20 @@ public class AuthenticationManager {
         
         NotificationCallback.userWentOffline(token.getUserID());
         return result;
+    }
+
+    public RequestResult<Boolean> registerPulse(ClientToken token) {
+        var validationResult = tokenValidator.checkClientToken(token);
+        if (validationResult.getErrorMessage() != null) {
+            return validationResult;
+        }
+        boolean isTokenValid = validationResult.getResponseData();
+        if (!isTokenValid) {
+            return new RequestResult<>(false,
+                    ExceptionMessages.INVALID_TOKEN);
+        }
+        
+        OnlineTracker.registerPulse(token.getUserID());
+        return new RequestResult<>(true, null);
     }
 }

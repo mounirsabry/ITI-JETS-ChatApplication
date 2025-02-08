@@ -25,9 +25,14 @@ public interface ClientAPI extends Remote {
     // If it is a file message, then I will NOT contain the file data.
     public void contactMessageReceived(ContactMessage message) throws RemoteException;
     
+    public void contactUpdateInfo(int contactID,
+            String newDisplayName, byte[] newPic) throws RemoteException;
+    
     // The whole group info will be sent (including the pic) to be added
     // to the list.
     public void addedToGroup(Group group) throws RemoteException;
+    
+    public void groupPicChanged(int groupID, byte[] newPic) throws RemoteException;
     
     // Do the action based on the groupID.
     // The group, groupMembers, groupMessages should be removed from the client.

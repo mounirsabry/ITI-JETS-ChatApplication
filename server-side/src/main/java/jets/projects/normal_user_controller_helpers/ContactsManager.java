@@ -1,101 +1,135 @@
 package jets.projects.normal_user_controller_helpers;
 
-import java.rmi.RemoteException;
-import java.sql.Blob;
 import java.util.List;
-import java.util.Map;
 
 import jets.projects.classes.ExceptionMessages;
 import jets.projects.classes.RequestResult;
 import jets.projects.dao.ContactDao;
 import jets.projects.dao.TokenValidatorDao;
-import jets.projects.dao.UsersDao;
+import jets.projects.dao.UsersQueryDao;
 import jets.projects.entity_info.ContactInfo;
 import jets.projects.entities.NormalUser;
-import jets.projects.online_listeners.ContactInvitationCallback;
-import jets.projects.online_listeners.ContactMessageCallback;
-import jets.projects.online_listeners.GroupCallback;
-import jets.projects.online_listeners.GroupMessageCallback;
-import jets.projects.online_listeners.NotificationCallback;
+import jets.projects.online_listeners.OnlineTracker;
 import jets.projects.session.ClientToken;
-import jets.projects.shared_ds.OnlineNormalUserInfo;
-import jets.projects.shared_ds.OnlineNormalUserTable;
 
 public class ContactsManager {
-
-    ContactDao contactsDao = new ContactDao();
-    UsersDao usersDao = new UsersDao();
-    TokenValidatorDao tokenValidator = new TokenValidatorDao();
-    //  listener classes
-    ContactInvitationCallback contactInvitationCallback;
-    ContactMessageCallback contactMessageCallback;
-    GroupMessageCallback groupMessageCallback;
-    GroupCallback groupCallback;
-    NotificationCallback notificatonCallback;
-    Map<Integer, OnlineNormalUserInfo> onlineUsers;
+    private final ContactDao contactsDao;
+    private final UsersQueryDao usersQueryDao;
+    private final TokenValidatorDao tokenValidator;
 
     public ContactsManager() {
-        onlineUsers = OnlineNormalUserTable.getOnlineUsersTable();
+        contactsDao = new ContactDao();
+        usersQueryDao = new UsersQueryDao();
+        tokenValidator = new TokenValidatorDao();
     }
 
     public RequestResult<List<ContactInfo>> getContacts(ClientToken token) {
-        boolean validToken = tokenValidator.checkClientToken(token).getResponseData();
-        if (!validToken) {
-            return new RequestResult<>(null, ExceptionMessages.INVALID_TOKEN);
+        var validationResult = tokenValidator.checkClientToken(token);
+        if (validationResult.getErrorMessage() != null) {
+            return new RequestResult<>(null,
+                    validationResult.getErrorMessage());
         }
-        if (!onlineUsers.containsKey(token.getUserID())) {
-            return new RequestResult<>(null, ExceptionMessages.USER_TIMEOUT);
+        boolean isTokenValid = validationResult.getResponseData();
+        if (!isTokenValid) {
+            return new RequestResult<>(null,
+                    ExceptionMessages.INVALID_TOKEN);
         }
-        var result = contactsDao.getAllContacts(token.getUserID());
-        if (result.getErrorMessage() != null) {
-            throw new RemoteException(result.getErrorMessage());
+        
+        if (!OnlineTracker.isOnline(true)) {
+            return new RequestResult<>(null,
+                    ExceptionMessages.USER_TIMEOUT);
         }
-        return new RequestResult<>(result.getResponseData(), null);
+        
+        return contactsDao.getAllContacts(token.getUserID());
     }
 
     public RequestResult<NormalUser> getContactProfile(ClientToken token, int contactID) {
-        boolean validToken = tokenValidator.checkClientToken(token).getResponseData();
-        if (!validToken) {
-            return new RequestResult<>(null, ExceptionMessages.INVALID_TOKEN);
+        var validationResult = tokenValidator.checkClientToken(token);
+        if (validationResult.getErrorMessage() != null) {
+            return new RequestResult<>(null,
+                    validationResult.getErrorMessage());
         }
-        if (!onlineUsers.containsKey(token.getUserID())) {
-            return new RequestResult<>(null, ExceptionMessages.USER_TIMEOUT);
+        boolean isTokenValid = validationResult.getResponseData();
+        if (!isTokenValid) {
+            return new RequestResult<>(null,
+                    ExceptionMessages.INVALID_TOKEN);
         }
-        boolean isContactExists = usersDao.isNormalUserExists(contactID).getResponseData();
-        if (!isContactExists) {
-            return new RequestResult<>(null, ExceptionMessages.CONTACT_DOES_NOT_EXIST);
+        
+        if (!OnlineTracker.isOnline(true)) {
+            return new RequestResult<>(null,
+                    ExceptionMessages.USER_TIMEOUT);
         }
-        boolean isContacts = contactsDao.isContacts(token.getUserID(), contactID).getResponseData();
+        
+        var isUserExistsResult = usersQueryDao.isNormalUserExistsByID(
+                contactID);
+        if (isUserExistsResult.getErrorMessage() != null) {
+            return new RequestResult<>(null,
+                    isUserExistsResult.getErrorMessage());
+        }
+        boolean isUserExists = isUserExistsResult.getResponseData();
+        if (!isUserExists) {
+            return new RequestResult<>(null,
+                    ExceptionMessages.USER_DOES_NOT_EXIST);
+        }
+        
+        var isContactResult = contactsDao.isContacts(token.getUserID(),
+                contactID);
+        if (isContactResult.getErrorMessage() != null) {
+            return new RequestResult<>(null,
+                    isContactResult.getErrorMessage());
+        }
+        boolean isContacts = isContactResult.getResponseData();
         if (!isContacts) {
-            return new RequestResult<>(null, ExceptionMessages.NOT_CONTACTS);
+            return new RequestResult<>(null,
+                    ExceptionMessages.NOT_CONTACTS);
         }
-        var result = contactsDao.getContactProfile(contactID);
-        if (result.getErrorMessage() != null) {
-            throw new RemoteException(result.getErrorMessage());
-        }
-        return new RequestResult<>(result.getResponseData(), null);
+        
+        return contactsDao.getContactProfile(contactID);
     }
 
+    /*
     public RequestResult<byte[]> getContactProfilePic(ClientToken token, int contactID) {
-        boolean validToken = tokenValidator.checkClientToken(token).getResponseData();
-        if (!validToken) {
-            return new RequestResult<>(null, ExceptionMessages.INVALID_TOKEN);
+        var validationResult = tokenValidator.checkClientToken(token);
+        if (validationResult.getErrorMessage() != null) {
+            return new RequestResult<>(null,
+                    validationResult.getErrorMessage());
         }
-        if (!onlineUsers.containsKey(token.getUserID())) {
-            return new RequestResult<>(null, ExceptionMessages.USER_TIMEOUT);
+        boolean isTokenValid = validationResult.getResponseData();
+        if (!isTokenValid) {
+            return new RequestResult<>(null,
+                    ExceptionMessages.INVALID_TOKEN);
         }
-        boolean isContactExists = usersDao.isNormalUserExists(contactID).getResponseData();
-        if (!isContactExists) {
-            return new RequestResult<>(null, ExceptionMessages.CONTACT_DOES_NOT_EXIST);
+        
+        if (!OnlineTracker.isOnline(true)) {
+            return new RequestResult<>(null,
+                    ExceptionMessages.USER_TIMEOUT);
         }
-        boolean isContacts = contactsDao.isContacts(token.getUserID(), contactID).getResponseData();
+        
+        var isUserExistsResult = usersQueryDao.isNormalUserExistsByID(
+                contactID);
+        if (isUserExistsResult.getErrorMessage() != null) {
+            return new RequestResult<>(null,
+                    isUserExistsResult.getErrorMessage());
+        }
+        boolean isUserExists = isUserExistsResult.getResponseData();
+        if (!isUserExists) {
+            return new RequestResult<>(null,
+                    ExceptionMessages.USER_DOES_NOT_EXIST);
+        }
+        
+        var isContactResult = contactsDao.isContacts(token.getUserID(),
+                contactID);
+        if (isContactResult.getErrorMessage() != null) {
+            return new RequestResult<>(null,
+                    isContactResult.getErrorMessage());
+        }
+        boolean isContacts = isContactResult.getResponseData();
         if (!isContacts) {
-            return new RequestResult<>(null, ExceptionMessages.NOT_CONTACTS);
+            return new RequestResult<>(null,
+                    ExceptionMessages.NOT_CONTACTS);
         }
-        var result = contactsDao.getContactProfilePic(contactID);
-        if (result.getErrorMessage() != null) {
-            throw new RemoteException(result.getErrorMessage());
-        }
-        return new RequestResult<>(result.getResponseData(), null);
+        
+        return contactsDao.getContactProfilePic(contactID);
     }
+    */
 }
