@@ -47,8 +47,8 @@ public class Director {
        loadingController.setDirector(stage,this);
 
        // set launch scene
-       loadingController.perform();
-       stage.setScene(loadingScene);
+       signinController.perform();
+       stage.setScene(signInScene);
        stage.show();
     }
 

@@ -29,7 +29,6 @@ import javafx.stage.Modality;
 import javafx.stage.Stage;
 import jets.projects.entities.Group;
 import jets.projects.entity_info.ContactInfo;
-import jets.projects.entity_info.ContactMessagesInfo;
 
 public class Utilities {
     

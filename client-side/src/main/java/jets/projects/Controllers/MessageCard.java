@@ -2,6 +2,7 @@ package jets.projects.Controllers;
 
 import datastore.DataCenter;
 import javafx.geometry.Insets;
+import javafx.geometry.Pos;
 import javafx.scene.control.Label;
 import javafx.scene.control.ListCell;
 import javafx.scene.image.Image;
@@ -12,6 +13,7 @@ import java.io.ByteArrayInputStream;
 import java.time.format.DateTimeFormatter;
 import java.util.List;
 
+import javafx.scene.shape.Circle;
 import jets.projects.entity_info.ContactInfo;
 import jets.projects.entities.ContactMessage;
 
@@ -23,10 +25,7 @@ public class MessageCard extends ListCell<ContactMessage> {
     private Label messageContent;
     private Label timestamp;
 
-    private List<ContactInfo> contactList; // Holds contact info for name and profile pic
-
     public MessageCard() {
-        this.contactList = DataCenter.getInstance().getContactList();
 
         profilePic = new ImageView();
         profilePic.setFitWidth(40);
@@ -39,6 +38,7 @@ public class MessageCard extends ListCell<ContactMessage> {
         messageContent = new Label();
         messageContent.setWrapText(true);
         messageContent.setMaxWidth(250);
+        messageContent.setStyle("-fx-background-color: lightgray; -fx-padding: 8px; -fx-background-radius: 8px;");
 
         timestamp = new Label();
         timestamp.setStyle("-fx-font-size: 10px; -fx-text-fill: gray;");
@@ -46,7 +46,7 @@ public class MessageCard extends ListCell<ContactMessage> {
         messageBox = new VBox(senderName, messageContent, timestamp);
         messageBox.setPadding(new Insets(5));
 
-        content = new HBox(10, profilePic, messageBox);
+        content = new HBox(10);
         content.setPadding(new Insets(5));
     }
 
@@ -58,41 +58,62 @@ public class MessageCard extends ListCell<ContactMessage> {
             setGraphic(null);
         } else {
             int myID = DataCenter.getInstance().getMyProfile().getUserID();
-            int contactID = 0;
-            if(message.getReceiverID() != myID){
-                contactID = message.getReceiverID();
-            }else {
-                contactID = message.getSenderID();
-            }
-            // Find ContactInfo using senderID
-            int finalContactID = contactID;
-            ContactInfo contactInfo = contactList.stream()
-                    .filter(c -> c.getContact().getFirstID() == finalContactID || c.getContact().getSecondID() == finalContactID)
-                    .findFirst()
-                    .orElse(null);
+            String displayName;
+            Image profileImage;
 
-            // Set sender name
-            if (contactInfo != null) {
-                senderName.setText(contactInfo.getName());
-
-                // Load profile picture from byte array
-                if (contactInfo.getPic() != null) {
-                    Image image = new Image(new ByteArrayInputStream(contactInfo.getPic()));
-                    profilePic.setImage(image);
+            if (message.getSenderID() == myID) {
+                // If I am the sender, show my profile details
+                displayName = DataCenter.getInstance().getMyProfile().getDisplayName();
+                if (DataCenter.getInstance().getMyProfile().getPic() != null) {
+                    profileImage = new Image(new ByteArrayInputStream(DataCenter.getInstance().getMyProfile().getPic()));
                 } else {
-                    profilePic.setImage(new Image("file:default_profile.png")); // Default image
+                    profileImage = new Image(getClass().getResource("/images/blank-profile.png").toExternalForm());
                 }
             } else {
-                senderName.setText("Unknown User");
-                profilePic.setImage(new Image("file:default_profile.png")); // Default image
+                // If I am the receiver, show the sender's details
+                int contactID = message.getSenderID();
+                ContactInfo contactInfo = DataCenter.getInstance().getContactInfoMap().get(contactID);
+
+                if (contactInfo != null) {
+                    displayName = contactInfo.getName();
+                    if (contactInfo.getPic() != null) {
+                        profileImage = new Image(new ByteArrayInputStream(contactInfo.getPic()));
+                    } else {
+                        profileImage = new Image(getClass().getResource("/images/blank-profile.png").toExternalForm());
+                    }
+                } else {
+                    displayName = "Unknown User";
+                    profileImage = new Image(getClass().getResource("/images/blank-profile.png").toExternalForm());
+                }
             }
 
-            // Set message content and timestamp
+            // Update UI components
+            senderName.setText(displayName);
+
+            Circle clip = new Circle(20, 20, 20); // Center (20,20) and Radius 20
+            profilePic.setClip(clip);
+            profilePic.setImage(profileImage);
+
             messageContent.setText(message.getContent());
             timestamp.setText(message.getSentAt().format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm")));
 
+            // Adjust alignment
+            content.getChildren().clear();
+            if (message.getSenderID() == myID) {
+                // Sent messages (Align Right)
+                content.setAlignment(Pos.CENTER_RIGHT);
+                messageContent.setStyle("-fx-background-color: #DCF8C6; -fx-padding: 8px; -fx-background-radius: 8px;");
+                messageBox.setAlignment(Pos.CENTER_RIGHT);
+                content.getChildren().addAll(messageBox, profilePic);
+
+            } else {
+                // Received messages (Align Left)
+                content.setAlignment(Pos.CENTER_LEFT);
+                messageContent.setStyle("-fx-background-color: lightgray; -fx-padding: 8px; -fx-background-radius: 8px;");
+                content.getChildren().addAll(profilePic, messageBox);
+            }
             setGraphic(content);
         }
     }
-}
 
+}

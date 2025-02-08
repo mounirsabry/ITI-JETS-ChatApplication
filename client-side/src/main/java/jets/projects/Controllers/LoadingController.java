@@ -69,10 +69,10 @@ public class LoadingController {
                 }
             }
             // Wait for all other tasks to complete
-            DataCenter.getInstance().getGroupList().addAll(groupsFuture.get());
-            DataCenter.getInstance().getAnnouncementList().addAll(announcementsFuture.get());
-            DataCenter.getInstance().getContactInvitationList().addAll(invitationsFuture.get());
-            DataCenter.getInstance().getNotificationList().addAll(notificationsFuture.get());
+//            DataCenter.getInstance().getGroupList().addAll(groupsFuture.get());
+//            DataCenter.getInstance().getAnnouncementList().addAll(announcementsFuture.get());
+//            DataCenter.getInstance().getContactInvitationList().addAll(invitationsFuture.get());
+//            DataCenter.getInstance().getNotificationList().addAll(notificationsFuture.get());
             Platform.runLater(() -> director.home());
         } catch (InterruptedException | ExecutionException e) {
             System.err.println(e.getMessage());
