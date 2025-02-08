@@ -1,32 +1,44 @@
 package jets.projects.Controllers;
+
 import java.net.URL;
+import datastore.DataCenter;
+import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
 import javafx.scene.control.ListView;
-import javafx.scene.layout.HBox;
-import javafx.scene.layout.VBox;
-import javafx.scene.text.Text;
-import javafx.scene.control.Label;;
+import javafx.stage.Stage;
+import jets.projects.Utilities;
+import jets.projects.Director;
+import jets.projects.entity_info.AnnouncementInfo;
 
 public class AnnouncementsController {
 
     @FXML
-    private ListView<HBox> announcementsList;
-    
-    @FXML
-    private void initialize(){
-        URL fxmlURL= getClass().getResource("/fxml/announcementCard.fxml");
-        announcementsList.setCellFactory(lv->jets.projects.Utilities.createCustomCell(fxmlURL, 
-        (AnnouncementCardController controller , HBox item )-> controller.setData(item , announcementsList)));
-        populateWithDummyData(announcementsList);
+    private ListView<AnnouncementInfo> announcementsList;
+    private ObservableList<AnnouncementInfo> announcementObservableList = DataCenter.getInstance().getAnnouncementList();
+
+    private Stage stage;
+    private Director director;
+
+    public void setDirector(Stage stage, Director director) {
+        this.stage = stage;
+        this.director = director;
     }
-    // for testing purposes only
-    private void populateWithDummyData(ListView<HBox> announcementListView) {
-        HBox announcement = new HBox();
-        VBox announcementContent = new VBox(5);
-        Label titleLabel = new Label("New Update");
-        Text content = new Text("Update to version 3.5 and check out the new features");
-        announcementContent.getChildren().addAll(titleLabel,content);
-        announcement.getChildren().add(announcementContent);
-        announcementListView.getItems().add(announcement);
+    @FXML
+    private void initialize() {
+        // Bind the ListView to the observable list
+        announcementsList.setItems(announcementObservableList);
+
+        URL fxmlURL = getClass().getResource("/fxml/announcementCard.fxml");
+        if (fxmlURL == null) {
+            System.err.println("Error: announcementCard.fxml not found!");
+            return;
+        }
+        // Set up the cell factory
+        announcementsList.setCellFactory(lv -> Utilities.createCustomCell(
+                fxmlURL, (AnnouncementCardController controller, AnnouncementInfo item) -> controller.setData(item, announcementsList)
+        ));
     }
 }
+
+
+
