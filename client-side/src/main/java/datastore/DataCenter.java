@@ -1,5 +1,6 @@
 package datastore;
 
+import javafx.beans.property.IntegerProperty;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import jets.projects.entities.*;
@@ -10,9 +11,6 @@ import jets.projects.entity_info.ContactInvitationInfo;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
-
-
-
 
 /**
  * The ContactData class serves as a singleton model.
@@ -67,6 +65,9 @@ public class DataCenter {
             FXCollections.synchronizedObservableList(FXCollections.observableArrayList());
 
     private final Map<Integer, ObservableList<ContactMessage>> contactMessagesMap =
+            Collections.synchronizedMap(new HashMap<>());
+
+    private final Map<Integer, IntegerProperty> unreadMessages =
             Collections.synchronizedMap(new HashMap<>());
 
     private final ObservableList<Group> groupList =

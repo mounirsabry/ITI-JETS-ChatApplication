@@ -1,18 +1,18 @@
 package jets.projects.Controllers;
+import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.net.URL;
-import java.util.Arrays;
+import java.util.*;
 
+import javafx.application.Platform;
+import javafx.collections.FXCollections;
+import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
-import javafx.geometry.Insets;
 import javafx.scene.Node;
-import javafx.scene.control.Button;
-import javafx.scene.control.ListView;
-import javafx.scene.control.TextField;
-import javafx.scene.control.TreeCell;
-import javafx.scene.control.TreeItem;
-import javafx.scene.control.TreeView;
+import javafx.scene.control.*;
+import javafx.scene.text.TextFlow;
+import jets.projects.Utilities;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.BorderPane;
@@ -25,6 +25,10 @@ import javafx.scene.text.Text;
 import javafx.stage.Stage;
 import jets.projects.Director;
 import javafx.scene.input.MouseEvent;
+import jets.projects.entities.ContactMessage;
+import jets.projects.entities.Group;
+import jets.projects.entity_info.ContactInfo;
+import jets.projects.entity_info.ContactMessagesInfo;
 
 public class HomeScreenController {
 
@@ -59,7 +63,8 @@ public class HomeScreenController {
     @FXML
     private BorderPane openchatContainer;
     @FXML
-    private ListView<HBox> openChatList;
+    private ListView<TextFlow> openChatList;
+    private final ObservableList<TextFlow> openChatObservablList = FXCollections.observableArrayList() ;
     @FXML
     private Circle chatProfile;
     @FXML
@@ -74,16 +79,24 @@ public class HomeScreenController {
     private Button attachmentsButton;
     private Stage stage;
     private Director myDirector;
+    private List<ContactInfo> contactsList = new ArrayList<>();
+    private  Map<Integer , ContactMessagesInfo> messagesInfoMap=new HashMap<>();
+    private List<Group> groupsList = new ArrayList<>();
 
     public void setDirector(Stage stage, Director myDirector) {
         this.stage = stage;
         this.myDirector = myDirector;
     }
-    public void perform() {
+    public void perform(List<ContactInfo> contactsList, Map<Integer, ContactMessagesInfo> messagesInfoMap,
+                        List<Group> groupsList) {
         Image userprofile = new Image(getClass().getResource("/images/profile.png").toExternalForm());
         Image myprofile = new Image(getClass().getResource("/images/blank-profile.png").toExternalForm());
         chatProfile.setFill(new ImagePattern(userprofile));
         myprofilepicture.setFill(new ImagePattern(myprofile));
+        openChatList.setItems(openChatObservablList);
+        this.contactsList = contactsList;
+        this.messagesInfoMap = messagesInfoMap;
+        this.groupsList = groupsList;
     }
 
     @FXML
@@ -94,7 +107,7 @@ public class HomeScreenController {
         Stage owner = (Stage)currentNode.getScene().getWindow();
         // load the popup content
         URL fxmlURL = getClass().getResource("/fxml/groupInfo.fxml");
-        jets.projects.Utilities.showPopup(owner, fxmlURL, 600, 400);        
+        Utilities.showPopup(owner, fxmlURL, 600, 400);
     }
     @FXML
     void handleEditProfileButton(ActionEvent event) {
@@ -102,7 +115,7 @@ public class HomeScreenController {
         Stage owner = (Stage)currentNode.getScene().getWindow();
         // load the popup content
         URL fxmlURL = getClass().getResource("/fxml/editProfile.fxml");
-        jets.projects.Utilities.showPopup(owner, fxmlURL, 600, 400);
+        Utilities.showPopup(owner, fxmlURL, 600, 400);
     }
     @FXML
     void handleAddContact(ActionEvent event) {
@@ -110,7 +123,7 @@ public class HomeScreenController {
         Stage owner = (Stage)currentNode.getScene().getWindow();
         // load the popup content
         URL fxmlURL = getClass().getResource("/fxml/addContact.fxml");
-        jets.projects.Utilities.showPopup(owner, fxmlURL, 600, 400);
+        Utilities.showPopup(owner, fxmlURL, 600, 400);
     }
     @FXML
     void handleAddGroup(ActionEvent event) {   
@@ -118,7 +131,7 @@ public class HomeScreenController {
         Stage owner = (Stage)currentNode.getScene().getWindow();
         // load the popup content
         URL fxmlURL = getClass().getResource("/fxml/addGroup.fxml");
-        jets.projects.Utilities.showPopup(owner, fxmlURL, 600, 400);
+        Utilities.showPopup(owner, fxmlURL, 600, 400);
     }
 
     @FXML
@@ -128,72 +141,76 @@ public class HomeScreenController {
     }
     @FXML
     void handleContactButton(ActionEvent event) {
-        TreeView<String> contactsList = new TreeView<>();
-        contactsList.getStylesheets().add(getClass().getResource("/styles/homeScreenStyles.css").toExternalForm());
-        contactsList.getStyleClass().add("chatsList");
+        TreeView<String> treeView = new TreeView<>();
+        treeView.getStylesheets().add(getClass().getResource("/styles/homeScreenStyles.css").toExternalForm());
+        treeView.getStyleClass().add("chatsList");
 
         // creating contacts categories
         TreeItem<String> rootItem = new TreeItem<>("Contacts");
         TreeItem<String> familyItem = new TreeItem<>("Family");
         TreeItem<String> friendsItem = new TreeItem<>("Friends");
         TreeItem<String> workItem = new TreeItem<>("Work");
-        
-        //add dummy data
-        Node profile = new ImageView(new Image(getClass().getResource("/images/blank-profile.png").toExternalForm()));
-        ((ImageView) profile).setFitWidth(25);  
-        ((ImageView) profile).setFitHeight(25);
-        familyItem.getChildren().addAll(Arrays.asList(
-            new TreeItem<>("Alice",profile)
-        ));
-        friendsItem.getChildren().addAll(Arrays.asList(
-            new TreeItem<>("John",profile),
-            new TreeItem<>("Doe",profile),
-            new TreeItem<>("Bob",profile)
-        ));
-        workItem.getChildren().addAll(Arrays.asList(
-            new TreeItem<>("Manager",profile),
-            new TreeItem<>("Team Lead",profile)
-        ));
-
-        familyItem.setExpanded(true);
-        friendsItem.setExpanded(true);
-        workItem.setExpanded(true);  
-
-        contactsList.setRoot(rootItem); 
-        contactsList.setShowRoot(false);
-        contactsList.getRoot().getChildren().addAll(Arrays.asList(familyItem, friendsItem, workItem));
-
-         // Set cell factory to apply styles
-        contactsList.setCellFactory(treeView -> new TreeCell<>() {
-            @Override
-            protected void updateItem(String item, boolean empty) {
-                super.updateItem(item, empty);
-                if (empty || item == null) {
-                    setText(null);
-                    setGraphic(null);
-                } else {
-                    setText(item);
-                    TreeItem<String> currentItem = getTreeItem();
-                    if (currentItem != null && currentItem.getGraphic() != null) {
-                        setGraphic(currentItem.getGraphic()); 
-                    } else {
-                        setGraphic(null);
-                    }
-                    if (currentItem == familyItem || currentItem == workItem || currentItem == friendsItem) {
-                        getStyleClass().add("subtitle");
-                    } else {
-                        getStyleClass().remove("subtitle"); 
-                    }
+        List<ContactInfo> familyContacts = new ArrayList<>();
+        List<ContactInfo> workContacts = new ArrayList<>();
+        List<ContactInfo> friendsContacts = new ArrayList<>();
+        for (ContactInfo contact : contactsList) {
+            switch (contact.getContact().getContactGroup()) {
+                case FAMILY -> {familyContacts.add(contact); break;}
+                case WORK -> {workContacts.add(contact);break;}
+                case FRIENDS -> {friendsContacts.add(contact);break;}
+                default -> {}
                 }
+        }
+       Utilities.populateTree(familyItem,familyContacts , messagesInfoMap);
+       Utilities.populateTree(friendsItem,friendsContacts , messagesInfoMap);
+       Utilities.populateTree(workItem,workContacts , messagesInfoMap);
+
+       familyItem.setExpanded(true);
+       friendsItem.setExpanded(true);
+       workItem.setExpanded(true);
+       treeView.setRoot(rootItem);
+       treeView.setShowRoot(false);
+       treeView.getRoot().getChildren().addAll(Arrays.asList(familyItem, friendsItem, workItem));
+       treeView.setCellFactory(param -> new TreeCell<>() {
+        @Override
+        protected void updateItem(String item, boolean empty) {
+            super.updateItem(item, empty);
+            if (empty || item == null) {
+                setText(null);
+                setGraphic(null);
+            } else {
+                TreeItem<String> treeItem = getTreeItem();
+                if(treeItem.getParent()==rootItem){
+                    setText(treeItem.getValue());
+                }
+                else {
+                    setText(null);
+                }
+                setGraphic(treeItem.getGraphic());
             }
-        });
-        Node existingNode = jets.projects.Utilities.getExistingNode(mainContainer, 1, 2);
+        }});
+       Node existingNode = Utilities.getExistingNode(mainContainer, 1, 2);
         if (existingNode != null) {
             mainContainer.getChildren().remove(existingNode);
-            mainContainer.add(contactsList, 1, 2);
-            GridPane.setRowSpan(contactsList , GridPane.REMAINING);
-            contactsList.minWidth(200);
+            mainContainer.add(treeView, 1, 2);
+            GridPane.setRowSpan(treeView , GridPane.REMAINING);
+            treeView.minWidth(200);
         }
+        treeView.getSelectionModel().selectedItemProperty().addListener((obs, oldItem, newItem) -> {
+            if (newItem != null) {
+                String contactId = newItem.getValue();
+                List<ContactMessage> messages = messagesInfoMap.get(Integer.parseInt(contactId)).getMessages();
+                Platform.runLater(() -> {
+                    openChatObservablList.clear();
+                    for (ContactMessage message : messages) {
+                        Text text = new Text(message.getContent());
+                        TextFlow messageFlow = new TextFlow(text);
+                        openChatObservablList.add(messageFlow);
+                    }
+                });
+                System.out.println(messagesInfoMap.get(Integer.parseInt(contactId)).getMessages());
+            }
+        });
     }
     @FXML
     void handleFriendRequestsButton(ActionEvent event){
@@ -201,25 +218,35 @@ public class HomeScreenController {
         Stage owner = (Stage)currentNode.getScene().getWindow();
         // load the popup content
         URL fxmlURL = getClass().getResource("/fxml/friendRequests.fxml");
-        jets.projects.Utilities.showPopup(owner, fxmlURL, 620, 420);
+        Utilities.showPopup(owner, fxmlURL, 620, 420);
     }
 
     @FXML
     void handleGroupButton(ActionEvent event) {
-        ListView<HBox> chatsListView = new ListView<HBox>();
-        chatsListView.getStylesheets().add(getClass().getResource("/styles/homeScreenStyles.css").toExternalForm());
-        chatsListView.getStyleClass().add("chatsList");
+        ListView<HBox> groupsListView = new ListView<HBox>();
+        groupsListView.getStylesheets().add(getClass().getResource("/styles/homeScreenStyles.css").toExternalForm());
+        groupsListView.getStyleClass().add("chatsList");
         // set custom list items
-        chatsListView.setCellFactory(lv->jets.projects.Utilities.createCustomCell());
+        groupsListView.setCellFactory(lv->Utilities.createCustomCell());
 
-       Node existingNode = jets.projects.Utilities.getExistingNode(mainContainer, 1, 2);
+       Node existingNode = Utilities.getExistingNode(mainContainer, 1, 2);
         if (existingNode != null) {
             mainContainer.getChildren().remove(existingNode);
-            mainContainer.add(chatsListView, 1, 2);
-            GridPane.setRowSpan(chatsListView , GridPane.REMAINING);
-            chatsListView.minWidth(200);
+            mainContainer.add(groupsListView, 1, 2);
+            GridPane.setRowSpan(groupsListView , GridPane.REMAINING);
+            groupsListView.minWidth(200);
         }
-        populateChatListWithDummyData(chatsListView);
+        populateGroupsList(groupsListView,groupsList);
+        groupsListView.getSelectionModel().selectedItemProperty().addListener((obs, oldSelection, selectedGroup) -> {
+            if (selectedGroup != null) {
+                // extract group id
+                Text groupID =  (Text) selectedGroup.getChildren().get(2);
+
+                // open group chat on demand using extracted groupID
+            }
+        });
+
+
     }
     @FXML
     void handleAnnouncemnetButton(ActionEvent event){
@@ -227,7 +254,7 @@ public class HomeScreenController {
         Stage owner = (Stage)currentNode.getScene().getWindow();
         // load the popup content
         URL fxmlURL = getClass().getResource("/fxml/announcements.fxml");
-        jets.projects.Utilities.showPopup(owner, fxmlURL, 620, 420);
+        Utilities.showPopup(owner, fxmlURL, 620, 420);
 
     }
     @FXML
@@ -246,7 +273,7 @@ public class HomeScreenController {
         Stage owner = (Stage)currentNode.getScene().getWindow();
         // load the popup content
         URL fxmlURL = getClass().getResource("/fxml/notifications.fxml");
-        jets.projects.Utilities.showPopup(owner, fxmlURL, 620, 420);
+        Utilities.showPopup(owner, fxmlURL, 620, 420);
     }
     @FXML
     void handleSeacrchTextField(ActionEvent event) {
@@ -264,29 +291,27 @@ public class HomeScreenController {
         Stage owner = (Stage)currentNode.getScene().getWindow();
         // load the popup content
         URL fxmlURL = getClass().getResource("/fxml/settings.fxml");
-        jets.projects.Utilities.showPopup(owner, fxmlURL, 600, 400);
+        Utilities.showPopup(owner, fxmlURL, 600, 400);
 
     }
-
     // for testing purposes only
-    private void populateChatListWithDummyData(ListView<HBox> chatsListView) {
-        HBox card = new HBox();
+    private void populateGroupsList(ListView<HBox> groupListView , List<Group> groupsList) {
+        for(Group group : groupsList){
+            HBox groupHbox = new HBox(10);
+            ImageView groupPic = new ImageView();
+            if (group.getPic() != null){
+                groupPic.setImage(new Image(new ByteArrayInputStream(group.getPic())));
+            } else {
+                groupPic.setImage(new Image(getClass().getResource("/images/blank-group-picture.png").toExternalForm()));
+            }
+            groupPic.setFitWidth(25);
+            groupPic.setFitHeight(25);
+            Text groupname = new Text(group.getGroupName());
+            Text groupID = new Text(String.valueOf(group.getGroupID()));
+            groupID.setVisible(false);
+            groupHbox.getChildren().addAll(groupPic,groupname,groupID);
+            groupListView.getItems().add(groupHbox);
+        }
 
-        // create list item 
-        ImageView profile = new ImageView(getClass().getResource("/images/profile.png").toExternalForm());
-        Text name = new Text("Salma ElKhatib");
-
-        // inline styling
-        profile.setFitWidth(30);
-        profile.setFitHeight(30);
-        HBox.setMargin(profile, new Insets(0, 10, 0, 0));  
-        profile.setStyle("-fx-background-color: #003249; -fx-background-radius: 50%; -fx-border-radius: 50%; -fx-padding: 2; -fx-border-width: 2; -fx-border-color: #ffffff;");
-        card.setStyle("-fx-padding: 10; -fx-background-color: #ffffff; -fx-background-radius: 20; -fx-effect: dropshadow(gaussian, rgba(0, 0, 0, 0.2), 10, 0.5, 0, 2); -fx-margin: 10; -fx-pref-width: 270px;");
-        name.setStyle("-fx-font-weight: bold; -fx-fill: #007ea7; -fx-font-size: 12px;");
-
-        //add nodes to list item
-        card.getChildren().addAll(profile,name);
-        //add item to list
-        chatsListView.getItems().add(card);    
     }
 } 
