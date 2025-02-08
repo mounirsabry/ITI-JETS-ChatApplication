@@ -41,12 +41,10 @@ public class SigninController {
 
     @FXML
     void handleSignInButton(ActionEvent event) throws IOException {
+        //validate data and navigate to loading screen
         if(clientAuthenticationService.login(phoneField.getText(), passwordField.getText())){
-            //
-
+            myDirector.loading();
         }
-        //validate data and navigate to home screen
-        myDirector.home();
     }
 
     @FXML
