@@ -9,7 +9,6 @@ import jets.projects.classes.Delays;
 import jets.projects.classes.MyExecutorFactory;
 import jets.projects.dao.GroupDao;
 import jets.projects.dao.GroupMemberDao;
-import jets.projects.dao.UsersDao;
 import jets.projects.entity_info.GroupMemberInfo;
 import jets.projects.shared_ds.OnlineNormalUserTable;
 
@@ -59,14 +58,17 @@ public class GroupCallback {
 
     public static void addedToGroup(int userID, int groupID) {
         executor.submit(()->{
-            ClientAPI client = OnlineNormalUserTable.getTable().get(userID).getImpl();
-            if (client!=null) {
-                try {
-                    String groupName = groupDao.getGroupName(groupID).getResponseData();
-                    client.addedToGroup(groupName);
-                } catch (RemoteException e) {
-                    System.err.println("Falied to notify added member: " + e.getMessage());
-                }
+            var receiverUser = OnlineNormalUserTable.getTable().getOrDefault(
+                    userID, null);
+            if (receiverUser == null) {
+                return;
+            }
+            ClientAPI client = receiverUser.getImpl();
+            try {
+                String groupName = groupDao.getGroupName(groupID).getResponseData();
+                client.addedToGroup(groupName);
+            } catch (RemoteException e) {
+                System.err.println("Falied to notify added member: " + e.getMessage());
             }
         });
     }
@@ -75,35 +77,41 @@ public class GroupCallback {
         some text to spike compiler error.
     }
     
-    public void removedFromGroup(int userID, int groupID) {
+    public static void removedFromGroup(int userID, int groupID) {
         executor.submit(()->{
-            ClientAPI client = OnlineNormalUserTable.getTable().get(userID).getImpl();
-            if (client!=null) {
-                try {
-                    String groupName = groupDao.getGroupName(groupID).getResponseData();
-                    client.removedFromGroup(groupName);
-                } catch (RemoteException e) {
-                    System.err.println("Falied to notify removed member: " + e.getMessage());
-                }
+            var receiverUser = OnlineNormalUserTable.getTable().getOrDefault(
+                    userID, null);
+            if (receiverUser == null) {
+                return;
+            }
+            ClientAPI client = receiverUser.getImpl();
+            try {
+                String groupName = groupDao.getGroupName(groupID).getResponseData();
+                client.removedFromGroup(groupName);
+            } catch (RemoteException e) {
+                System.err.println("Falied to notify removed member: " + e.getMessage());
             }
         });        
     }
     
-    public void leadershipGained(int userID, int groupID) {
+    public static void leadershipGained(int userID, int groupID) {
         executor.submit(()->{
-            ClientAPI client = OnlineNormalUserTable.getTable().get(userID).getImpl();
-            if (client!=null) {
-                try {
-                    String groupName = groupDao.getGroupName(groupID).getResponseData();
-                    client.leadershipGained(groupName);
-                } catch (RemoteException e) {
-                    System.err.println("Falied to notify member about assigned leadership: " + e.getMessage());
-                }
+            var receiverUser = OnlineNormalUserTable.getTable().getOrDefault(
+                    userID, null);
+            if (receiverUser == null) {
+                return;
+            }
+            ClientAPI client = receiverUser.getImpl();
+            try {
+                String groupName = groupDao.getGroupName(groupID).getResponseData();
+                client.leadershipGained(groupName);
+            } catch (RemoteException e) {
+                System.err.println("Falied to notify member about assigned leadership: " + e.getMessage());
             }
         });        
     }
     
-    public void groupDeleted(int groupID) {
+    public static void groupDeleted(int groupID) {
         executor.submit(()->{
             ClientAPI client;
             List<GroupMemberInfo> members = groupMemberDao.getAllMembers(groupID).getResponseData();

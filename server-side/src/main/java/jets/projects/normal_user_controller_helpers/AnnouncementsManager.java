@@ -9,44 +9,55 @@ import jets.projects.dao.AnnouncementDao;
 import jets.projects.dao.TokenValidatorDao;
 import jets.projects.entities.Announcement;
 import jets.projects.entity_info.AnnouncementInfo;
+import jets.projects.online_listeners.OnlineTracker;
 import jets.projects.session.ClientToken;
 
 public class AnnouncementsManager {
-    private final AnnouncementDao announcementDao;
     private final TokenValidatorDao tokenValidator;
+    private final AnnouncementDao announcementDao;
     
     public AnnouncementsManager() {
-        announcementDao = new AnnouncementDao();
         tokenValidator = new TokenValidatorDao();
+        announcementDao = new AnnouncementDao();
     }
 
     public RequestResult<List<AnnouncementInfo>> getAllAnnouncements(ClientToken token) {
-        boolean validToken = tokenValidator.checkClientToken(token).getResponseData();
-        if (!validToken) {
-            return new RequestResult<>(null, ExceptionMessages.INVALID_TOKEN);
+        var validationResult = tokenValidator.checkClientToken(token);
+        if (validationResult.getErrorMessage() != null) {
+            return new RequestResult<>(null,
+                    validationResult.getErrorMessage());
         }
-        if (!onlineUsers.containsKey(token.getUserID())) {
-            return new RequestResult<>(null, ExceptionMessages.USER_TIMEOUT);
+        boolean isTokenValid = validationResult.getResponseData();
+        if (!isTokenValid) {
+            return new RequestResult<>(null,
+                    ExceptionMessages.INVALID_TOKEN);
         }
-        var result = announcementDao.getAllAnnouncements(token.getUserID());
-        if (result.getErrorMessage() != null) {
-            throw new RemoteException(result.getErrorMessage());
+        
+        if (!OnlineTracker.isOnline(true)) {
+            return new RequestResult<>(null,
+                    ExceptionMessages.USER_TIMEOUT);
         }
-        return new RequestResult<>(result.getResponseData(), null);
+        
+        return announcementDao.getAllAnnouncements(token.getUserID());
     }
 
     public RequestResult<List<Announcement>> getUnReadAnnouncements(ClientToken token) {
-        boolean validToken = tokenValidator.checkClientToken(token).getResponseData();
-        if (!validToken) {
-            return new RequestResult<>(null, ExceptionMessages.INVALID_TOKEN);
+        var validationResult = tokenValidator.checkClientToken(token);
+        if (validationResult.getErrorMessage() != null) {
+            return new RequestResult<>(null,
+                    validationResult.getErrorMessage());
         }
-        if (!onlineUsers.containsKey(token.getUserID())) {
-            return new RequestResult<>(null, ExceptionMessages.USER_TIMEOUT);
+        boolean isTokenValid = validationResult.getResponseData();
+        if (!isTokenValid) {
+            return new RequestResult<>(null,
+                    ExceptionMessages.INVALID_TOKEN);
         }
-        var result = announcementDao.getUnreadAnnouncements(token.getUserID());
-        if (result.getErrorMessage() != null) {
-            throw new RemoteException(result.getErrorMessage());
+        
+        if (!OnlineTracker.isOnline(true)) {
+            return new RequestResult<>(null,
+                    ExceptionMessages.USER_TIMEOUT);
         }
-        return new RequestResult<>(result.getResponseData(), null);
+        
+        return announcementDao.getUnreadAnnouncements(token.getUserID());
     }
 }

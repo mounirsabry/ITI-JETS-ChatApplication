@@ -44,4 +44,9 @@ public class ContactCallback {
             executor = null;
         }
     }
+    
+    public static void contactUpdateInfo(int contactID,
+            String newDisplayName, byte[] newPic) {
+        some invalid code.   
+    }
 }
