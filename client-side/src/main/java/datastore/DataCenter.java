@@ -69,6 +69,9 @@ public class DataCenter {
     private final Map<Integer, ObservableList<ContactMessage>> contactMessagesMap =
             Collections.synchronizedMap(new HashMap<>());
 
+    private final Map<Integer, Integer> unreadContactMessages =
+            Collections.synchronizedMap(new HashMap<>());
+
     private final ObservableList<Group> groupList =
             FXCollections.synchronizedObservableList(FXCollections.observableArrayList());
 
