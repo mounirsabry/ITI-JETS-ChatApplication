@@ -8,14 +8,14 @@ import java.util.ArrayList;
 import java.util.List;
 import jets.projects.classes.RequestResult;
 import jets.projects.db_connections.ConnectionManager;
-import jets.projects.dbconnections.DBConnection;
 import jets.projects.entities.ContactInvitation;
 import jets.projects.entities.Gender;
 import jets.projects.entities.NormalUser;
 import jets.projects.entities.NormalUserStatus;
+import jets.projects.entity_info.ContactInvitationInfo;
 
 public class ContactInvitationDao{
-    public RequestResult<List<NormalUser>> getAllInvitations(int userID) {
+    public RequestResult<List<ContactInvitationInfo>> getAllInvitations(int userID) {
         List<NormalUser> invitationSenders = new ArrayList<>();
             String query = "SELECT * FROM contactinvitation c JOIN normaluser u on c.sender_ID = u.user_ID where receiver_id = ? ORDER BY sent_at DESC;";
         try (PreparedStatement statement = DBConnection.getConnection().prepareStatement(query)) {
@@ -45,7 +45,13 @@ public class ContactInvitationDao{
             return new RequestResult<>(null, "Database error: " + e.getMessage());
         }
     }
-    public RequestResult<Boolean> sendContactInvitation(ContactInvitation invitation) {
+    
+    // If invitation does not exist return null.
+    public RequestResult<ContactInvitation> getContactInvitation(int invitationID) {
+        
+    }
+    
+    public RequestResult<Boolean> sendContactInvitation(int senderID, int receiverID) {
         String checkQuery = "SELECT invitation_ID FROM contactinvitation WHERE sender_ID = ? AND receiver_ID = ?";
         String insertContactQuery = "INSERT INTO contact (first_ID, second_ID) VALUES (?, ?)";
         String deleteQuery = "DELETE FROM contactinvitation WHERE sender_ID = ? AND receiver_ID = ? OR sender_ID = ? AND receiver_ID = ?";
@@ -115,7 +121,9 @@ public class ContactInvitationDao{
             } catch (SQLException ignored) {}
         }
     }
-    public RequestResult<Boolean> acceptContactInvitation(ContactInvitation invitation) {
+    
+    public RequestResult<Boolean> acceptContactInvitation(
+            ContactInvitation invitation) {
         String insertQuery = "INSERT INTO contact (first_ID, second_ID) VALUES (?, ?), (?, ?)";
         String deleteQuery = "DELETE FROM contactinvitation WHERE invitation_ID = ?";
         Connection connection = DBConnection.getConnection();
@@ -128,7 +136,7 @@ public class ContactInvitationDao{
             insertStatement.setInt(4, invitation.getSenderID());
             insertStatement.executeUpdate();            
             
-            deleteStatement.setInt(1, invitation.getInvitation_ID());
+            deleteStatement.setInt(1, invitation.getInvitationID());
             deleteStatement.executeUpdate();
             connection.commit();
             return new RequestResult<>(true, null);
@@ -136,12 +144,14 @@ public class ContactInvitationDao{
             return new RequestResult<>(false, "Database error: " + e.getMessage());
         }        
     }
-    public RequestResult<Boolean> rejectContactInvitation(ContactInvitation invitation) {
+    
+    public RequestResult<Boolean> rejectContactInvitation(
+            ContactInvitation invitation) {
 
         try (Connection connection = ConnectionManager.getConnection()) {
             String query = "DELETE FROM contactinvitation WHERE invitation_ID = ?";
             PreparedStatement deleteStatement = connection.prepareStatement(query);
-            deleteStatement.setInt(1, invitation.getInvitation_ID());
+            deleteStatement.setInt(1, invitation.getInvitationID());
             int rowsAffected = deleteStatement.executeUpdate();
             if (rowsAffected == 1) {
                 return new RequestResult<>(true, null);

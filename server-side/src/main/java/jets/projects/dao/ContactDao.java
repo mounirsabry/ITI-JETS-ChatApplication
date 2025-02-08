@@ -1,13 +1,11 @@
 package jets.projects.dao;
 
-import java.sql.Blob;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
 import jets.projects.classes.RequestResult;
-import jets.projects.dbconnections.DBConnection;
 import jets.projects.entity_info.ContactInfo;
 import jets.projects.entities.ContactGroup;
 import jets.projects.entities.NormalUser;
@@ -15,7 +13,9 @@ import jets.projects.entities.NormalUserStatus;
 
 public class ContactDao {
     public RequestResult<Boolean> isContacts(int userID, int contactID) {
-            String query = "SELECT * FROM CONTACT WHERE (first_ID = ? AND second_ID = ?) OR (first_ID = ? AND second_ID = ?)";
+            String query = "SELECT * FROM CONTACT WHERE"
+                    + " (first_ID = ? AND second_ID = ?)"
+                    + " OR (first_ID = ? AND second_ID = ?)";
         try (PreparedStatement statement = DBConnection.getConnection().prepareStatement(query)){
             statement.setInt(1, userID);
             statement.setInt(2, contactID);
@@ -31,6 +31,7 @@ public class ContactDao {
             return new RequestResult<>(false, e.getMessage());
         }
     }
+    
     public RequestResult<List<ContactInfo>> getAllContacts(int userID) {
         String query = "SELECT distinct u.display_name, u.pic, c.category " +
                         "FROM CONTACT c " +
@@ -53,21 +54,7 @@ public class ContactDao {
             return new RequestResult<>(null, e.getMessage());
         }
     }
-    public RequestResult<Blob> getContactProfilePic(int contactID) {
-        String query = "SELECT pic FROM NormalUser WHERE user_ID = ?";
-        try (PreparedStatement statement = DBConnection.getConnection().prepareStatement(query)){
-            statement.setInt(1, contactID);
-            ResultSet resultSet = statement.executeQuery();
-            if (resultSet.next()) {
-                Blob pic = resultSet.getBlob("pic");
-                return new RequestResult<>(pic, null);
-            } else {
-                return new RequestResult<>(null, "Profile picture not found.");
-            }
-        } catch (SQLException e) {
-            return new RequestResult<>(null, e.getMessage());
-        }
-    }    
+    
     public RequestResult<NormalUser> getContactProfile(int contactID) {
         String query = "SELECT display_name, phone_number, email, pic, `status`, bio FROM NormalUser WHERE user_ID = ?";
         try (PreparedStatement statement = DBConnection.getConnection().prepareStatement(query)){
@@ -90,4 +77,21 @@ public class ContactDao {
         }
     }
     
+    /*
+    public RequestResult<byte[]> getContactProfilePic(int contactID) {
+        String query = "SELECT pic FROM NormalUser WHERE user_ID = ?";
+        try (PreparedStatement statement = DBConnection.getConnection().prepareStatement(query)){
+            statement.setInt(1, contactID);
+            ResultSet resultSet = statement.executeQuery();
+            if (resultSet.next()) {
+                Blob pic = resultSet.getBlob("pic");
+                return new RequestResult<>(pic, null);
+            } else {
+                return new RequestResult<>(null, "Profile picture not found.");
+            }
+        } catch (SQLException e) {
+            return new RequestResult<>(null, e.getMessage());
+        }
+    }    
+    */
 }

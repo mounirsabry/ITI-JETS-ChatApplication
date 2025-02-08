@@ -71,6 +71,10 @@ public class NormalUserController {
         return authenticationManager.logout(token);
     }
     
+    public RequestResult<Boolean> registerPulse(ClientToken token) {
+        return authenticationManager.registerPulse(token);
+    }
+    
     public RequestResult<NormalUser> getMyProfile(ClientToken token) {
         return profilesManager.getMyProfile(token);
     }

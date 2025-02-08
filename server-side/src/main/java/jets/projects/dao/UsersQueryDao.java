@@ -10,8 +10,7 @@ import jets.projects.entities.NormalUser;
 import jets.projects.entities.NormalUserStatus;
 
 public class UsersQueryDao {
-
-    public RequestResult<Boolean> isNormalUserExists(int userID) {
+    public RequestResult<Boolean> isNormalUserExistsByID(int userID) {
         String query = "SELECT * FROM NormalUser WHERE user_ID = ?";
         try (PreparedStatement stmt = ConnectionManager.getConnection().prepareStatement(query)) {
             stmt.setInt(1, userID);
@@ -24,6 +23,13 @@ public class UsersQueryDao {
             return new RequestResult<>(false, "Database error: " + e.getMessage());
         }
         return new RequestResult<>(false, "Unexpected error occurred.");
+    }
+    
+    // Returns the ID of the normal user if exists.
+    // Otherwise, returns null for the integer value.
+    public RequestResult<Integer> isNormalUserExistsByPhoneNumber(
+            String phoneNumber) {
+        
     }
 
     public RequestResult<NormalUser> getNormalUserByPhoneNumber(String phoneNumber) {

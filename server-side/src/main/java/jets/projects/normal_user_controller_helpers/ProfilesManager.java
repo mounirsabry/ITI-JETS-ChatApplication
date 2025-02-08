@@ -1,6 +1,5 @@
 package jets.projects.normal_user_controller_helpers;
 
-import java.rmi.RemoteException;
 import java.util.Date;
 
 import jets.projects.classes.ExceptionMessages;
@@ -9,12 +8,13 @@ import jets.projects.dao.TokenValidatorDao;
 import jets.projects.dao.UsersDao;
 import jets.projects.entities.NormalUser;
 import jets.projects.entities.NormalUserStatus;
+import jets.projects.online_listeners.NotificationCallback;
 import jets.projects.online_listeners.OnlineTracker;
 import jets.projects.session.ClientToken;
 
 public class ProfilesManager {
-    UsersDao usersDao;
-    TokenValidatorDao tokenValidator;
+    private final UsersDao usersDao;
+    private final TokenValidatorDao tokenValidator;
 
     public ProfilesManager() {
         usersDao = new UsersDao();
@@ -87,11 +87,14 @@ public class ProfilesManager {
         if (passwordValidation.getErrorMessage() != null) {
             
         }
+        boolean isOldPasswordValid = passwordValidation.getResponseData();
         if (!isOldPasswordValid) {
-            return new RequestResult<>(false, ExceptionMessages.INVALID_INPUT_DATA);
+            return new RequestResult<>(false,
+                    ExceptionMessages.INVALID_INPUT_DATA);
         }
         
-        return usersDao.updatePassword(token.getUserID(), oldPassword, newPassword);
+        return usersDao.updatePassword(token.getUserID(), oldPassword,
+                newPassword);
     }
     
     public RequestResult<byte[]> getProfilePic(ClientToken token) {
@@ -110,11 +113,8 @@ public class ProfilesManager {
             return new RequestResult<>(null,
                     ExceptionMessages.USER_TIMEOUT);
         }
-        var result = usersDao.getNormalUserProfilePic(token.getUserID());
-        if (result.getErrorMessage() != null) {
-            throw new RemoteException(result.getErrorMessage());
-        }
-        return new RequestResult<>(result.getResponseData(), null);
+        
+        return usersDao.getNormalUserProfilePic(token.getUserID());
     }
 
     public RequestResult<Boolean> setOnlineStatus(ClientToken token,
@@ -135,11 +135,14 @@ public class ProfilesManager {
                     ExceptionMessages.USER_TIMEOUT);
         }
         
-        var result = usersDao.setOnlineStatus(token.getUserID(), newStatus); //update database
-        notificatonCallback.userStatusChanged(token.getUserID(), newStatus);//callback for contacts
+        var result = usersDao.setOnlineStatus(token.getUserID(),
+                newStatus);
         if (result.getErrorMessage() != null) {
-            throw new RemoteException(result.getErrorMessage());
+            return result;
         }
-        return new RequestResult<>(true, null);
+        
+        NotificationCallback.userStatusChanged(
+                token.getUserID(), newStatus);
+        return result;
     }
 }

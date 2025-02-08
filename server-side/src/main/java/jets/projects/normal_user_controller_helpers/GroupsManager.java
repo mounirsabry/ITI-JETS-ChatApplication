@@ -3,94 +3,86 @@ package jets.projects.normal_user_controller_helpers;
 import java.rmi.RemoteException;
 import java.sql.Blob;
 import java.util.List;
-import java.util.Map;
 
 import jets.projects.classes.ExceptionMessages;
 import jets.projects.classes.RequestResult;
 import jets.projects.dao.ContactDao;
 import jets.projects.dao.GroupDao;
 import jets.projects.dao.GroupMemberDao;
-import jets.projects.dao.GroupMessagesDao;
 import jets.projects.dao.TokenValidatorDao;
 import jets.projects.dao.UsersDao;
 import jets.projects.entities.Group;
 import jets.projects.entity_info.GroupMemberInfo;
 import jets.projects.entities.NormalUser;
-import jets.projects.online_listeners.GroupCallback;
+import jets.projects.online_listeners.OnlineTracker;
 import jets.projects.session.ClientToken;
-import jets.projects.shared_ds.OnlineNormalUserInfo;
-import jets.projects.shared_ds.OnlineNormalUserTable;
 
 public class GroupsManager {
 
-    GroupDao groupDao = new GroupDao();
-    ContactDao contactsDao = new ContactDao();
-    GroupMemberDao groupMemberDao = new GroupMemberDao();
-    GroupMessagesDao groupMessagesDao = new GroupMessagesDao();
-    UsersDao usersDao = new UsersDao();
-    TokenValidatorDao tokenValidator = new TokenValidatorDao();
-    GroupCallback groupCallback;
-    Map<Integer, OnlineNormalUserInfo> onlineUsers;
+    private final GroupDao groupDao;
+    private final ContactDao contactsDao;
+    private final GroupMemberDao groupMemberDao;
+    private final UsersDao usersDao;
+    private final TokenValidatorDao tokenValidator;
 
     public GroupsManager() {
-        this.groupCallback = new GroupCallback(groupDao, groupMemberDao, usersDao);
-        onlineUsers = OnlineNormalUserTable.getOnlineUsersTable();
+        groupDao = new GroupDao();
+        contactsDao = new ContactDao();
+        groupMemberDao = new GroupMemberDao();
+        usersDao = new UsersDao();
+        tokenValidator = new TokenValidatorDao();
     }
 
     public RequestResult<List<Group>> getAllGroups(ClientToken token) {
-        boolean validToken = tokenValidator.checkClientToken(token).getResponseData();
-        if (!validToken) {
-            return new RequestResult<>(null, ExceptionMessages.INVALID_TOKEN);
+        var validationResult = tokenValidator.checkClientToken(token);
+        if (validationResult.getErrorMessage() != null) {
+            return new RequestResult<>(null,
+                    validationResult.getErrorMessage());
         }
-        if (!onlineUsers.containsKey(token.getUserID())) {
-            return new RequestResult<>(null, ExceptionMessages.USER_TIMEOUT);
+        boolean isTokenValid = validationResult.getResponseData();
+        if (!isTokenValid) {
+            return new RequestResult<>(null,
+                    ExceptionMessages.INVALID_TOKEN);
         }
-        var result = groupDao.getAllGroups(token.getUserID());
-        if (result.getErrorMessage() != null) {
-            throw new RemoteException(result.getErrorMessage());
+        
+        if (!OnlineTracker.isOnline(true)) {
+            return new RequestResult<>(null,
+                    ExceptionMessages.USER_TIMEOUT);
         }
-        return new RequestResult<>(result.getResponseData(), null);
+        
+        return groupDao.getAllGroups(token.getUserID());
     }
 
-    public RequestResult<Blob> getGroupPic(ClientToken token, int groupID) {
-        boolean validToken = tokenValidator.checkClientToken(token).getResponseData();
-        if (!validToken) {
-            return new RequestResult<>(null, ExceptionMessages.INVALID_TOKEN);
+    public RequestResult<Boolean> setGroupPic(ClientToken token,
+            int groupID, byte[] pic) {
+        var validationResult = tokenValidator.checkClientToken(token);
+        if (validationResult.getErrorMessage() != null) {
+            return new RequestResult<>(null,
+                    validationResult.getErrorMessage());
         }
-        if (!onlineUsers.containsKey(token.getUserID())) {
-            return new RequestResult<>(null, ExceptionMessages.USER_TIMEOUT);
+        boolean isTokenValid = validationResult.getResponseData();
+        if (!isTokenValid) {
+            return new RequestResult<>(null,
+                    ExceptionMessages.INVALID_TOKEN);
         }
-        boolean isGroupExists = groupDao.isGroupExists(groupID).getResponseData();
+        
+        if (!OnlineTracker.isOnline(true)) {
+            return new RequestResult<>(null,
+                    ExceptionMessages.USER_TIMEOUT);
+        }
+        
+        var isGroupExistsResult = groupDao.isGroupExists(groupID);
+        if (isGroupExistsResult.getErrorMessage() != null) {
+            return new RequestResult<>(null,
+                    isGroupExistsResult.getErrorMessage());
+        }
+        boolean isGroupExists = isGroupExistsResult.getResponseData();
         if (!isGroupExists) {
-            return new RequestResult<>(null, ExceptionMessages.GROUP_DOES_NOT_EXIST);
+            return new RequestResult<>(null,
+                    ExceptionMessages.GROUP_DOES_NOT_EXIST);
         }
-        var result = groupDao.getGroupPic(groupID);
-        if (result.getErrorMessage() != null) {
-            throw new RemoteException(result.getErrorMessage());
-        }
-        return new RequestResult<>(result.getResponseData(), null);
-    }
-
-    public RequestResult<Boolean> setGroupPic(ClientToken token, int groupID, byte[] pic) {
-        boolean validToken = tokenValidator.checkClientToken(token).getResponseData();
-        if (!validToken) {
-            return new RequestResult<>(false, ExceptionMessages.INVALID_TOKEN);
-        }
-        if (!onlineUsers.containsKey(token.getUserID())) {
-            return new RequestResult<>(false, ExceptionMessages.USER_TIMEOUT);
-        }
-        boolean isGroupExists = groupDao.isGroupExists(groupID).getResponseData();
-        if (!isGroupExists) {
-            return new RequestResult<>(false, ExceptionMessages.GROUP_DOES_NOT_EXIST);
-        }
-        if (pic == null) {
-            return new RequestResult<>(false, ExceptionMessages.INVALID_INPUT_DATA);
-        }
-        var result = groupDao.setGroupPic(groupID, pic);
-        if (result.getErrorMessage() != null) {
-            throw new RemoteException(result.getErrorMessage());
-        }
-        return new RequestResult<>(result.getResponseData(), null);
+        
+        return groupDao.setGroupPic(groupID, pic);
     }
 
     public RequestResult<Boolean> createGroup(ClientToken token, Group newGroup) {
