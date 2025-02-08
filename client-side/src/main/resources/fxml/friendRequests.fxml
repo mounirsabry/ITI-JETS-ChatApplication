@@ -7,8 +7,8 @@
 <?import javafx.scene.layout.VBox?>
 
 
-<BorderPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="400.0" prefWidth="600.0" xmlns="http://javafx.com/javafx/9.0.1" 
-fx:controller="jets.projects.Controllers.friendRequestsController" xmlns:fx="http://javafx.com/fxml/1">
+<BorderPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="400.0" prefWidth="600.0" xmlns="http://javafx.com/javafx/9.0.1"
+            fx:controller="jets.projects.Controllers.InvitationsController" xmlns:fx="http://javafx.com/fxml/1">
    <top>
       <VBox alignment="CENTER_LEFT" prefHeight="59.0" prefWidth="600.0" style="-fx-background-color: #f1f2f6;" BorderPane.alignment="CENTER">
          <children>
@@ -21,6 +21,6 @@ fx:controller="jets.projects.Controllers.friendRequestsController" xmlns:fx="htt
       </VBox>
    </top>
    <center>
-      <ListView fx:id="requestsList" prefHeight="200.0" prefWidth="200.0" BorderPane.alignment="CENTER" />
+      <ListView fx:id="invitationList" prefHeight="200.0" prefWidth="200.0" BorderPane.alignment="CENTER" />
    </center>
 </BorderPane>
