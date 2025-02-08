@@ -47,8 +47,12 @@ public class GroupMessagesDao {
         } catch (SQLException e) {
             return new RequestResult<>(null, "Database error: " + e.getMessage());
         }
-       
     }
+    
+    public RequestResult<byte[]> getGroupMessageFile(int groupID, int messageID) {
+        
+    }
+    
     public RequestResult<Boolean> sendGroupMessage(GroupMessage message) {
 
         try (Connection connection = ConnectionManager.getConnection()) {

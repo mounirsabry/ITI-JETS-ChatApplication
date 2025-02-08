@@ -1,8 +1,6 @@
 package jets.projects.normal_user_controller_helpers;
 
-import java.rmi.RemoteException;
 import java.util.List;
-import java.util.Map;
 
 import jets.projects.classes.ExceptionMessages;
 import jets.projects.classes.RequestResult;
@@ -10,101 +8,162 @@ import jets.projects.dao.GroupDao;
 import jets.projects.dao.GroupMemberDao;
 import jets.projects.dao.GroupMessagesDao;
 import jets.projects.dao.TokenValidatorDao;
-import jets.projects.dao.UsersDao;
 import jets.projects.entities.GroupMessage;
-import jets.projects.online_listeners.GroupCallback;
-import jets.projects.online_listeners.GroupMessageCallback;
+import jets.projects.online_listeners.OnlineTracker;
 import jets.projects.session.ClientToken;
-import jets.projects.shared_ds.OnlineNormalUserInfo;
-import jets.projects.shared_ds.OnlineNormalUserTable;
+import jets.projects.online_listeners.GroupMessageCallback;
 
 public class GroupMessagesManager {
-
-    GroupDao groupDao = new GroupDao();
-    GroupMemberDao groupMemberDao = new GroupMemberDao();
-    GroupMessagesDao groupMessagesDao = new GroupMessagesDao();
-    UsersDao usersDao = new UsersDao();
-    TokenValidatorDao tokenValidator = new TokenValidatorDao();
-    GroupMessageCallback groupMessageCallback;
-    GroupCallback groupCallback;
-    Map<Integer, OnlineNormalUserInfo> onlineUsers;
+    private final TokenValidatorDao tokenValidator;
+    private final GroupDao groupDao;
+    private final GroupMemberDao groupMemberDao;
+    private final GroupMessagesDao groupMessagesDao;
 
     public GroupMessagesManager() {
-        this.groupMessageCallback = new GroupMessageCallback(groupMessagesDao, groupMemberDao);
-        this.groupCallback = new GroupCallback(groupDao, groupMemberDao, usersDao);
-        onlineUsers = OnlineNormalUserTable.getTable();
+        tokenValidator = new TokenValidatorDao();
+        groupDao = new GroupDao();
+        groupMemberDao = new GroupMemberDao();
+        groupMessagesDao = new GroupMessagesDao();
     }
 
-    public RequestResult<List<GroupMessage>> getGroupMessages(ClientToken token, int groupID) {
-        boolean validToken = tokenValidator.checkClientToken(token).getResponseData();
-        if (!validToken) {
-            return new RequestResult<>(null, ExceptionMessages.INVALID_TOKEN);
+    public RequestResult<List<GroupMessage>> getGroupMessages(ClientToken token,
+            int groupID) {
+        var validationResult = tokenValidator.checkClientToken(token);
+        if (validationResult.getErrorMessage() != null) {
+            return new RequestResult<>(null,
+                    validationResult.getErrorMessage());
         }
-        if (!onlineUsers.containsKey(token.getUserID())) {
-            return new RequestResult<>(null, ExceptionMessages.USER_TIMEOUT);
+        boolean isTokenValid = validationResult.getResponseData();
+        if (!isTokenValid) {
+            return new RequestResult<>(null,
+                    ExceptionMessages.INVALID_TOKEN);
         }
-        var result = groupMessagesDao.getGroupMessages(token.getUserID());
-        if (result.getErrorMessage() != null) {
-            throw new RemoteException(result.getErrorMessage());
+        
+        if (!OnlineTracker.isOnline(true)) {
+            return new RequestResult<>(null,
+                    ExceptionMessages.USER_TIMEOUT);
         }
-        return new RequestResult<>(result.getResponseData(), null);
+        
+        var isGroupExistsResult = groupDao.isGroupExists(groupID);
+        if (isGroupExistsResult.getErrorMessage() != null) {
+            return new RequestResult<>(null,
+                    isGroupExistsResult.getErrorMessage());
+        }
+        boolean isGroupExists = isGroupExistsResult.getResponseData();
+        if (!isGroupExists) {
+            return new RequestResult<>(null,
+                    ExceptionMessages.GROUP_DOES_NOT_EXIST);
+        }
+        
+        var isMemberResult = groupMemberDao.isMember(groupID,
+                token.getUserID());
+        if (isMemberResult.getErrorMessage() != null) {
+            return new RequestResult<>(null,
+                    isMemberResult.getErrorMessage());
+        }
+        boolean isMember = isMemberResult.getResponseData();
+        if (!isMember) {
+            return new RequestResult<>(null,
+                    ExceptionMessages.NOT_MEMBER);
+        }
+        
+        return groupMessagesDao.getGroupMessages(token.getUserID());
     }
     
-    public RequestResult<byte[]> getGroupMessageFile(ClientToken token, int groupID, int messageID) {
-        throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
+    public RequestResult<byte[]> getGroupMessageFile(ClientToken token,
+            int groupID, int messageID) {
+        var validationResult = tokenValidator.checkClientToken(token);
+        if (validationResult.getErrorMessage() != null) {
+            return new RequestResult<>(null,
+                    validationResult.getErrorMessage());
+        }
+        boolean isTokenValid = validationResult.getResponseData();
+        if (!isTokenValid) {
+            return new RequestResult<>(null,
+                    ExceptionMessages.INVALID_TOKEN);
+        }
+        
+        if (!OnlineTracker.isOnline(true)) {
+            return new RequestResult<>(null,
+                    ExceptionMessages.USER_TIMEOUT);
+        }
+        
+        var isGroupExistsResult = groupDao.isGroupExists(groupID);
+        if (isGroupExistsResult.getErrorMessage() != null) {
+            return new RequestResult<>(null,
+                    isGroupExistsResult.getErrorMessage());
+        }
+        boolean isGroupExists = isGroupExistsResult.getResponseData();
+        if (!isGroupExists) {
+            return new RequestResult<>(null,
+                    ExceptionMessages.GROUP_DOES_NOT_EXIST);
+        }
+        
+        var isMemberResult = groupMemberDao.isMember(groupID,
+                token.getUserID());
+        if (isMemberResult.getErrorMessage() != null) {
+            return new RequestResult<>(null,
+                    isMemberResult.getErrorMessage());
+        }
+        boolean isMember = isMemberResult.getResponseData();
+        if (!isMember) {
+            return new RequestResult<>(null,
+                    ExceptionMessages.NOT_MEMBER);
+        }
+        
+        return groupMessagesDao.getGroupMessageFile(groupID, messageID);
     }
 
-    public RequestResult<Boolean> sendGroupMessage(ClientToken token, GroupMessage message) {
-        boolean validToken = tokenValidator.checkClientToken(token).getResponseData();
-        if (!validToken) {
-            return new RequestResult<>(false, ExceptionMessages.INVALID_TOKEN);
+    public RequestResult<Boolean> sendGroupMessage(ClientToken token,
+            GroupMessage message) {
+        var validationResult = tokenValidator.checkClientToken(token);
+        if (validationResult.getErrorMessage() != null) {
+            return new RequestResult<>(null,
+                    validationResult.getErrorMessage());
         }
-        if (!onlineUsers.containsKey(token.getUserID())) {
-            return new RequestResult<>(false, ExceptionMessages.USER_TIMEOUT);
+        boolean isTokenValid = validationResult.getResponseData();
+        if (!isTokenValid) {
+            return new RequestResult<>(null,
+                    ExceptionMessages.INVALID_TOKEN);
         }
-        if (message.getContent() == null) {
-            return new RequestResult<>(false, ExceptionMessages.INVALID_MESSAGE);
+        
+        if (!OnlineTracker.isOnline(true)) {
+            return new RequestResult<>(null,
+                    ExceptionMessages.USER_TIMEOUT);
         }
-        boolean isGroupExists = groupDao.isGroupExists(message.getGroupID()).getResponseData();
+        
+        var isGroupExistsResult = groupDao.isGroupExists(
+                message.getGroupID());
+        if (isGroupExistsResult.getErrorMessage() != null) {
+            return new RequestResult<>(null,
+                    isGroupExistsResult.getErrorMessage());
+        }
+        boolean isGroupExists = isGroupExistsResult.getResponseData();
         if (!isGroupExists) {
-            return new RequestResult<>(false, ExceptionMessages.GROUP_DOES_NOT_EXIST);
+            return new RequestResult<>(null,
+                    ExceptionMessages.GROUP_DOES_NOT_EXIST);
         }
-        boolean isMember = groupMemberDao.isMember(message.getGroupID(), token.getUserID()).getResponseData();
+        
+        var isMemberResult = groupMemberDao.isMember(
+                message.getGroupID(),
+                token.getUserID());
+        if (isMemberResult.getErrorMessage() != null) {
+            return new RequestResult<>(null,
+                    isMemberResult.getErrorMessage());
+        }
+        boolean isMember = isMemberResult.getResponseData();
         if (!isMember) {
-            return new RequestResult<>(false, ExceptionMessages.NOT_MEMBER);
+            return new RequestResult<>(null,
+                    ExceptionMessages.NOT_MEMBER);
         }
-        var result = groupMessagesDao.sendGroupMessage(message); //save in database
-        groupMessageCallback.groupMessageReceived(message);  //callback for group members
+        
+        var result = groupMessagesDao.sendGroupMessage(message);
         if (result.getErrorMessage() != null) {
-            throw new RemoteException(result.getErrorMessage());
+            return result;
         }
-        return new RequestResult<>(true, null);
-    }
-
-    public RequestResult<Boolean> sendGroupFileMessage(ClientToken token, int groupID, String file) {
-        boolean validToken = tokenValidator.checkClientToken(token).getResponseData();
-        if (!validToken) {
-            return new RequestResult<>(false, ExceptionMessages.INVALID_TOKEN);
-        }
-        if (!onlineUsers.containsKey(token.getUserID())) {
-            return new RequestResult<>(false, ExceptionMessages.USER_TIMEOUT);
-        }
-        if (file == null || file.isBlank()) {
-            return new RequestResult<>(false, ExceptionMessages.INVALID_MESSAGE);
-        }
-        boolean isGroupExists = groupDao.isGroupExists(groupID).getResponseData();
-        if (!isGroupExists) {
-            return new RequestResult<>(false, ExceptionMessages.GROUP_DOES_NOT_EXIST);
-        }
-        boolean isMember = groupMemberDao.isMember(groupID, token.getUserID()).getResponseData();
-        if (!isMember) {
-            return new RequestResult<>(false, ExceptionMessages.NOT_MEMBER);
-        }
-        var result = groupMessagesDao.sendGroupFileMessage(token.getUserID(), groupID, file);  //save in database
-        groupMessageCallback.fileGroupMessageReceived(token.getUserID(), groupID, file); //callback for group members
-        if (result.getErrorMessage() != null) {
-            throw new RemoteException(result.getErrorMessage());
-        }
-        return new RequestResult<>(true, null);
+        
+        message.setFile(null);
+        GroupMessageCallback.groupMessageReceived(message);
+        return result;
     }
 }

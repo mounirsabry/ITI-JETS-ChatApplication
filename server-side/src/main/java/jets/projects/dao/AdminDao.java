@@ -10,6 +10,7 @@ import jets.projects.db_connections.ConnectionManager;
 import jets.projects.session.AdminSessionData;
 
 public class AdminDao {
+        // Admin does not have an online status.
         public RequestResult<AdminSessionData> adminLogin(int userID,
                 String password) {
         try (Connection connection = ConnectionManager.getConnection()) {

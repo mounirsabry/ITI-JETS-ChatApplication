@@ -71,7 +71,8 @@ public class GroupDao {
         return null; 
     }    
     
-    public RequestResult<NormalUser> getGroupAdmin(int groupID) {
+    // Returns the id of the admin of the group.
+    public RequestResult<Integer> getGroupAdminID(nt groupID) {
         String query = "SELECT u.* FROM NormalUser u " +
                        "JOIN UsersGroup g ON u.user_ID = g.group_admin_ID " +
                        "WHERE g.group_ID = ?";
@@ -111,6 +112,7 @@ public class GroupDao {
         }
         return new RequestResult<>(null, "Error retrieving group name.");
     }
+
     public RequestResult<Boolean> updateAdmin(int groupID, int newAdminID) {
         String query = "UPDATE UsersGroup SET group_admin_ID = ? WHERE group_ID = ?";
         try (PreparedStatement statement = DBConnection.getConnection().prepareStatement(query)){
@@ -187,6 +189,7 @@ public class GroupDao {
             return new RequestResult<>(false, e.getMessage());
         }
     }
+    
     public RequestResult<Boolean> deleteGroup(int groupID){
         String deleteMemberQuery = "DELETE FROM UsersGroupMember WHERE group_ID = ?";
         Connection connection = DBConnection.getConnection();

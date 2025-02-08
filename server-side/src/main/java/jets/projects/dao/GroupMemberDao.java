@@ -48,6 +48,11 @@ public class GroupMemberDao {
             return new RequestResult<>(null, e.getMessage());
         }
     }
+    
+    public RequestResult<Integer> getNumberOfGroupMembers(int groupID) {
+        
+    }
+    
     public RequestResult<Boolean> addMemberToGroup(int groupID, int otherID) {
         String query = "INSERT INTO UsersGroupMember (group_ID, member_ID) VALUES (?, ?)";
         try (PreparedStatement preparedStatement = DBConnection.getConnection().prepareStatement(query)){
@@ -93,6 +98,8 @@ public class GroupMemberDao {
             return new RequestResult<>(false, "Database error: " + e.getMessage());
         }
     }
+    
+    // Make this a transaction to ensure both has happened.
     public RequestResult<Boolean> leaveGroupAsAdmin(int userID , int groupID, int newAdminID) {
         String query = "UPDATE UsersGroup SET group_admin_ID = ? WHERE group_ID = ?";
         try (PreparedStatement preparedStatement = DBConnection.getConnection().prepareStatement(query)){
