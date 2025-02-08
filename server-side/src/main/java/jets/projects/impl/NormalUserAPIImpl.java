@@ -113,6 +113,18 @@ public class NormalUserAPIImpl extends UnicastRemoteObject
     }
     
     @Override
+    public void registerPulse(ClientToken token) throws RemoteException {
+        if (!validToken(token)) {
+            throw new RemoteException(ExceptionMessages.INVALID_TOKEN);
+        }
+        
+        var result = controller.registerPulse(token);
+        if (result.getErrorMessage() != null) {
+            throw new RemoteException(result.getErrorMessage());
+        }
+    }
+    
+    @Override
     public NormalUser getMyProfile(ClientToken token) throws RemoteException {
         if (!validToken(token)) {
             throw new RemoteException(ExceptionMessages.INVALID_TOKEN);

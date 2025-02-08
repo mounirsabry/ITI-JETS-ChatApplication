@@ -14,22 +14,18 @@ import jets.projects.entity_info.GroupMemberInfo;
 import jets.projects.shared_ds.OnlineNormalUserTable;
 
 public class GroupCallback {
-    private ExecutorService executor;
+    private static ExecutorService executor;
     
-    GroupDao groupDao;
-    GroupMemberDao groupMemberDao;
-    UsersDao usersDao;
+    private static final GroupDao groupDao 
+            = new GroupDao();
+    private static final GroupMemberDao groupMemberDao 
+            = new GroupMemberDao();
     
     private static boolean isInit = false;
     public GroupCallback() {
         if (isInit) {
             throw new UnsupportedOperationException("Object has already been init.");
         }
-        
-        groupDao = new GroupDao();
-        groupMemberDao = new GroupMemberDao();
-        usersDao = new UsersDao();
-        
         isInit = true;
     }
     
@@ -47,16 +43,23 @@ public class GroupCallback {
                     "The executor is already shutdown.");
         }
         try {
-            executor.awaitTermination(Delays.EXECUTOR_AWAIT_TERMINATION_TIMEOUT,
-                    TimeUnit.SECONDS);
+            executor.shutdown();
+            if (!executor.awaitTermination(
+                    Delays.EXECUTOR_AWAIT_TERMINATION_TIMEOUT,
+                    TimeUnit.SECONDS)) {
+                executor.shutdownNow();
+            }
         } catch (InterruptedException ex) {
-            System.err.println("Thread interrupted while waiting to terminate the executor.");
+            System.err.println("Thread interrupted while waiting "
+                    + "to terminate the executor.");
+        } finally {
+            executor = null;
         }
     }
 
-    public void addedToGroup(int userID, int groupID) {
+    public static void addedToGroup(int userID, int groupID) {
         executor.submit(()->{
-            ClientAPI client = OnlineNormalUserTable.getOnlineUsersTable().get(userID).getImpl();
+            ClientAPI client = OnlineNormalUserTable.getTable().get(userID).getImpl();
             if (client!=null) {
                 try {
                     String groupName = groupDao.getGroupName(groupID).getResponseData();
@@ -68,9 +71,13 @@ public class GroupCallback {
         });
     }
     
+    public static void groupPicChanged(int groupID, byte[] newPic) {
+        some text to spike compiler error.
+    }
+    
     public void removedFromGroup(int userID, int groupID) {
         executor.submit(()->{
-            ClientAPI client = OnlineNormalUserTable.getOnlineUsersTable().get(userID).getImpl();
+            ClientAPI client = OnlineNormalUserTable.getTable().get(userID).getImpl();
             if (client!=null) {
                 try {
                     String groupName = groupDao.getGroupName(groupID).getResponseData();
@@ -84,7 +91,7 @@ public class GroupCallback {
     
     public void leadershipGained(int userID, int groupID) {
         executor.submit(()->{
-            ClientAPI client = OnlineNormalUserTable.getOnlineUsersTable().get(userID).getImpl();
+            ClientAPI client = OnlineNormalUserTable.getTable().get(userID).getImpl();
             if (client!=null) {
                 try {
                     String groupName = groupDao.getGroupName(groupID).getResponseData();

@@ -20,10 +20,7 @@ public class ExceptionMessages {
     
     public static final String INVALID_INPUT_DATA 
             = "Invalid input data.";
-    
-    public static final String CONTACT_DOES_NOT_EXIST 
-            = "Contact does not exist";
-    
+        
     public static final String USER_DOES_NOT_EXIST 
             = "User does not exist";
     

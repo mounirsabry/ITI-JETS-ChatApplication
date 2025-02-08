@@ -8,25 +8,20 @@ import jets.projects.api.ClientAPI;
 import jets.projects.classes.Delays;
 import jets.projects.classes.MyExecutorFactory;
 import jets.projects.dao.GroupMemberDao;
-import jets.projects.dao.GroupMessagesDao;
 import jets.projects.entity_info.GroupMemberInfo;
 import jets.projects.entities.GroupMessage;
 
 public class GroupMessageCallback {
-    private ExecutorService executor;
+    private static ExecutorService executor;
     
-    GroupMessagesDao groupMessagesDao;
-    GroupMemberDao groupMemberDao;
+    private static final GroupMemberDao groupMemberDao 
+            = new GroupMemberDao();
     
     private static boolean isInit = false;
     public GroupMessageCallback() {
         if (isInit) {
             throw new UnsupportedOperationException("Object has already been init.");
         }
-        
-        groupMessagesDao = new GroupMessagesDao();
-        groupMemberDao = new GroupMemberDao();
-        
         isInit = true;
     }
     
@@ -44,14 +39,21 @@ public class GroupMessageCallback {
                     "The executor is already shutdown.");
         }
         try {
-            executor.awaitTermination(Delays.EXECUTOR_AWAIT_TERMINATION_TIMEOUT,
-                    TimeUnit.SECONDS);
+            executor.shutdown();
+            if (!executor.awaitTermination(
+                    Delays.EXECUTOR_AWAIT_TERMINATION_TIMEOUT,
+                    TimeUnit.SECONDS)) {
+                executor.shutdownNow();
+            }
         } catch (InterruptedException ex) {
-            System.err.println("Thread interrupted while waiting to terminate the executor.");
+            System.err.println("Thread interrupted while waiting "
+                    + "to terminate the executor.");
+        } finally {
+            executor = null;
         }
     }
     
-    public void groupMessageReceived(GroupMessage message) {
+    public static void groupMessageReceived(GroupMessage message) {
         executor.submit(()->{
             ClientAPI client;
             List<GroupMemberInfo> members = groupMemberDao.getAllMembers(message.getGroupID()).getResponseData();
@@ -66,22 +68,5 @@ public class GroupMessageCallback {
                 }
             }
         });
-    }
-    
-    public void fileGroupMessageReceived(int senderID ,int groupID, String file) {
-        executor.submit(()->{
-            ClientAPI client;
-            List<GroupMemberInfo> members = groupMemberDao.getAllMembers(groupID).getResponseData();
-            for(GroupMemberInfo member : members){
-                client = onlineUsers.get(member.getMemberID()).getImpl();
-                if(client!=null){
-                   try {
-                    client.groupFileMessageReceived(senderID, groupID, file);  //notify group members 
-                    } catch (RemoteException e) {
-                        System.err.println("Falied to notify member about new group file message: " + e.getMessage());
-                    } 
-                }
-            }
-        });     
     }
 }
