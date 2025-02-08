@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.control.ProgressBar?>
+<?import javafx.scene.layout.BorderPane?>
+
+<BorderPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="600.0" prefWidth="800.0" xmlns="http://javafx.com/javafx/9.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="jets.projects.Controllers.LoadingController">
+   <center>
+      <ProgressBar fx:id="progressBar" minHeight="10.0" prefHeight="10.0" prefWidth="300.0" progress="0.0" BorderPane.alignment="CENTER" />
+   </center>
+</BorderPane>

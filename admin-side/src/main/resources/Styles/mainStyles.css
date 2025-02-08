@@ -32,11 +32,8 @@
 }
 .iconsButtons  {
     -fx-background-color: #ccdbdc; 
-    -fx-background-radius: 40%; 
-    -fx-min-width: 50px; 
-    -fx-min-height: 50px; 
-    -fx-max-width: 50px; 
-    -fx-max-height: 50px;
+    -fx-background-radius: 25%;
+
     -fx-border-color: #003249; 
     -fx-border-width: 1;
     -fx-border-radius: 40%; 

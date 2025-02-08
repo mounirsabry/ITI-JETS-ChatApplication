@@ -12,16 +12,17 @@ import jets.projects.Controllers.*;
 public class App extends Application {
 
     private Parent signInParent;
-    private signinController signinController;
+    private SigninController signinController;
 
     private Parent signUpParent;
-    private signUpController signUpController;
+    private SignUpController signUpController;
 
     private Parent homeParent;
-    private homeScreenController homeScreenController;
+    private HomeScreenController homeScreenController;
 
     @Override
     public void start(Stage stage) {
+
         stage.setMinWidth(600);
         stage.setMinHeight(400);
         
@@ -31,7 +32,8 @@ public class App extends Application {
         loadHomePage(homeName);
     	loadSignInPage(signinName);
         loadSignUpPage(signupName);
-        
+
+
         if (signInParent == null || signinController == null 
         ||  signUpParent == null || signUpController == null
         ||  homeParent == null || homeScreenController == null) {
@@ -47,6 +49,7 @@ public class App extends Application {
                 homeParent, homeScreenController);
             myDirector.startWorking();
         }
+
     }
 
     public static void main(String[] args) {
