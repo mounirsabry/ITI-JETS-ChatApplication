@@ -7,4 +7,12 @@ public class CallBackInvitationService {
     public void contactInvitationReceived(ContactInvitationInfo invitationInfo) {
 
     }
+
+    public void contactInvitationAccepted(int invitationID){
+
+    }
+
+    public void contactInvitationRejected(int invitationID){
+
+    }
 }

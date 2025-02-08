@@ -73,7 +73,7 @@ public class ClientContactMessageService {
         }
     }
 
-    public boolean markContactMessagesAsRead(List<Integer> messagesIDs) {
+    public boolean markContactMessagesAsRead(int contactID) {
         if (!ServerConnectivityService.check()) {
             ClientAlerts.invokeWarningAlert("Mark Messages As Read", "Can't connect to server");
             return false;
@@ -81,7 +81,7 @@ public class ClientContactMessageService {
         NormalUserAPI serverAPI = ServerConnectivityService.getServerAPI();
         ClientToken myToken = ServerConnectivityService.getMyToken();
         try {
-            if (serverAPI.markContactMessagesAsRead(myToken, messagesIDs)) {
+            if (serverAPI.markContactMessagesAsRead(myToken, contactID)) {
                 return true;
             }
             ClientAlerts.invokeErrorAlert("Mark Messages As Read Error", "Failed to mark messages as read");

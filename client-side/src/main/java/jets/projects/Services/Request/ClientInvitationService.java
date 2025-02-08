@@ -24,14 +24,14 @@ public class ClientInvitationService {
         }
     }
 
-    public boolean sendContactInvitation(ContactInvitation invitation) {
+    public boolean sendContactInvitation(String phoneNumber) {
         if (!ServerConnectivityService.check()) {
             ClientAlerts.invokeWarningAlert("Send Contact Invitation", "Can't connect to server");
             return false;
         }
         ClientToken myToken = ServerConnectivityService.getMyToken();
         try {
-            if(ServerConnectivityService.getServerAPI().sendContactInvitation(myToken, invitation)){
+            if(ServerConnectivityService.getServerAPI().sendContactInvitation(myToken, phoneNumber)){
                 return true;
             }
             ClientAlerts.invokeErrorAlert("Send Contact Invitation Error", "Failed to send invitation");

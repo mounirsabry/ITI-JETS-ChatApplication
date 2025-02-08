@@ -8,6 +8,7 @@ import jets.projects.entities.NormalUserStatus;
 import jets.projects.session.ClientToken;
 
 import java.rmi.RemoteException;
+import java.util.Date;
 
 
 /**
@@ -36,7 +37,9 @@ public class ClientProfileService {
         }
     }
 
-    public boolean editProfile(String displayName, String bio, byte[] profilePic){
+    public boolean editProfile(String displayName,
+                               Date birthDate,
+                               String bio, byte[] profilePic){
         if(!ServerConnectivityService.check()){
             ClientAlerts.invokeWarningAlert("Edit My Profile", "Can't connect to server");
             return false;
@@ -44,7 +47,7 @@ public class ClientProfileService {
         NormalUserAPI serverAPI = ServerConnectivityService.getServerAPI();
         ClientToken myToken = ServerConnectivityService.getMyToken();
         try{
-            if(serverAPI.editProfile(myToken, displayName, bio, profilePic)){
+            if(serverAPI.editProfile(myToken, displayName, birthDate, bio, profilePic)){
                 ClientAlerts.invokeInformationAlert("Edit Profile", "Profile edited successfully");
                 return true;
             }
