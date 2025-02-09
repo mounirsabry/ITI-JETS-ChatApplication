@@ -55,6 +55,10 @@ public class ContactDao {
         }
     }
     
+    public RequestResult<List<Integer>> getAllContactsIDs(int userID) {
+        
+    }
+    
     public RequestResult<NormalUser> getContactProfile(int contactID) {
         String query = "SELECT display_name, phone_number, email, pic, `status`, bio FROM NormalUser WHERE user_ID = ?";
         try (PreparedStatement statement = DBConnection.getConnection().prepareStatement(query)){

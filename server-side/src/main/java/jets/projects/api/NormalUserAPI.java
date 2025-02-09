@@ -7,6 +7,7 @@ import java.util.List;
 import jets.projects.session.ClientSessionData;
 import jets.projects.session.ClientToken;
 import jets.projects.entities.Announcement;
+import jets.projects.entities.ContactGroup;
 import jets.projects.entity_info.ContactInfo;
 import jets.projects.entities.ContactMessage;
 import jets.projects.entities.Group;
@@ -130,7 +131,8 @@ public interface NormalUserAPI extends Remote {
             ClientToken token) throws RemoteException;
     
     public boolean sendContactInvitation(ClientToken token,
-            String userPhoneNumber) throws RemoteException;
+            String userPhoneNumber,
+            ContactGroup contactGroup) throws RemoteException;
     
     // The return type contains the contact who sent 
     // the contact invitation.

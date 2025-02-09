@@ -20,6 +20,7 @@ import jets.projects.api.ClientAPI;
 import jets.projects.api.NormalUserAPI;
 import jets.projects.classes.ExceptionMessages;
 import jets.projects.classes.FileChecker;
+import jets.projects.entities.ContactGroup;
 import jets.projects.entity_info.AnnouncementInfo;
 import jets.projects.entity_info.ContactInvitationInfo;
 import jets.projects.top_controllers.NormalUserController;
@@ -635,16 +636,19 @@ public class NormalUserAPIImpl extends UnicastRemoteObject
 
     @Override
     public boolean sendContactInvitation(ClientToken token,
-            String userPhoneNumber) throws RemoteException {
+            String userPhoneNumber,
+            ContactGroup contactGroup) throws RemoteException {
         if (!validToken(token)) {
             throw new RemoteException(ExceptionMessages.INVALID_TOKEN);
         }
         
-        if (userPhoneNumber == null || userPhoneNumber.isBlank()) {
+        if (userPhoneNumber == null || userPhoneNumber.isBlank()
+        || contactGroup == null) {
             throw new RemoteException(ExceptionMessages.INVALID_INPUT_DATA);
         }
         
-        var result = controller.sendContactInvitation(token, userPhoneNumber);
+        var result = controller.sendContactInvitation(token,
+                userPhoneNumber, contactGroup);
         if (result.getErrorMessage() != null) {
             throw new RemoteException(result.getErrorMessage());
         }
@@ -652,7 +656,7 @@ public class NormalUserAPIImpl extends UnicastRemoteObject
     }
 
     @Override
-    public boolean acceptContactInvitation(ClientToken token, int invitationID)
+    public ContactInfo acceptContactInvitation(ClientToken token, int invitationID)
             throws RemoteException {
         if (!validToken(token)) {
             throw new RemoteException(ExceptionMessages.INVALID_TOKEN);
