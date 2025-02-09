@@ -1,9 +1,12 @@
 package jets.projects.online_listeners;
 
+import java.util.Map;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
 import jets.projects.classes.Delays;
+import jets.projects.shared_ds.OnlineNormalUserInfo;
+import jets.projects.shared_ds.OnlineNormalUserTable;
 
 public class OnlineCleaner {
     private ScheduledExecutorService executor;
@@ -47,6 +50,18 @@ public class OnlineCleaner {
     }
     
     private void clean() {
-        System.err.println("Online cleaner check not implemented.");
+        var table = OnlineNormalUserTable.table;
+        for (Map.Entry<Integer, OnlineNormalUserInfo> entry : table.entrySet()) {
+            var info = entry.getValue();
+            
+            long 
+            long difference = now.getTime() -
+                    user.getLastHeartBeat().getTime();
+
+            difference = difference / 1000;
+            if (difference >= Delays.USER_TIMEOUT_DELAY) {
+                userTimeout(user.getName());
+            }
+        }
     }
 }

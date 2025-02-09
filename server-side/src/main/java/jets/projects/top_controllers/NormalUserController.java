@@ -14,6 +14,7 @@ import java.util.List;
 import jets.projects.api.ClientAPI;
 import jets.projects.classes.RequestResult;
 import jets.projects.entities.Announcement;
+import jets.projects.entities.ContactGroup;
 import jets.projects.entities.ContactMessage;
 import jets.projects.entities.Group;
 import jets.projects.entities.GroupMessage;
@@ -215,11 +216,12 @@ public class NormalUserController {
     }
     
     public RequestResult<Boolean> sendContactInvitation(ClientToken token,
-            String userPhoneNumber) {
-        return contactInvitationsManager.sendContactInvitation(token, userPhoneNumber);
+            String userPhoneNumber, ContactGroup contactGroup) {
+        return contactInvitationsManager.sendContactInvitation(token,
+                userPhoneNumber, contactGroup);
     }
     
-    public RequestResult<Boolean> acceptContactInvitation(ClientToken token, int invitationID) {
+    public RequestResult<ContactInfo> acceptContactInvitation(ClientToken token, int invitationID) {
         return contactInvitationsManager.acceptContactInvitation(token, invitationID);
     }
     

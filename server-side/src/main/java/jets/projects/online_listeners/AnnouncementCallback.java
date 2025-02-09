@@ -53,14 +53,14 @@ public class AnnouncementCallback {
     
     public static void newAnnouncementAdded(Announcement announcement){
         executor.submit(() -> {
-            Map<Integer, OnlineNormalUserInfo> onlineUsers 
-                    = OnlineNormalUserTable.getTable();
-            for (OnlineNormalUserInfo userInfo : onlineUsers.values()) {
+            var table = OnlineNormalUserTable.table;
+            for (OnlineNormalUserInfo userInfo : table.values()) {
                 try {
                     userInfo.getImpl().newAnnouncementAdded(announcement);
                 } catch (RemoteException e) {
                     System.err.println("Failed to send announcement to user: " 
                             + userInfo.toString());
+                    System.err.println("Error: " + e.getMessage());
                 }
             }
         });

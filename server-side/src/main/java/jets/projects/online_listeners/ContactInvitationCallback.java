@@ -9,6 +9,7 @@ import jets.projects.classes.Delays;
 import jets.projects.classes.MyExecutorFactory;
 import jets.projects.dao.ContactInvitationDao;
 import jets.projects.entities.ContactInvitation;
+import jets.projects.shared_ds.OnlineNormalUserTable;
 
 public class ContactInvitationCallback {
     private static ExecutorService executor;
@@ -16,7 +17,7 @@ public class ContactInvitationCallback {
             = new ContactInvitationDao();
     
     private static boolean isInit = false;
-    public ContactCallback() {
+    public ContactInvitationCallback() {
         if (isInit) {
             throw new UnsupportedOperationException(
                     "Object has already been init.");
@@ -56,45 +57,55 @@ public class ContactInvitationCallback {
     // If the invitation does not exist, then maybe it was a two way
     // contact invtation, in this case, do nothing.
     public static void contactInvitationReceived(int senderID, int receiverID) {
-        contactInvitationDao
-        
-        ClientAPI client = onlineUsers.get(receiverID).getImpl();
         executor.submit(()->{
-            if(client != null){
-                try {
-                    client.contactInvitationReceived(invitation);
-                } catch (RemoteException e) {
-                    System.err.println("Failed to send invitation " 
-                            + e.getMessage());
-                }
+            contactInvitationDao.
+            var receiverUser = OnlineNormalUserTable.getTable().getOrDefault(
+                    receiverID, null);
+            if (receiverUser == null) {
+                return;
+            }
+            ClientAPI client = receiverUser.getImpl();
+            try {
+                client.contactInvitationReceived(invitation);
+            } catch (RemoteException e) {
+                System.err.println("Failed to send invitation " 
+                        + e.getMessage());
             }
         });
     }
     
     public static void contactInvitationAccepted(ContactInvitation invitation) {
-        int receiverID = invitation.getReceiverID();
-        ClientAPI client = onlineUsers.get(receiverID).getImpl();
         executor.submit(()->{
-            if(client!=null){
-                try {
-                    client.contactInvitationAccepted(invitation);
-                } catch (RemoteException e) {
-                    System.err.println("Failed to send invitation " + e.getMessage());
-                }
+            int receiverID = invitation.getReceiverID();
+            var receiverUser = OnlineNormalUserTable.getTable().getOrDefault(
+                    receiverID, null);
+            if (receiverUser == null) {
+                return;
+            }
+            ClientAPI client = receiverUser.getImpl();
+            try {
+                client.contactInvitationAccepted(
+                        invitation.getInvitationID());
+            } catch (RemoteException e) {
+                System.err.println("Failed to send invitation " + e.getMessage());
             }
         });        
     }
     
     public static void contactInvitationRejected(ContactInvitation invitation) {
-        int receiverID = invitation.getReceiverID();
-        ClientAPI client = onlineUsers.get(receiverID).getImpl();
         executor.submit(()->{
-            if (client!=null) {
-                try {
-                    client.contactInvitationRejected(invitation);
-                } catch (RemoteException e) {
-                    System.err.println("Failed to send invitation " + e.getMessage());
-                }
+            int receiverID = invitation.getReceiverID();
+            var receiverUser = OnlineNormalUserTable.getTable().getOrDefault(
+                    receiverID, null);
+            if (receiverUser == null) {
+                return;
+            }
+            ClientAPI client = receiverUser.getImpl();
+            try {
+                client.contactInvitationRejected(
+                        invitation.getInvitationID());
+            } catch (RemoteException e) {
+                System.err.println("Failed to send invitation " + e.getMessage());
             }
         });        
     }

@@ -210,6 +210,7 @@ public class ContactMessagesManager {
             return result;
         }
         
+        message.setFile(null);
         ContactMessageCallback.contactMessageReceived(message);
         return result;
     }

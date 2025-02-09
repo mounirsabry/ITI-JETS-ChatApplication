@@ -9,17 +9,15 @@ import jets.projects.entities.Group;
 import jets.projects.entities.GroupMessage;
 import jets.projects.entities.Notification;
 import jets.projects.entity_info.ContactInvitationInfo;
+import jets.projects.entity_info.ContactInfo;
 
 public interface ClientAPI extends Remote {
     public void contactInvitationReceived(
             ContactInvitationInfo invitationInfo) throws RemoteException;
     
-    // The action should be removing the contact invitation from the list.
+    // This will be called on the sender of the contact invitation.
     public void contactInvitationAccepted(
-            int invitationID) throws RemoteException;
-    
-    public void contactInvitationRejected(
-            int invitationID) throws RemoteException;
+            ContactInfo receiverContactInfo) throws RemoteException;
     
     // The message will be either normal message or file message,
     // If it is a file message, then I will NOT contain the file data.
