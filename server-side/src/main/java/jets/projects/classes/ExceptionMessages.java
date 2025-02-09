@@ -50,4 +50,8 @@ public class ExceptionMessages {
     
     public static final String NOT_THE_LAST_MEMER
             = "You are not the last member of the group to use this parameter.";
+    
+    // Sent from the client.
+    public static final String NULL_DATA_SENT_FORM_SERVER
+            = "Null data sent form Server.";
 }
