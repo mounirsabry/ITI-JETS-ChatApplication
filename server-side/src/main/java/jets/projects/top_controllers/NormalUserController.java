@@ -110,6 +110,11 @@ public class NormalUserController {
         return contactsManager.getContactProfile(token, contactID);
     }
     
+    public RequestResult<NormalUserStatus> getContactOnlineStatus(ClientToken token,
+            int contactID) {
+        return contactsManager.getContactOnlineStatus(token, contactID);
+    }
+    
     public RequestResult<List<ContactMessage>> getAllContactMessages(ClientToken token,
             int contactID) {
         return contactMessagesManager.getContactMessages(token,
