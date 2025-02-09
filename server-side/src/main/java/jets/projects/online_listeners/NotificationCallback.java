@@ -12,6 +12,7 @@ import jets.projects.dao.ContactDao;
 import jets.projects.dao.UsersDao;
 import jets.projects.entity_info.ContactInfo;
 import jets.projects.entities.NormalUserStatus;
+import jets.projects.entities.Notification;
 
 public class NotificationCallback {
     private static ExecutorService executor;
@@ -56,41 +57,17 @@ public class NotificationCallback {
         }
     }
     
-    public static void userWentOnline(int userID) {
-        executor.submit(()->{
-            ClientAPI client;
-            List<ContactInfo> contacts = contactDao.getAllContacts(userID).getResponseData();
-            for(ContactInfo contact : contacts){
-                client = onlineUsers.get(contact.getFirstID()).getImpl();
-                if(client!=null){
-                   try {
-                    client.userWentOnline(usersDao.getNormalUserByID(userID).getDisplayName()); //notify contacts 
-                    } catch (RemoteException e) {
-                        System.err.println("Falied to notify contacts: " + e.getMessage());
-                    } 
-                }
-            }
-        });
+    public static void userStatusChangedNotification(Notification notification) {
+        
+    }
+
+    public static void contactInvitationNotification(Notification notification) {
+        
     }
     
-    public static void userWentOffline(int userID) {
-        executor.submit(()->{
-            ClientAPI client;
-            List<ContactInfo> contacts = contactDao.getAllContacts(userID).getResponseData();
-            for(ContactInfo contact : contacts){
-                client = onlineUsers.get(contact.getFirstID()).getImpl();
-                if(client!=null){
-                   try {
-                    client.userWentOffline(usersDao.getNormalUserByID(userID).getDisplayName()); //notify contacts 
-                    } catch (RemoteException e) {
-                        System.err.println("Falied to notify contacts: " + e.getMessage());
-                    } 
-                }
-            }
-        });      
-    }
-    
+
     public static void userStatusChanged(int userID, NormalUserStatus newStatus) {
+        /*
         executor.submit(()->{
             ClientAPI client;
             List<ContactInfo> contacts = contactDao.getAllContacts(userID).getResponseData();
@@ -104,6 +81,7 @@ public class NotificationCallback {
                     } 
                 }
             }
-        });       
+        });
+        */
     }
 }
