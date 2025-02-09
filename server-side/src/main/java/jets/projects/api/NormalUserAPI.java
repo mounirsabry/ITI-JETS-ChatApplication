@@ -56,6 +56,9 @@ public interface NormalUserAPI extends Remote {
     public NormalUser getContactProfile(ClientToken token,
             int contactID) throws RemoteException;
     
+    public NormalUserStatus getContactOnlineStatus(ClientToken token,
+            int contactID) throws RemoteException;
+    
     // Files not included.
     public List<ContactMessage> getAllContactMessages(ClientToken token,
             int contactID) throws RemoteException;

@@ -9,6 +9,7 @@ import jets.projects.dao.TokenValidatorDao;
 import jets.projects.dao.UsersQueryDao;
 import jets.projects.entity_info.ContactInfo;
 import jets.projects.entities.NormalUser;
+import jets.projects.entities.NormalUserStatus;
 import jets.projects.online_listeners.OnlineTracker;
 import jets.projects.session.ClientToken;
 
@@ -85,6 +86,51 @@ public class ContactsManager {
         }
         
         return contactsDao.getContactProfile(contactID);
+    }
+    
+    public RequestResult<NormalUserStatus> getContactOnlineStatus(
+            ClientToken token, int contactID) {
+        var validationResult = tokenValidator.checkClientToken(token);
+        if (validationResult.getErrorMessage() != null) {
+            return new RequestResult<>(null,
+                    validationResult.getErrorMessage());
+        }
+        boolean isTokenValid = validationResult.getResponseData();
+        if (!isTokenValid) {
+            return new RequestResult<>(null,
+                    ExceptionMessages.INVALID_TOKEN);
+        }
+        
+        if (!OnlineTracker.isOnline(token.getUserID())) {
+            return new RequestResult<>(null,
+                    ExceptionMessages.USER_TIMEOUT);
+        }
+        
+        var isUserExistsResult = usersQueryDao.isNormalUserExistsByID(
+                contactID);
+        if (isUserExistsResult.getErrorMessage() != null) {
+            return new RequestResult<>(null,
+                    isUserExistsResult.getErrorMessage());
+        }
+        boolean isUserExists = isUserExistsResult.getResponseData();
+        if (!isUserExists) {
+            return new RequestResult<>(null,
+                    ExceptionMessages.USER_DOES_NOT_EXIST);
+        }
+        
+        var isContactResult = contactsDao.isContacts(token.getUserID(),
+                contactID);
+        if (isContactResult.getErrorMessage() != null) {
+            return new RequestResult<>(null,
+                    isContactResult.getErrorMessage());
+        }
+        boolean isContacts = isContactResult.getResponseData();
+        if (!isContacts) {
+            return new RequestResult<>(null,
+                    ExceptionMessages.NOT_CONTACTS);
+        }
+        
+        return contactsDao.getContactOnlineStatus(contactID);
     }
 
     /*

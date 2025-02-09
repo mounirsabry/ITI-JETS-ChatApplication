@@ -256,6 +256,25 @@ public class NormalUserAPIImpl extends UnicastRemoteObject
         }
         return result.getResponseData();
     }
+    
+    @Override
+    public NormalUserStatus getContactOnlineStatus(ClientToken token,
+            int contactID) throws RemoteException {
+        if (!validToken(token)) {
+            throw new RemoteException(ExceptionMessages.INVALID_TOKEN);
+        }
+        
+        if (contactID <= 0) {
+            throw new RemoteException(ExceptionMessages.INVALID_INPUT_DATA);
+        }
+        
+        var result = controller.getContactOnlineStatus(token,
+                contactID);
+        if (result.getErrorMessage() != null) {
+            throw new RemoteException(result.getErrorMessage());
+        }
+        return result.getResponseData();
+    }
 
     @Override
     public List<ContactMessage> getAllContactMessages(ClientToken token,
