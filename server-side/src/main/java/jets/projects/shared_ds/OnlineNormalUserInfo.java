@@ -1,28 +1,27 @@
 package jets.projects.shared_ds;
 
-import java.sql.Timestamp;
-import java.time.Instant;
+import java.time.LocalDateTime;
 import jets.projects.api.ClientAPI;
 
 public class OnlineNormalUserInfo {
     private final ClientAPI impl;
-    private Timestamp lastRefreshed;
+    private LocalDateTime lastRefreshed;
 
     public OnlineNormalUserInfo(ClientAPI impl) {
         this.impl = impl;
-        lastRefreshed = Timestamp.from(Instant.now());
+        lastRefreshed = LocalDateTime.now();
     }
 
     public ClientAPI getImpl() {
         return impl;
     }
 
-    public Timestamp getLastRefreshed() {
+    public LocalDateTime getLastRefreshed() {
         return lastRefreshed;
     }
     
     public void setLastRefreshed() {
-        lastRefreshed = Timestamp.from(Instant.now());
+        lastRefreshed = LocalDateTime.now();
     }
     
     @Override

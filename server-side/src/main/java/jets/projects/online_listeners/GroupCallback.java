@@ -55,10 +55,15 @@ public class GroupCallback {
             executor = null;
         }
     }
+    
+    public static void groupPicChanged(int groupID, byte[] newPic) {
+        some text to spike compiler error.
+    }
 
     public static void addedToGroup(int userID, int groupID) {
         executor.submit(()->{
-            var receiverUser = OnlineNormalUserTable.getTable().getOrDefault(
+            var table = OnlineNormalUserTable.table;
+            var receiverUser = table.getOrDefault(
                     userID, null);
             if (receiverUser == null) {
                 return;
@@ -73,13 +78,10 @@ public class GroupCallback {
         });
     }
     
-    public static void groupPicChanged(int groupID, byte[] newPic) {
-        some text to spike compiler error.
-    }
-    
     public static void removedFromGroup(int userID, int groupID) {
         executor.submit(()->{
-            var receiverUser = OnlineNormalUserTable.getTable().getOrDefault(
+            var table = OnlineNormalUserTable.table;
+            var receiverUser = table.getOrDefault(
                     userID, null);
             if (receiverUser == null) {
                 return;
@@ -96,7 +98,8 @@ public class GroupCallback {
     
     public static void leadershipGained(int userID, int groupID) {
         executor.submit(()->{
-            var receiverUser = OnlineNormalUserTable.getTable().getOrDefault(
+            var table = OnlineNormalUserTable.table;
+            var receiverUser = table.getOrDefault(
                     userID, null);
             if (receiverUser == null) {
                 return;
@@ -109,6 +112,24 @@ public class GroupCallback {
                 System.err.println("Falied to notify member about assigned leadership: " + e.getMessage());
             }
         });        
+    }
+    
+    public static void groupMemberLeft(int groupID, int memberID) {
+        
+    }
+    
+    // Exclude the admin and the affected from the called list in the 
+    // following functions.
+    public static void newGroupMemberAdded(int adminID, GroupMemberInfo newMember) {
+        var table = OnlineNorm
+    }
+    
+    public static void groupMemberRemoved(int adminID, int groupID, int memberID) {
+        
+    }
+    
+    public static void adminChanged(int oldAdminID, int groupID, int newAdminID) {
+        
     }
     
     public static void groupDeleted(int groupID) {

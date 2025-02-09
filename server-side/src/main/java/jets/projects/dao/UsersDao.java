@@ -14,6 +14,7 @@ import jets.projects.entities.NormalUserStatus;
 
 public class UsersDao {
 
+    // Should return early if the user was not found.
     public RequestResult<ClientSessionData> clientLogin(String phoneNumber, String password) {
         String query = "SELECT * FROM NormalUser WHERE phone_number = ? AND password= ?";
         try (PreparedStatement preparedStatement = ConnectionManager.getConnection().prepareStatement(query)) {

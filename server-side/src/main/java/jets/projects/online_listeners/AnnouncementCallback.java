@@ -1,7 +1,6 @@
 package jets.projects.online_listeners;
 
 import java.rmi.RemoteException;
-import java.util.Map;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.TimeUnit;
 import jets.projects.classes.Delays;
@@ -58,9 +57,7 @@ public class AnnouncementCallback {
                 try {
                     userInfo.getImpl().newAnnouncementAdded(announcement);
                 } catch (RemoteException e) {
-                    System.err.println("Failed to send announcement to user: " 
-                            + userInfo.toString());
-                    System.err.println("Error: " + e.getMessage());
+                    System.err.println("Callback Error: " + e.getMessage());
                 }
             }
         });

@@ -34,7 +34,7 @@ public class ProfilesManager {
                     ExceptionMessages.INVALID_TOKEN);
         }
         
-        if (!OnlineTracker.isOnline(true)) {
+        if (!OnlineTracker.isOnline(token.getUserID())) {
             return new RequestResult<>(null,
                     ExceptionMessages.USER_TIMEOUT);
         }
@@ -56,7 +56,7 @@ public class ProfilesManager {
                     ExceptionMessages.INVALID_TOKEN);
         }
         
-        if (!OnlineTracker.isOnline(true)) {
+        if (!OnlineTracker.isOnline(token.getUserID())) {
             return new RequestResult<>(null,
                     ExceptionMessages.USER_TIMEOUT);
         }
@@ -85,7 +85,7 @@ public class ProfilesManager {
                     ExceptionMessages.INVALID_TOKEN);
         }
         
-        if (!OnlineTracker.isOnline(true)) {
+        if (!OnlineTracker.isOnline(token.getUserID())) {
             return new RequestResult<>(null,
                     ExceptionMessages.USER_TIMEOUT);
         }
@@ -117,7 +117,7 @@ public class ProfilesManager {
                     ExceptionMessages.INVALID_TOKEN);
         }
         
-        if (!OnlineTracker.isOnline(true)) {
+        if (!OnlineTracker.isOnline(token.getUserID())) {
             return new RequestResult<>(null,
                     ExceptionMessages.USER_TIMEOUT);
         }
@@ -138,7 +138,7 @@ public class ProfilesManager {
                     ExceptionMessages.INVALID_TOKEN);
         }
         
-        if (!OnlineTracker.isOnline(true)) {
+        if (!OnlineTracker.isOnline(token.getUserID())) {
             return new RequestResult<>(null,
                     ExceptionMessages.USER_TIMEOUT);
         }

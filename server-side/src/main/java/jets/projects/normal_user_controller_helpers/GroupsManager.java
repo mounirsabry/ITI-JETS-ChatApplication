@@ -42,7 +42,7 @@ public class GroupsManager {
                     ExceptionMessages.INVALID_TOKEN);
         }
         
-        if (!OnlineTracker.isOnline(true)) {
+        if (!OnlineTracker.isOnline(token.getUserID())) {
             return new RequestResult<>(null,
                     ExceptionMessages.USER_TIMEOUT);
         }
@@ -63,7 +63,7 @@ public class GroupsManager {
                     ExceptionMessages.INVALID_TOKEN);
         }
         
-        if (!OnlineTracker.isOnline(true)) {
+        if (!OnlineTracker.isOnline(token.getUserID())) {
             return new RequestResult<>(null,
                     ExceptionMessages.USER_TIMEOUT);
         }
@@ -112,7 +112,7 @@ public class GroupsManager {
                     ExceptionMessages.INVALID_TOKEN);
         }
         
-        if (!OnlineTracker.isOnline(true)) {
+        if (!OnlineTracker.isOnline(token.getUserID())) {
             return new RequestResult<>(null,
                     ExceptionMessages.USER_TIMEOUT);
         }
@@ -133,7 +133,7 @@ public class GroupsManager {
                     ExceptionMessages.INVALID_TOKEN);
         }
         
-        if (!OnlineTracker.isOnline(true)) {
+        if (!OnlineTracker.isOnline(token.getUserID())) {
             return new RequestResult<>(null,
                     ExceptionMessages.USER_TIMEOUT);
         }
@@ -177,7 +177,7 @@ public class GroupsManager {
                     ExceptionMessages.INVALID_TOKEN);
         }
         
-        if (!OnlineTracker.isOnline(true)) {
+        if (!OnlineTracker.isOnline(token.getUserID())) {
             return new RequestResult<>(null,
                     ExceptionMessages.USER_TIMEOUT);
         }
@@ -242,11 +242,16 @@ public class GroupsManager {
         
         var result = groupMemberDao.addMemberToGroup(groupID, otherID);
         if (result.getErrorMessage() != null) {
-            return result;
+            return new RequestResult<>(null,
+                    result.getErrorMessage());
         }
         
+        GroupMemberInfo newMemberInfo = result.getResponseData();
+        
         GroupCallback.addedToGroup(otherID, groupID);
-        return result;
+        GroupCallback.newGroupMemberAdded(
+                groupAdminID, newMemberInfo);
+        return new RequestResult<>(true, null);
     }
 
     public RequestResult<Boolean> removeMemberFromGroup(ClientToken token,
@@ -262,7 +267,7 @@ public class GroupsManager {
                     ExceptionMessages.INVALID_TOKEN);
         }
         
-        if (!OnlineTracker.isOnline(true)) {
+        if (!OnlineTracker.isOnline(token.getUserID())) {
             return new RequestResult<>(null,
                     ExceptionMessages.USER_TIMEOUT);
         }
@@ -319,6 +324,8 @@ public class GroupsManager {
         }
         
         GroupCallback.removedFromGroup(otherID, groupID);
+        GroupCallback.groupMemberRemoved(
+                groupAdminID, groupID, otherID);
         return result;
     }
 
@@ -334,7 +341,7 @@ public class GroupsManager {
                     ExceptionMessages.INVALID_TOKEN);
         }
         
-        if (!OnlineTracker.isOnline(true)) {
+        if (!OnlineTracker.isOnline(token.getUserID())) {
             return new RequestResult<>(null,
                     ExceptionMessages.USER_TIMEOUT);
         }
@@ -362,8 +369,14 @@ public class GroupsManager {
                     ExceptionMessages.NOT_MEMBER);
         }
         
-        return groupMemberDao.leaveGroupAsMember(
+        var result = groupMemberDao.leaveGroupAsMember(
                 token.getUserID(), groupID);
+        if (result.getErrorMessage() != null) {
+            return result;
+        }
+        
+        GroupCallback.groupMemberLeft(groupID, token.getUserID());
+        return result;
     }
 
     public RequestResult<Boolean> leaveGroupAsAdmin(ClientToken token,
@@ -379,7 +392,7 @@ public class GroupsManager {
                     ExceptionMessages.INVALID_TOKEN);
         }
         
-        if (!OnlineTracker.isOnline(true)) {
+        if (!OnlineTracker.isOnline(token.getUserID())) {
             return new RequestResult<>(null,
                     ExceptionMessages.USER_TIMEOUT);
         }
@@ -453,6 +466,9 @@ public class GroupsManager {
         }
         
         GroupCallback.leadershipGained(newAdminID, groupID);
+        GroupCallback.groupMemberLeft(groupID, token.getUserID());
+        GroupCallback.adminChanged(
+                token.getUserID(), groupID, newAdminID);
         return result;
     }
 
@@ -469,7 +485,7 @@ public class GroupsManager {
                     ExceptionMessages.INVALID_TOKEN);
         }
         
-        if (!OnlineTracker.isOnline(true)) {
+        if (!OnlineTracker.isOnline(token.getUserID())) {
             return new RequestResult<>(null,
                     ExceptionMessages.USER_TIMEOUT);
         }
@@ -526,6 +542,8 @@ public class GroupsManager {
         }
         
         GroupCallback.leadershipGained(newAdminID, groupID);
+        GroupCallback.adminChanged(
+                token.getUserID(), groupID, newAdminID);
         return result;
     }
 
@@ -541,7 +559,7 @@ public class GroupsManager {
                     ExceptionMessages.INVALID_TOKEN);
         }
         
-        if (!OnlineTracker.isOnline(true)) {
+        if (!OnlineTracker.isOnline(token.getUserID())) {
             return new RequestResult<>(null,
                     ExceptionMessages.USER_TIMEOUT);
         }

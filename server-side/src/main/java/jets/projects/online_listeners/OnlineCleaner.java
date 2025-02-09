@@ -1,15 +1,19 @@
 package jets.projects.online_listeners;
 
+import java.time.Duration;
+import java.time.LocalDateTime;
 import java.util.Map;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
 import jets.projects.classes.Delays;
+import jets.projects.dao.UsersDao;
 import jets.projects.shared_ds.OnlineNormalUserInfo;
 import jets.projects.shared_ds.OnlineNormalUserTable;
 
 public class OnlineCleaner {
     private ScheduledExecutorService executor;
+    private static final UsersDao usersDao = new UsersDao();
     private final Runnable checkTask;
     
     private static boolean isInit = false;
@@ -52,15 +56,19 @@ public class OnlineCleaner {
     private void clean() {
         var table = OnlineNormalUserTable.table;
         for (Map.Entry<Integer, OnlineNormalUserInfo> entry : table.entrySet()) {
+            int userID = entry.getKey();
             var info = entry.getValue();
             
-            long 
-            long difference = now.getTime() -
-                    user.getLastHeartBeat().getTime();
-
-            difference = difference / 1000;
-            if (difference >= Delays.USER_TIMEOUT_DELAY) {
-                userTimeout(user.getName());
+            Duration difference = Duration.between(
+                    info.getLastRefreshed(),
+                    LocalDateTime.now());
+            if (difference.getSeconds() >= Delays.USER_TIMEOUT_DELAY) {
+                table.remove(entry.getKey());
+                var queryResult = usersDao.clientLogout(userID);
+                if (queryResult.getErrorMessage() != null) {
+                    System.err.println(queryResult.getErrorMessage());
+                }
+                NotificationCallback.userTimeout(userID);
             }
         }
     }
