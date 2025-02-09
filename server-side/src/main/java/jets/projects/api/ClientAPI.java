@@ -10,6 +10,7 @@ import jets.projects.entities.GroupMessage;
 import jets.projects.entities.Notification;
 import jets.projects.entity_info.ContactInvitationInfo;
 import jets.projects.entity_info.ContactInfo;
+import jets.projects.entity_info.GroupMemberInfo;
 
 public interface ClientAPI extends Remote {
     public void contactInvitationReceived(
@@ -29,14 +30,18 @@ public interface ClientAPI extends Remote {
     // The whole group info will be sent (including the pic) to be added
     // to the list.
     public void addedToGroup(Group group) throws RemoteException;
-    
-    public void groupPicChanged(int groupID, byte[] newPic) throws RemoteException;
-    
     // Do the action based on the groupID.
     // The group, groupMembers, groupMessages should be removed from the client.
     public void removedFromGroup(int groupID) throws RemoteException;
     public void leadershipGained(int groupID) throws RemoteException;
     
+    // Should not called on the admin nor the member affected.
+    public void newGroupMemberAdded(GroupMemberInfo newMember);
+    public void groupMemberRemoved(int groupID, int memberID);
+    public void adminChanged(int groupID, int newAdminID);
+    
+    public void groupPicChanged(int groupID,
+            byte[] newPic) throws RemoteException;
     // Same as removed from group.
     public void groupDeleted(int groupID) throws RemoteException;
     
