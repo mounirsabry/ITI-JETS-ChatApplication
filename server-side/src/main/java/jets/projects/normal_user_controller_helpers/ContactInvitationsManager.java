@@ -9,7 +9,9 @@ import jets.projects.dao.ContactInvitationDao;
 import jets.projects.dao.TokenValidatorDao;
 import jets.projects.dao.UsersDao;
 import jets.projects.dao.UsersQueryDao;
+import jets.projects.entities.ContactGroup;
 import jets.projects.entities.ContactInvitation;
+import jets.projects.entity_info.ContactInfo;
 import jets.projects.entity_info.ContactInvitationInfo;
 import jets.projects.online_listeners.ContactInvitationCallback;
 import jets.projects.online_listeners.OnlineTracker;
@@ -53,7 +55,8 @@ public class ContactInvitationsManager {
     }
 
     public RequestResult<Boolean> sendContactInvitation(
-            ClientToken token, String userPhoneNumber) {
+            ClientToken token, String userPhoneNumber,
+            ContactGroup contactGroup) {
         var validationResult = tokenValidator.checkClientToken(token);
         if (validationResult.getErrorMessage() != null) {
             return new RequestResult<>(null,
@@ -95,7 +98,8 @@ public class ContactInvitationsManager {
         }
         
         var result = contactInvitationDao.sendContactInvitation(
-                token.getUserID(), userID);
+                token.getUserID(), userID,
+                contactGroup);
         if (result.getErrorMessage() != null) {
             return result;
         }
@@ -104,7 +108,7 @@ public class ContactInvitationsManager {
         return result;
     }
 
-    public RequestResult<Boolean> acceptContactInvitation(ClientToken token,
+    public RequestResult<ContactInfo> acceptContactInvitation(ClientToken token,
             int invitationID) {
         var validationResult = tokenValidator.checkClientToken(token);
         if (validationResult.getErrorMessage() != null) {

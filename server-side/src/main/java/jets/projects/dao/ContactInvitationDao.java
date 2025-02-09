@@ -8,10 +8,12 @@ import java.util.ArrayList;
 import java.util.List;
 import jets.projects.classes.RequestResult;
 import jets.projects.db_connections.ConnectionManager;
+import jets.projects.entities.ContactGroup;
 import jets.projects.entities.ContactInvitation;
 import jets.projects.entities.Gender;
 import jets.projects.entities.NormalUser;
 import jets.projects.entities.NormalUserStatus;
+import jets.projects.entity_info.ContactInfo;
 import jets.projects.entity_info.ContactInvitationInfo;
 
 public class ContactInvitationDao{
@@ -51,7 +53,9 @@ public class ContactInvitationDao{
         
     }
     
-    public RequestResult<Boolean> sendContactInvitation(int senderID, int receiverID) {
+    public RequestResult<Boolean> sendContactInvitation(int senderID,
+            int receiverID, ContactGroup contactGroup) {
+        contactGroup;
         String checkQuery = "SELECT invitation_ID FROM contactinvitation WHERE sender_ID = ? AND receiver_ID = ?";
         String insertContactQuery = "INSERT INTO contact (first_ID, second_ID) VALUES (?, ?)";
         String deleteQuery = "DELETE FROM contactinvitation WHERE sender_ID = ? AND receiver_ID = ? OR sender_ID = ? AND receiver_ID = ?";
@@ -122,7 +126,7 @@ public class ContactInvitationDao{
         }
     }
     
-    public RequestResult<Boolean> acceptContactInvitation(
+    public RequestResult<ContactInfo> acceptContactInvitation(
             ContactInvitation invitation) {
         String insertQuery = "INSERT INTO contact (first_ID, second_ID) VALUES (?, ?), (?, ?)";
         String deleteQuery = "DELETE FROM contactinvitation WHERE invitation_ID = ?";
