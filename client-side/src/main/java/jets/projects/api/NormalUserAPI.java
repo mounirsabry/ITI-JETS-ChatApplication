@@ -127,7 +127,7 @@ public interface NormalUserAPI extends Remote {
     public boolean sendContactInvitation(ClientToken token,
             String userPhoneNumber) throws RemoteException;
     
-    public boolean acceptContactInvitation( ClientToken token,
+    public ContactInfo acceptContactInvitation( ClientToken token,
             int invitationID) throws RemoteException;
     
     public boolean rejectContactInvitation(ClientToken token,

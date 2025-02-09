@@ -44,6 +44,6 @@ public class ExceptionMessages {
 
     /*******************************************************************************/
     //Hashim
-    public static final String NULL_Data
+    public static final String NULL_DATA_SENT_FORM_SERVER
             = "Null data sent form Server.";
 }

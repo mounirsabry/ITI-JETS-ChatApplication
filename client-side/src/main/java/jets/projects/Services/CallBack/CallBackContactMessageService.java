@@ -16,18 +16,13 @@ public class CallBackContactMessageService {
     public void contactMessageReceived(ContactMessage message){
 
         int myID = dataCenter.getMyProfile().getUserID();
-        int senderID = -1;
-        if(message.getSenderID() != myID && message.getReceiverID() == myID){
-            senderID = message.getSenderID();
-        }else if (message.getSenderID() == myID && message.getReceiverID() != myID) {
-            senderID = message.getReceiverID();
-        }else{
+        if(message.getReceiverID() != myID){
             Platform.runLater(()->{
-                ClientAlerts.invokeErrorAlert(
-                        "Error", "Message sent from server with wrong ids:::" + message.toString());
+                ClientAlerts.invokeErrorAlert("From Server", "Message received with wrong id 1 to 1" + message);
             });
             return;
         }
+        int senderID = message.getSenderID();
 
         Map<Integer, ObservableList<ContactMessage>> contactMessagesMap = dataCenter.getContactMessagesMap();
 

@@ -3,6 +3,7 @@ package jets.projects.Services.Request;
 import jets.projects.Controllers.ClientAlerts;
 import jets.projects.Services.ServerConnectivityService;
 import jets.projects.entities.ContactInvitation;
+import jets.projects.entity_info.ContactInfo;
 import jets.projects.entity_info.ContactInvitationInfo;
 import jets.projects.session.ClientToken;
 
@@ -42,21 +43,22 @@ public class ClientInvitationService {
         }
     }
 
-    public boolean acceptContactInvitation(int invitationID) {
+    public ContactInfo acceptContactInvitation(int invitationID) {
         if (!ServerConnectivityService.check()) {
             ClientAlerts.invokeWarningAlert("Accept Contact Invitation", "Can't connect to server");
-            return false;
+            return null;
         }
         ClientToken myToken = ServerConnectivityService.getMyToken();
         try {
-            if(ServerConnectivityService.getServerAPI().acceptContactInvitation(myToken, invitationID)){
-                return true;
+            ContactInfo contactInfo = ServerConnectivityService.getServerAPI().acceptContactInvitation(myToken, invitationID);
+            if(contactInfo != null){
+                return contactInfo;
             }
             ClientAlerts.invokeErrorAlert("Accept Contact Invitation Error", "Failed to accept invitation");
-            return false;
+            return null;
         } catch (Exception e) {
             ClientAlerts.invokeErrorAlert("Accept Contact Invitation Error", e.getMessage());
-            return false;
+            return null;
         }
     }
 
