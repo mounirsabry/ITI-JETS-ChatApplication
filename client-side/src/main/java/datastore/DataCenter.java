@@ -1,6 +1,7 @@
 package datastore;
 
 import javafx.beans.property.IntegerProperty;
+import javafx.beans.property.SimpleIntegerProperty;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import jets.projects.entities.*;
@@ -86,11 +87,14 @@ public class DataCenter {
     private final ObservableList<AnnouncementInfo> announcementList =
             FXCollections.synchronizedObservableList(FXCollections.observableArrayList());
 
+
     private final ObservableList<ContactInvitationInfo> contactInvitationList =
             FXCollections.synchronizedObservableList(FXCollections.observableArrayList());
 
+
     private final ObservableList<Notification> notificationList =
             FXCollections.synchronizedObservableList(FXCollections.observableArrayList());
+
     /*********************************************************************************************/
 
     public ObservableList<ContactInfo> getContactList() {

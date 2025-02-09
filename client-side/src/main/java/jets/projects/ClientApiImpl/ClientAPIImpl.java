@@ -1,10 +1,7 @@
 package jets.projects.ClientApiImpl;
 
 import jets.projects.Classes.ExceptionMessages;
-import jets.projects.Services.CallBack.CallBackContactMessageService;
-import jets.projects.Services.CallBack.CallBackGroupService;
-import jets.projects.Services.CallBack.CallBackInvitationService;
-import jets.projects.Services.CallBack.CallBackNotificationService;
+import jets.projects.Services.CallBack.*;
 import jets.projects.api.ClientAPI;
 import jets.projects.entities.*;
 import jets.projects.entity_info.ContactInfo;
@@ -19,13 +16,14 @@ public class ClientAPIImpl extends UnicastRemoteObject implements ClientAPI {
     private final CallBackContactMessageService callBackContactMessageService;
     private final CallBackGroupService callBackGroupService;
     private final CallBackNotificationService callBackNotificationService;
+    private final CallBackUpdateService callBackUpdateService;
 
     public ClientAPIImpl() throws RemoteException {
         callBackInvitationService = new CallBackInvitationService();
         callBackContactMessageService = new CallBackContactMessageService();
         callBackGroupService = new CallBackGroupService();
         callBackNotificationService = new CallBackNotificationService();
-
+        callBackUpdateService = new CallBackUpdateService();
     }
 
     @Override
@@ -111,11 +109,11 @@ public class ClientAPIImpl extends UnicastRemoteObject implements ClientAPI {
 
     @Override
     public void contactUpdateInfo(int contactID, String newDisplayName, byte[] newPic) throws RemoteException {
-
+        callBackUpdateService.contactUpdateInfo(contactID, newDisplayName, newPic);
     }
 
     @Override
     public void groupPicChanged(int groupID, byte[] newPic) throws RemoteException {
-
+        callBackUpdateService.groupPicChanged(groupID, newPic);
     }
 }
