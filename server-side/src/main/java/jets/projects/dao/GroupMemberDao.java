@@ -19,7 +19,7 @@ public class GroupMemberDao {
             if (resultSet.next()) {
                 return new RequestResult<>(true, null);
             }else{
-                return new RequestResult<Boolean>(false, null);
+                return new RequestResult<>(false, null);
             }
         } catch (SQLException e) {
             return new RequestResult<>(false, e.getMessage());
@@ -53,7 +53,7 @@ public class GroupMemberDao {
         
     }
     
-    public RequestResult<Boolean> addMemberToGroup(int groupID, int otherID) {
+    public RequestResult<GroupMemberInfo> addMemberToGroup(int groupID, int otherID) {
         String query = "INSERT INTO UsersGroupMember (group_ID, member_ID) VALUES (?, ?)";
         try (PreparedStatement preparedStatement = DBConnection.getConnection().prepareStatement(query)){
             preparedStatement.setInt(1, groupID);
@@ -68,6 +68,7 @@ public class GroupMemberDao {
             return new RequestResult<>(false, "Database error: " + e.getMessage());
         }
     }
+    
     public RequestResult<Boolean> removeMemberFromGroup(int groupID, int otherID) {
         String query = "DELETE FROM UsersGroupMember WHERE group_ID = ? AND member_ID = ?";
         try (PreparedStatement preparedStatement = DBConnection.getConnection().prepareStatement(query)){
@@ -83,6 +84,7 @@ public class GroupMemberDao {
             return new RequestResult<>(false, "Database error: " + e.getMessage());
         }
     }
+    
     public RequestResult<Boolean> leaveGroupAsMember(int userID, int groupID) {
         String query = "DELETE FROM UsersGroupMember WHERE group_ID = ? AND member_ID = ?";
         try (PreparedStatement preparedStatement = DBConnection.getConnection().prepareStatement(query)){

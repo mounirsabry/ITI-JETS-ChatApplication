@@ -2,13 +2,11 @@ package jets.projects.online_listeners;
 
 import java.rmi.RemoteException;
 import java.util.List;
-import java.util.Map;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.TimeUnit;
 import jets.projects.classes.Delays;
 import jets.projects.classes.MyExecutorFactory;
 import jets.projects.dao.ContactDao;
-import jets.projects.shared_ds.OnlineNormalUserInfo;
 import jets.projects.shared_ds.OnlineNormalUserTable;
 
 public class ContactCallback {

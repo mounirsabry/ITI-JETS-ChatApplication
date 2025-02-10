@@ -26,7 +26,7 @@ public class OnlineTracker {
         var table = OnlineNormalUserTable.table;
         if (table.containsKey(userID)) {
             throw new IllegalStateException(
-                    "The user is already exists.");
+                    "The user is already tracked.");
         }
         table.put(userID, new OnlineNormalUserInfo(impl));
         return true;

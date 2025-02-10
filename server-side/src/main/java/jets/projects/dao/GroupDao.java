@@ -72,7 +72,7 @@ public class GroupDao {
     }    
     
     // Returns the id of the admin of the group.
-    public RequestResult<Integer> getGroupAdminID(nt groupID) {
+    public RequestResult<Integer> getGroupAdminID(int groupID) {
         String query = "SELECT u.* FROM NormalUser u " +
                        "JOIN UsersGroup g ON u.user_ID = g.group_admin_ID " +
                        "WHERE g.group_ID = ?";
@@ -92,7 +92,7 @@ public class GroupDao {
                 return new RequestResult<>(admin, null);
             }else{
                 System.out.println("Group admin not found.");
-                return new RequestResult<NormalUser>(null, "Group admin not found.");
+                return new RequestResult<>(null, "Group admin not found.");
             }
         } catch (SQLException e) {
             return new RequestResult<>(null, e.getMessage());
@@ -173,7 +173,7 @@ public class GroupDao {
     */
     
     public RequestResult<Boolean> setGroupPic(int groupID, byte[] pic) {
-        
+        throw new UnsupportedOperationException("Not implemented.");
     }
 
     public RequestResult<Boolean> createGroup(Group newGroup) {
