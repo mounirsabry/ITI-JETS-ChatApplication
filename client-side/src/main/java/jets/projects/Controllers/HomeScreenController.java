@@ -58,9 +58,10 @@ public class HomeScreenController {
     @FXML
     private ListView<GroupMessage> groupMessagesListView;
 
+    private Stage stage;
     private Director myDirector;
     ClientAuthenticationService authenticationService = new ClientAuthenticationService();
-    ClientContactService contactService;
+    ClientContactService contactService = new ClientContactService();
     ClientContactMessageService contactMessageService = new ClientContactMessageService();
     ClientGroupMessageService groupMessageService = new ClientGroupMessageService();
     private ObservableList<ContactMessage> contactMessageObservableList = FXCollections.observableArrayList() ;
@@ -73,10 +74,6 @@ public class HomeScreenController {
     private ObservableList<Group> groupsList =DataCenter.getInstance().getGroupList();
     private SimpleIntegerProperty unseenAnnouncementsCount = DataCenter.getInstance().unseenAnnouncementsCountProperty();
     private SimpleIntegerProperty unseenNotificationsCount = DataCenter.getInstance().unseenNotificationsCountProperty();
-
-    public HomeScreenController() {
-        contactService = new ClientContactService();
-    }
 
     public void setDirector(Stage stage, Director myDirector) {
         this.stage = stage;
