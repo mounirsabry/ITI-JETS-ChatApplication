@@ -54,16 +54,19 @@ public class ContactMessageCallback {
         executor.submit(() -> {
             var table = OnlineNormalUserTable.table;
             int receiverID = message.getReceiverID();
-            var receiverUser = .getOrDefault(
+            var receiverUser = table.getOrDefault(
                     receiverID, null);
+            
+            // Receiver is offline.
             if (receiverUser == null) {
                 return;
             }
+            
             ClientAPI client = receiverUser.getImpl();
             try {
                 client.contactMessageReceived(message); 
             } catch (RemoteException e) {
-                System.err.println("Failed to send contact message callback: " 
+                System.err.println("Callback Error: " 
                         + e.getMessage());
             }
         });
