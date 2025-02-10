@@ -39,10 +39,10 @@ INSERT INTO CONTACT VALUES
 (7, 5, 'OTHER');
 
 INSERT INTO ContactInvitation VALUES
-(0, 1, 3, DEFAULT),
-(0, 1, 4, DEFAULT),
-(0, 2, 4, DEFAULT),
-(0, 6, 7, DEFAULT);
+(0, 1, 3, 'OHTER', DEFAULT),
+(0, 1, 4, 'OTHER', DEFAULT),
+(0, 2, 4, 'OTHER', DEFAULT),
+(0, 6, 7, 'OTHER', DEFAULT);
 
 INSERT INTO ContactMessage VALUES
 (0, 1, 2, DEFAULT, 'Hello Hashim', FALSE, FALSE, NULL),

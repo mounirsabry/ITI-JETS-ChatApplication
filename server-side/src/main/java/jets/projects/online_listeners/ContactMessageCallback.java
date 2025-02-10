@@ -52,8 +52,9 @@ public class ContactMessageCallback {
     
     public static void contactMessageReceived(ContactMessage message) {
         executor.submit(() -> {
+            var table = OnlineNormalUserTable.table;
             int receiverID = message.getReceiverID();
-            var receiverUser = OnlineNormalUserTable.getTable().getOrDefault(
+            var receiverUser = .getOrDefault(
                     receiverID, null);
             if (receiverUser == null) {
                 return;

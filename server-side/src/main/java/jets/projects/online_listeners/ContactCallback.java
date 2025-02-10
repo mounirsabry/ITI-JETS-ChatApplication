@@ -58,8 +58,7 @@ public class ContactCallback {
             
             var result = contactDao.getAllContactsIDs(contactID);
             if (result.getErrorMessage() != null) {
-                System.err.println("DB Error: " 
-                        + result.getErrorMessage());
+                System.err.println(result.getErrorMessage());
             }
             List<Integer> IDs = result.getResponseData();
             for (int ID : IDs) {

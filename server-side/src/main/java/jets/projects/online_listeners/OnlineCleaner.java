@@ -64,9 +64,9 @@ public class OnlineCleaner {
                     LocalDateTime.now());
             if (difference.getSeconds() >= Delays.USER_TIMEOUT_DELAY) {
                 table.remove(entry.getKey());
-                var queryResult = usersDao.clientLogout(userID);
-                if (queryResult.getErrorMessage() != null) {
-                    System.err.println(queryResult.getErrorMessage());
+                var logoutResult = usersDao.clientLogout(userID);
+                if (logoutResult.getErrorMessage() != null) {
+                    System.err.println(logoutResult.getErrorMessage());
                 }
                 NotificationCallback.userTimeout(userID);
             }

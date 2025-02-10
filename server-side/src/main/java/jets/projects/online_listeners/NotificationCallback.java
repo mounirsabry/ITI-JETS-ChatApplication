@@ -57,15 +57,19 @@ public class NotificationCallback {
         }
     }
     
-    public static void userStatusChangedNotification(Notification notification) {
+    public static void userStatusChangedNotification(
+            int userID, NormalUserStatus newStatus) {
         
     }
 
-    public static void contactInvitationNotification(Notification notification) {
+    public static void contactInvitationNotification(
+            Notification notification) {
         
     }
     
-    public static void userWent
+    public static void userTimeout(int userID) {
+        
+    }
 
     public static void userStatusChanged(int userID,
             NormalUserStatus newStatus) {

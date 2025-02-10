@@ -70,6 +70,7 @@ CREATE TABLE ContactInvitation
     invitation_ID INT AUTO_INCREMENT PRIMARY KEY,
     sender_ID INT NOT NULL,
     receiver_ID INT NOT NULL,
+	category ENUM('FAMILY', 'WORK', 'FRIENDS', 'OTHER') NOT NULL,
     sent_at DATETIME NOT NULL 
         DEFAULT CURRENT_TIMESTAMP,
     CONSTRAINT `contact_invitation_sender_ID`
