@@ -1,5 +1,6 @@
 package jets.projects.dao;
 
+import java.net.ConnectException;
 import java.sql.*;
 import java.util.ArrayList;
 import java.util.List;
@@ -66,7 +67,29 @@ public class ContactDao {
     
     // Return the secondID's info from the DB.
     public RequestResult<ContactInfo> getContactInfo(int firstID, int secondID) {
-        
+        String query = "SELECT display_name, pic, category FROM "
+                + "NormalUser, Contact WHERE user_ID = ? and second_ID = ? and first_ID = ?";
+        try(Connection connection = ConnectionManager.getConnection();
+        PreparedStatement statement = connection.prepareStatement(query);){
+            statement.setInt(1, secondID);
+            statement.setInt(2, secondID);
+            statement.setInt(3, firstID);
+            ResultSet resultSet = statement.executeQuery();
+            if (resultSet.next()) {
+                String name = resultSet.getString("display_name");
+                Blob blob = resultSet.getBlob("pic");
+                byte[] pic = blob != null ? blob.getBytes(1, (int) blob.length()) : null;
+                ContactGroup contactGroup = ContactGroup.valueOf(resultSet.getString("category"));
+                Contact contact = new Contact(firstID, secondID, contactGroup);
+                ContactInfo contactInfo = new ContactInfo(contact, name, pic);
+                resultSet.close();
+                return new RequestResult<>(contactInfo, null);
+            }
+            resultSet.close();
+            return new RequestResult<>(null, "Contact not found.");
+        }catch (SQLException e) {
+            return new RequestResult<>(null, "DB ERROR: " + e.getMessage());
+        }
     }
     
     public RequestResult<NormalUserStatus> getContactOnlineStatus(int contactID) {

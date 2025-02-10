@@ -5,6 +5,7 @@ import java.util.ArrayList;
 import java.util.List;
 import jets.projects.classes.RequestResult;
 import jets.projects.db_connections.ConnectionManager;
+import jets.projects.entities.Contact;
 import jets.projects.entities.ContactGroup;
 import jets.projects.entities.ContactInvitation;
 import jets.projects.entity_info.ContactInfo;
@@ -65,11 +66,57 @@ public class ContactInvitationDao{
             return new RequestResult<>(null, "DB ERROR: " + e.getMessage());
         }
     }
-    
-    public RequestResult<ContactInvitationInfo> getContactInvitationInfo(
-            int senderID, int receiverID) {
-        
+
+    public RequestResult<ContactInvitationInfo> getContactInvitationInfo(int senderID, int receiverID) {
+        String invitationQuery = "SELECT invitation_ID, sent_at FROM ContactInvitation WHERE sender_ID = ? AND receiver_ID = ?";
+        String userQuery = "SELECT display_name, pic FROM NormalUser WHERE user_ID = ?";
+
+        try (Connection connection = ConnectionManager.getConnection();
+             PreparedStatement invitationStatement = connection.prepareStatement(invitationQuery);
+             PreparedStatement userStatement = connection.prepareStatement(userQuery)) {
+
+            // Execute first query to fetch invitation details
+            invitationStatement.setInt(1, senderID);
+            invitationStatement.setInt(2, receiverID);
+            ResultSet invitationResultSet = invitationStatement.executeQuery();
+
+            if (!invitationResultSet.next()) {
+                return new RequestResult<>(null, "Invitation not found");
+            }
+
+            // Extract invitation details
+            int invitationID = invitationResultSet.getInt("invitation_ID");
+            Timestamp timestamp = invitationResultSet.getTimestamp("sent_at");
+            LocalDateTime sentAt = timestamp != null ? timestamp.toLocalDateTime() : null;
+
+            // Execute second query to fetch sender's display name & pic
+            userStatement.setInt(1, senderID);
+            ResultSet userResultSet = userStatement.executeQuery();
+
+            String displayName = null;
+            byte[] pic = null;
+
+            if (userResultSet.next()) {
+                displayName = userResultSet.getString("display_name");
+                Blob blob = userResultSet.getBlob("pic");
+                pic = (blob != null) ? blob.getBytes(1, (int) blob.length()) : null;
+            }
+
+            // Close result sets explicitly
+            invitationResultSet.close();
+            userResultSet.close();
+
+            // Create objects
+            ContactInvitation contactInvitation = new ContactInvitation(invitationID, senderID, receiverID, sentAt);
+            ContactInvitationInfo contactInvitationInfo = new ContactInvitationInfo(contactInvitation, displayName, pic);
+
+            return new RequestResult<>(contactInvitationInfo, null);
+
+        } catch (SQLException e) {
+            return new RequestResult<>(null, "DB ERROR: " + e.getMessage());
+        }
     }
+
 
     public RequestResult<Integer> sendContactInvitation(int senderID
             , int receiverID, ContactGroup contactGroup) {
@@ -92,7 +139,7 @@ public class ContactInvitationDao{
                 checkStatement.setInt(2, senderID);
                 ResultSet resultSet = checkStatement.executeQuery();
                 if (resultSet.next() && resultSet.getInt(1) > 0) {
-                    return new RequestResult<>(1, null);
+                    return new RequestResult<>(2, null);
                 }
             }
 
@@ -103,56 +150,82 @@ public class ContactInvitationDao{
                 insertStatement.setString(3, contactGroup.name());
                 int rowsAffected = insertStatement.executeUpdate();
                 return (rowsAffected == 1)
-                        ? new RequestResult<>(true, null)
-                        : new RequestResult<>(false, "Failed to send invitation.");
+                        ? new RequestResult<>(1, null)
+                        : new RequestResult<>(0, "Failed to send invitation.");
             }
         } catch (SQLException e) {
-            return new RequestResult<>(false, "Database error: " + e.getMessage());
+            return new RequestResult<>(null, "Database error: " + e.getMessage());
         }
     }
 
-    public RequestResult<ContactInfo> acceptContactInvitation(
-            ContactInvitation invitation) {
+    public RequestResult<ContactInfo> acceptContactInvitation(ContactInvitation invitation) {
         String selectQuery = "SELECT category FROM ContactInvitation WHERE invitation_ID = ?";
         String insertQuery = "INSERT INTO contact (first_ID, second_ID, category) VALUES (?, ?, ?), (?, ?, ?)";
         String deleteQuery = "DELETE FROM ContactInvitation WHERE invitation_ID = ?";
         String selectQuery2 = "SELECT display_name, pic FROM NormalUser WHERE user_ID = ?";
 
         try (Connection connection = ConnectionManager.getConnection();
-            PreparedStatement insertStatement = connection.prepareStatement(insertQuery);
-            PreparedStatement deleteStatement = connection.prepareStatement(deleteQuery);
-            PreparedStatement selectStatement = connection.prepareStatement(selectQuery);
-            PreparedStatement selectStatement2 = connection.prepareStatement(selectQuery2);
-            ){
+             PreparedStatement selectStatement = connection.prepareStatement(selectQuery);
+             PreparedStatement insertStatement = connection.prepareStatement(insertQuery);
+             PreparedStatement deleteStatement = connection.prepareStatement(deleteQuery);
+             PreparedStatement selectStatement2 = connection.prepareStatement(selectQuery2)) {
+
             connection.setAutoCommit(false);
+
+            // Step 1: Retrieve category from ContactInvitation
             selectStatement.setInt(1, invitation.getInvitationID());
-            ResultSet resultSet = selectStatement.executeQuery();
-            if(!resultSet.next()){
-                resultSet.close();
-                return new RequestResult<>(null, "Invitation not found.");
+            try (ResultSet resultSet = selectStatement.executeQuery()) {
+                if (!resultSet.next()) {
+                    connection.rollback();
+                    return new RequestResult<>(null, "Invitation not found.");
+                }
+                String category = resultSet.getString("category");
+
+                // Step 2: Insert new contact records (bi-directional)
+                insertStatement.setInt(1, invitation.getSenderID());
+                insertStatement.setInt(2, invitation.getReceiverID());
+                insertStatement.setString(3, category);
+                insertStatement.setInt(4, invitation.getReceiverID());
+                insertStatement.setInt(5, invitation.getSenderID());
+                insertStatement.setString(6, category);
+
+                int rowsInserted = insertStatement.executeUpdate();
+                if (rowsInserted != 2) {
+                    connection.rollback();
+                    return new RequestResult<>(null, "Failed to accept invitation.");
+                }
+
+                // Step 3: Delete the invitation
+                deleteStatement.setInt(1, invitation.getInvitationID());
+                deleteStatement.executeUpdate();
+
+                // Step 4: Retrieve sender's display name and profile picture
+                selectStatement2.setInt(1, invitation.getSenderID());
+                try (ResultSet resultSet2 = selectStatement2.executeQuery()) {
+                    if (!resultSet2.next()) {
+                        connection.rollback();
+                        return new RequestResult<>(null, "Sender not found.");
+                    }
+
+                    String displayName = resultSet2.getString("display_name");
+                    Blob blob = resultSet2.getBlob("pic");
+                    byte[] pic = (blob != null) ? blob.getBytes(1, (int) blob.length()) : null;
+
+                    // Step 5: Create ContactInfo object and commit transaction
+                    Contact contact = new Contact(invitation.getReceiverID(), invitation.getSenderID(), ContactGroup.valueOf(category));
+                    ContactInfo contactInfo = new ContactInfo(contact, displayName, pic);
+
+                    connection.commit();
+                    return new RequestResult<>(contactInfo, null);
+                }
             }
-            String category = resultSet.getString("category");
-            insertStatement.setInt(1, invitation.getSenderID());
-            insertStatement.setInt(2, invitation.getReceiverID());
-            insertStatement.setString(3, category);
-            insertStatement.setInt(4, invitation.getReceiverID());
-            insertStatement.setInt(5, invitation.getSenderID());
-            insertStatement.setString(6, category);
-            if(insertStatement.executeUpdate() != 2){
-                resultSet.close();
-                return new RequestResult<>(null, "Failed to accept invitation.");
-            }
-            resultSet.close();
-            
-            deleteStatement.setInt(1, invitation.getInvitationID());
-            deleteStatement.executeUpdate();
-            connection.commit();
-            return new RequestResult<>(true, null);
+
         } catch (SQLException e) {
             return new RequestResult<>(null, "DB Error: " + e.getMessage());
-        }        
+        }
     }
-    
+
+
     public RequestResult<Boolean> rejectContactInvitation(
             ContactInvitation invitation) {
 
