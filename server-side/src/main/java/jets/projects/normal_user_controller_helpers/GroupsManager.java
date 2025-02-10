@@ -547,7 +547,7 @@ public class GroupsManager {
         return result;
     }
 
-    public RequestResult<Boolean> deleteGroup(ClientToken token, int groupID) {
+    public RequestResult<List<Integer>> deleteGroup(ClientToken token, int groupID) {
         var validationResult = tokenValidator.checkClientToken(token);
         if (validationResult.getErrorMessage() != null) {
             return new RequestResult<>(null,
@@ -591,7 +591,7 @@ public class GroupsManager {
             return result;
         }
         
-        GroupCallback.groupDeleted(groupID);
+        GroupCallback.groupDeleted(groupID, token.getUserID(), List<Integer> IDs);
         return result;
     }
 }

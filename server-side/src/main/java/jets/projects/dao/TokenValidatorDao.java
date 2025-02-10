@@ -6,13 +6,13 @@ import java.sql.SQLException;
 import jets.projects.classes.RequestResult;
 import jets.projects.session.AdminToken;
 import jets.projects.session.ClientToken;
-import jets.projects.dbconnections.DBConnection;
+import jets.projects.db_connections.ConnectionManager;
 
 public class TokenValidatorDao {
     public RequestResult<Boolean> checkAdminToken(AdminToken token) {
         String query = "SELECT * FROM AdminUser WHERE user_ID = ?";
         
-        try (PreparedStatement statement = DBConnection.getConnection().prepareStatement(query)) {            
+        try (PreparedStatement statement = ConnectionManager.getConnection().prepareStatement(query)) {
             statement.setInt(1, token.getUserID());
             ResultSet resultSet = statement.executeQuery();
             
@@ -29,7 +29,7 @@ public class TokenValidatorDao {
     public RequestResult<Boolean> checkClientToken(ClientToken token) {
         String query = "SELECT * FROM NormalUser WHERE user_ID = ? AND phone_number = ?";
         
-        try (PreparedStatement statement = DBConnection.getConnection().prepareStatement(query)) {
+        try (PreparedStatement statement = ConnectionManager.getConnection().prepareStatement(query)) {
             statement.setInt(1, token.getUserID());
             statement.setString(2, token.getPhoneNumber());
             
