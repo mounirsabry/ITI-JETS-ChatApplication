@@ -38,6 +38,7 @@ public interface ClientAPI extends Remote {
     // Should not called on the admin nor the member affected.
     public void newGroupMemberAdded(GroupMemberInfo newMember);
     public void groupMemberRemoved(int groupID, int memberID);
+
     public void adminChanged(int groupID, int newAdminID);
     
     public void groupPicChanged(int groupID,

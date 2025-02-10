@@ -21,9 +21,12 @@ public class ExceptionMessages {
     public static final String INVALID_INPUT_DATA 
             = "Invalid input data.";
     
-    public static final String CONTACT_DOES_NOT_EXIST 
-            = "Contact does not exist";
+    public static final String FILE_TOO_BIG
+            = "File size is over the allowed size.";
     
+    public static final String FILE_TYPE_NOT_SUPPORTED
+            = "File type is not supported.";
+        
     public static final String USER_DOES_NOT_EXIST 
             = "User does not exist";
     
@@ -39,11 +42,16 @@ public class ExceptionMessages {
     public static final String NOT_MEMBER
             = "You are not a member of this group.";
     
+    public static final String ALREADY_MEMBER
+            = "The user is already a member in the group.";
+    
     public static final String NOT_GROUP_ADMIN
             = "You have no access on this action. Not the group admin.";
-
-    /*******************************************************************************/
-    //Hashim
+    
+    public static final String NOT_THE_LAST_MEMER
+            = "You are not the last member of the group to use this parameter.";
+    
+    // Sent from the client.
     public static final String NULL_DATA_SENT_FORM_SERVER
-            = "Null data sent form Server.";
+            = "Null data sent form Server.";
 }

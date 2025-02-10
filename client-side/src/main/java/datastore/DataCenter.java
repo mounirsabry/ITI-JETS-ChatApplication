@@ -8,6 +8,7 @@ import jets.projects.entities.*;
 import jets.projects.entity_info.AnnouncementInfo;
 import jets.projects.entity_info.ContactInfo;
 import jets.projects.entity_info.ContactInvitationInfo;
+import jets.projects.entity_info.GroupMemberInfo;
 
 import java.util.Collections;
 import java.util.HashMap;
@@ -84,6 +85,9 @@ public class DataCenter {
     private final Map<Integer, ObservableList<GroupMessage>> groupMessagesMap =
             Collections.synchronizedMap(new HashMap<>());
 
+    private final Map<Integer, ObservableList<GroupMemberInfo>> groupMembersMap =
+            Collections.synchronizedMap(new HashMap<>());
+
     private final ObservableList<AnnouncementInfo> announcementList =
             FXCollections.synchronizedObservableList(FXCollections.observableArrayList());
 
@@ -131,6 +135,10 @@ public class DataCenter {
 
     public Map<Integer, IntegerProperty> getUnreadContactMessages() {
         return unreadContactMessages;
+    }
+
+    public Map<Integer, ObservableList<GroupMemberInfo>> getGroupMembersMap() {
+        return groupMembersMap;
     }
 
 }

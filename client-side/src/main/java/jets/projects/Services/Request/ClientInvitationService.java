@@ -2,6 +2,7 @@ package jets.projects.Services.Request;
 
 import jets.projects.Controllers.ClientAlerts;
 import jets.projects.Services.ServerConnectivityService;
+import jets.projects.entities.ContactGroup;
 import jets.projects.entities.ContactInvitation;
 import jets.projects.entity_info.ContactInfo;
 import jets.projects.entity_info.ContactInvitationInfo;
@@ -25,14 +26,14 @@ public class ClientInvitationService {
         }
     }
 
-    public boolean sendContactInvitation(String phoneNumber) {
+    public boolean sendContactInvitation(String phoneNumber, ContactGroup contactGroup) {
         if (!ServerConnectivityService.check()) {
             ClientAlerts.invokeWarningAlert("Send Contact Invitation", "Can't connect to server");
             return false;
         }
         ClientToken myToken = ServerConnectivityService.getMyToken();
         try {
-            if(ServerConnectivityService.getServerAPI().sendContactInvitation(myToken, phoneNumber)){
+            if(ServerConnectivityService.getServerAPI().sendContactInvitation(myToken, phoneNumber, contactGroup)){
                 return true;
             }
             ClientAlerts.invokeErrorAlert("Send Contact Invitation Error", "Failed to send invitation");

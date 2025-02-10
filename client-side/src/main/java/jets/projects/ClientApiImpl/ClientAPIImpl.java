@@ -6,6 +6,7 @@ import jets.projects.api.ClientAPI;
 import jets.projects.entities.*;
 import jets.projects.entity_info.ContactInfo;
 import jets.projects.entity_info.ContactInvitationInfo;
+import jets.projects.entity_info.GroupMemberInfo;
 
 import java.rmi.RemoteException;
 import java.rmi.server.UnicastRemoteObject;
@@ -37,7 +38,7 @@ public class ClientAPIImpl extends UnicastRemoteObject implements ClientAPI {
     @Override
     public void contactInvitationAccepted(ContactInfo newContact) throws RemoteException {
         if(newContact == null){
-            throw new RemoteException(ExceptionMessages.CONTACT_DOES_NOT_EXIST);
+            throw new RemoteException(ExceptionMessages.NULL_DATA_SENT_FORM_SERVER);
         }
         callBackInvitationService.contactInvitationAccepted(newContact);
     }
@@ -115,5 +116,23 @@ public class ClientAPIImpl extends UnicastRemoteObject implements ClientAPI {
     @Override
     public void groupPicChanged(int groupID, byte[] newPic) throws RemoteException {
         callBackUpdateService.groupPicChanged(groupID, newPic);
+    }
+
+    @Override
+    public void newGroupMemberAdded(GroupMemberInfo newMember) throws RemoteException {
+        if(newMember == null){
+            throw new RemoteException(ExceptionMessages.NULL_DATA_SENT_FORM_SERVER);
+        }
+        callBackGroupService.newGroupMemberAdded(newMember);
+    }
+
+    @Override
+    public void groupMemberRemoved(int groupID, int memberID) throws RemoteException{
+        callBackGroupService.groupMemberRemoved(groupID, memberID);
+    }
+
+    @Override
+    public void adminChanged(int groupID, int newAdminID) throws RemoteException{
+        callBackGroupService.adminChanged(groupID, newAdminID);
     }
 }

@@ -5,6 +5,7 @@ import jets.projects.Services.ServerConnectivityService;
 import jets.projects.api.NormalUserAPI;
 import jets.projects.entities.ContactMessage;
 import jets.projects.entities.NormalUser;
+import jets.projects.entities.NormalUserStatus;
 import jets.projects.entity_info.ContactInfo;
 import jets.projects.session.ClientToken;
 
@@ -43,6 +44,21 @@ public class ClientContactService {
             return contact;
         } catch (RemoteException e) {
             ClientAlerts.invokeErrorAlert("Get Contact Error", e.getMessage());
+            return null;
+        }
+    }
+
+    public NormalUserStatus getContactOnlineStatus( int contactID){
+        if(!ServerConnectivityService.check()){
+            ClientAlerts.invokeWarningAlert("Get Contact Online Status", "Can't connect to server");
+            return null;
+        }
+        NormalUserAPI serverAPI = ServerConnectivityService.getServerAPI();
+        ClientToken myToken = ServerConnectivityService.getMyToken();
+        try{
+            return serverAPI.getContactOnlineStatus(myToken, contactID);
+        } catch (RemoteException e) {
+            ClientAlerts.invokeErrorAlert("Get Contact Online Status Error", e.getMessage());
             return null;
         }
     }
