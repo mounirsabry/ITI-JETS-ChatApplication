@@ -7,15 +7,12 @@ import jets.projects.classes.RequestResult;
 import jets.projects.db_connections.ConnectionManager;
 import jets.projects.entities.ContactGroup;
 import jets.projects.entities.ContactInvitation;
-import jets.projects.entities.Gender;
-import jets.projects.entities.NormalUser;
-import jets.projects.entities.NormalUserStatus;
 import jets.projects.entity_info.ContactInfo;
 import jets.projects.entity_info.ContactInvitationInfo;
 
 public class ContactInvitationDao{
 
-    public RequestResult<List<ContactInvitationInfo>> getAllInvitations(int userID) {
+    public RequestResult<List<ContactInvitationInfo>> getAllInvitationsInfo(int userID) {
 
             String query = "SELECT * FROM ContactInvitation c " +
                     "JOIN NormalUser u ON c.sender_ID = u.user_ID " +
@@ -68,8 +65,13 @@ public class ContactInvitationDao{
             return new RequestResult<>(null, "DB ERROR: " + e.getMessage());
         }
     }
+    
+    public RequestResult<ContactInvitationInfo> getContactInvitationInfo(
+            int senderID, int receiverID) {
+        
+    }
 
-    public RequestResult<Boolean> sendContactInvitation(int senderID
+    public RequestResult<Integer> sendContactInvitation(int senderID
             , int receiverID, ContactGroup contactGroup) {
         String checkQuery = "SELECT COUNT(*) FROM ContactInvitation WHERE sender_ID = ? AND receiver_ID = ?";
         String checkQuery2 = "SELECT COUNT(*) FROM ContactInvitation WHERE sender_ID = ? AND receiver_ID = ?";
@@ -82,7 +84,7 @@ public class ContactInvitationDao{
                 checkStatement.setInt(2, receiverID);
                 ResultSet resultSet = checkStatement.executeQuery();
                 if (resultSet.next() && resultSet.getInt(1) > 0) {
-                    return new RequestResult<>(false, "Invitation already sent.");
+                    return new RequestResult<>(0, null);
                 }
             }
             try (PreparedStatement checkStatement = connection.prepareStatement(checkQuery2)) {
@@ -90,7 +92,7 @@ public class ContactInvitationDao{
                 checkStatement.setInt(2, senderID);
                 ResultSet resultSet = checkStatement.executeQuery();
                 if (resultSet.next() && resultSet.getInt(1) > 0) {
-                    return new RequestResult<>(false, "You have a friend request from this user");
+                    return new RequestResult<>(1, null);
                 }
             }
 
@@ -108,7 +110,6 @@ public class ContactInvitationDao{
             return new RequestResult<>(false, "Database error: " + e.getMessage());
         }
     }
-
 
     public RequestResult<ContactInfo> acceptContactInvitation(
             ContactInvitation invitation) {
@@ -148,7 +149,7 @@ public class ContactInvitationDao{
             connection.commit();
             return new RequestResult<>(true, null);
         } catch (SQLException e) {
-            return new RequestResult<>(false, "Database error: " + e.getMessage());
+            return new RequestResult<>(null, "DB Error: " + e.getMessage());
         }        
     }
     

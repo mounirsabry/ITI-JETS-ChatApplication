@@ -1,22 +1,21 @@
 package jets.projects.online_listeners;
 
-import java.rmi.RemoteException;
-import java.util.List;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.TimeUnit;
 
-import jets.projects.api.ClientAPI;
 import jets.projects.classes.Delays;
 import jets.projects.classes.MyExecutorFactory;
 import jets.projects.dao.ContactDao;
+import jets.projects.dao.NotificationDao;
 import jets.projects.dao.UsersDao;
-import jets.projects.entity_info.ContactInfo;
 import jets.projects.entities.NormalUserStatus;
 import jets.projects.entities.Notification;
+import jets.projects.shared_ds.OnlineNormalUserTable;
 
 public class NotificationCallback {
     private static ExecutorService executor;
-    
+    private static final NotificationDao notificationDao
+            = new NotificationDao();
     private static final ContactDao contactDao = new ContactDao();
     private static final UsersDao usersDao = new UsersDao();
     
@@ -56,14 +55,27 @@ public class NotificationCallback {
             executor = null;
         }
     }
+
+    public static void receivedContactInvitationSender(
+            int senderID, int receiverID) {
+        var table = OnlineNormalUserTable.table;
+        
+        Notification notification;
+        notificationDao.saveNotification(notification);
+    }
     
-    public static void userStatusChangedNotification(
-            int userID, NormalUserStatus newStatus) {
+    public static void receivedContactInvitationReceiver(
+            int senderID, int receiverID) {
         
     }
-
-    public static void contactInvitationNotification(
-            Notification notification) {
+    
+    public static void acceptedContactInvitationSender(
+            int senderID, int receiverID) {
+        
+    }
+    
+    public static void acceptedContactInvitationReceiver(
+            int senderID, int recieverID) {
         
     }
     

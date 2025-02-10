@@ -3,7 +3,6 @@ package jets.projects.online_listeners;
 import java.rmi.RemoteException;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.TimeUnit;
-import jets.projects.api.ClientAPI;
 
 import jets.projects.classes.Delays;
 import jets.projects.classes.MyExecutorFactory;
@@ -54,17 +53,16 @@ public class ContactMessageCallback {
         executor.submit(() -> {
             var table = OnlineNormalUserTable.table;
             int receiverID = message.getReceiverID();
-            var receiverUser = table.getOrDefault(
+            var userInfo = table.getOrDefault(
                     receiverID, null);
             
             // Receiver is offline.
-            if (receiverUser == null) {
+            if (userInfo == null) {
                 return;
             }
             
-            ClientAPI client = receiverUser.getImpl();
             try {
-                client.contactMessageReceived(message); 
+                userInfo.getImpl().contactMessageReceived(message); 
             } catch (RemoteException e) {
                 System.err.println("Callback Error: " 
                         + e.getMessage());

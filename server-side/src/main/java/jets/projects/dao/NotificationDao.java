@@ -88,6 +88,12 @@ public class NotificationDao {
         }
        
     }
+    
+    // Return the ID of the newly created notification.
+    public RequestResult<Integer> saveNotification
+            (Notification notification) {
+        int userID = notification.getUserID();
+    }
 
     public RequestResult<Boolean> deleteNotification(int userID,
             int notificationID) {

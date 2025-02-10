@@ -7,6 +7,7 @@ import jets.projects.dao.TokenValidatorDao;
 import jets.projects.dao.UsersDao;
 import jets.projects.dao.UsersQueryDao;
 import jets.projects.entities.NormalUser;
+import jets.projects.entities.NormalUserStatus;
 import jets.projects.online_listeners.NotificationCallback;
 import jets.projects.online_listeners.OnlineTracker;
 import jets.projects.session.ClientSessionData;
@@ -48,7 +49,8 @@ public class AuthenticationManager {
 
         int userID = result.getResponseData().getUserID();
         OnlineTracker.track(userID, impl);
-        NotificationCallback.userWentOnline(userID);
+        NotificationCallback.userStatusChanged(
+                userID, NormalUserStatus.AVAILABLE);
         return result;
     }
 
@@ -80,7 +82,8 @@ public class AuthenticationManager {
 
         int userID = result.getResponseData().getUserID();
         OnlineTracker.track(userID, impl);
-        NotificationCallback.userWentOnline(userID);
+        NotificationCallback.userStatusChanged(
+                userID, NormalUserStatus.AVAILABLE);
         return result;
     }
 
@@ -110,7 +113,8 @@ public class AuthenticationManager {
             return result;
         }
         
-        NotificationCallback.userWentOffline(token.getUserID());
+        NotificationCallback.userStatusChanged(token.getUserID(),
+                NormalUserStatus.OFFLINE);
         return result;
     }
 

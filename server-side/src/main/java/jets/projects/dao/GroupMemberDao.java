@@ -6,7 +6,6 @@ import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
 import jets.projects.classes.RequestResult;
-import jets.projects.dbconnections.DBConnection;
 import jets.projects.entity_info.GroupMemberInfo;
 
 public class GroupMemberDao {
@@ -25,6 +24,7 @@ public class GroupMemberDao {
             return new RequestResult<>(false, e.getMessage());
         }
     }
+    
     public RequestResult<List<GroupMemberInfo>> getAllMembers(int groupID) {
         List<GroupMemberInfo> groupMembers = new ArrayList<>();
         String query = "SELECT username, picture " +
@@ -50,6 +50,10 @@ public class GroupMemberDao {
     }
     
     public RequestResult<Integer> getNumberOfGroupMembers(int groupID) {
+        
+    }
+    
+    public RequestResult<List<Integer>> getGroupMembersIDs(int groupID) {
         
     }
     

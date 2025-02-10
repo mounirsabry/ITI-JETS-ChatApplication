@@ -432,7 +432,12 @@ public class GroupsManager {
                         ExceptionMessages.NOT_THE_LAST_MEMER);
             }
             
-            return groupDao.deleteGroup(groupID);
+            var result = groupDao.deleteGroup(groupID);
+            if (result.getErrorMessage() != null) {
+                return new RequestResult<>(null,
+                        result.getErrorMessage());
+            }
+            return new RequestResult<>(true, null);
         }
         
         var isUserExistsResult = usersQueryDao.isNormalUserExistsByID(
@@ -547,7 +552,7 @@ public class GroupsManager {
         return result;
     }
 
-    public RequestResult<List<Integer>> deleteGroup(ClientToken token, int groupID) {
+    public RequestResult<Boolean> deleteGroup(ClientToken token, int groupID) {
         var validationResult = tokenValidator.checkClientToken(token);
         if (validationResult.getErrorMessage() != null) {
             return new RequestResult<>(null,
@@ -588,10 +593,12 @@ public class GroupsManager {
         
         var result = groupDao.deleteGroup(groupID);
         if (result.getErrorMessage() != null) {
-            return result;
+            return new RequestResult<>(null,
+                    result.getErrorMessage());
         }
+        List<Integer> groupMemberIDs = result.getResponseData();
         
-        GroupCallback.groupDeleted(groupID, token.getUserID(), List<Integer> IDs);
-        return result;
+        GroupCallback.groupDeleted(groupID, token.getUserID(), groupMemberIDs);
+        return new RequestResult<>(true, null);
     }
 }

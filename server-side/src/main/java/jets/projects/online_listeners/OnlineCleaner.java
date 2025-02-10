@@ -35,7 +35,8 @@ public class OnlineCleaner {
         }
         executor = Executors.newSingleThreadScheduledExecutor();
         executor.scheduleAtFixedRate(checkTask, 0,
-                Delays.TIMEOUT_USER_CHECK_DELAY, TimeUnit.SECONDS);
+                Delays.TIMEOUT_USER_CHECK_DELAY,
+                TimeUnit.SECONDS);
     }
     
     public void shutDown() {

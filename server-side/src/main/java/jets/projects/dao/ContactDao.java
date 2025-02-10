@@ -10,7 +10,6 @@ import jets.projects.entity_info.ContactInfo;
 import jets.projects.entities.ContactGroup;
 import jets.projects.entities.NormalUser;
 import jets.projects.entities.NormalUserStatus;
-import jets.projects.session.ClientToken;
 
 public class ContactDao {
     public RequestResult<Boolean> isContacts(int userID, int contactID) {
@@ -63,6 +62,11 @@ public class ContactDao {
             return new RequestResult<>(null,
                     "DB ERROR: " + e.getMessage());
         }
+    }
+    
+    // Return the secondID's info from the DB.
+    public RequestResult<ContactInfo> getContactInfo(int firstID, int secondID) {
+        
     }
     
     public RequestResult<NormalUserStatus> getContactOnlineStatus(int contactID) {

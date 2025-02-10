@@ -14,34 +14,36 @@ public class TokenValidatorDao {
         
         try (PreparedStatement statement = ConnectionManager.getConnection().prepareStatement(query)) {
             statement.setInt(1, token.getUserID());
-            ResultSet resultSet = statement.executeQuery();
             
-            boolean result = resultSet.next();
-            resultSet.close();
+            boolean result;
+            try (ResultSet resultSet = statement.executeQuery()) {
+                result = resultSet.next();
+            }
             
             return new RequestResult<>(result, null);
         } catch (SQLException ex) {
-            return new RequestResult<>(null,
-                    ex.getMessage());
+            return new RequestResult<>(null, "DB Error: "
+                    + ex.getMessage());
         }
     }  
     
     public RequestResult<Boolean> checkClientToken(ClientToken token) {
-        String query = "SELECT * FROM NormalUser WHERE user_ID = ? AND phone_number = ?";
+        String query = "SELECT * FROM NormalUser WHERE user_ID = ? "
+                + "AND phone_number = ?";
         
         try (PreparedStatement statement = ConnectionManager.getConnection().prepareStatement(query)) {
             statement.setInt(1, token.getUserID());
             statement.setString(2, token.getPhoneNumber());
             
-            ResultSet resultSet = statement.executeQuery();
-            
-            boolean result = (resultSet.next())? true : false;
-            resultSet.close();
+            boolean result;
+            try (ResultSet resultSet = statement.executeQuery()) {
+                result = resultSet.next();
+            }
             
             return new RequestResult<>(result, null);
         } catch (SQLException ex) {
-            return new RequestResult<>(null, 
-                    ex.getMessage());
+            return new RequestResult<>(null, "DB Erorr: "
+                    + ex.getMessage());
         }
     }
 }

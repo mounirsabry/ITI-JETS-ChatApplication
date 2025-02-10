@@ -1,6 +1,5 @@
 package jets.projects.dao;
 
-import java.sql.Blob;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
@@ -8,7 +7,6 @@ import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
 import jets.projects.classes.RequestResult;
-import jets.projects.dbconnections.DBConnection;
 import jets.projects.entities.Gender;
 import jets.projects.entities.Group;
 import jets.projects.entities.NormalUser;
@@ -25,7 +23,8 @@ public class GroupDao {
         }
     }
     
-    public Group getGroupById(int groupID) {
+    // If the group does not exist, then return null.
+    public RequestResult<Group> getGroupById(int groupID) {
         String query = "SELECT * FROM UsersGroup WHERE group_ID = ?";
     
         try (PreparedStatement stmt = DBConnection.getConnection().prepareStatement(query)) {    
@@ -48,7 +47,9 @@ public class GroupDao {
         return null; 
     }    
     
-    public Group getGroupByName(String groupName) {
+    /*
+    // If the group does not exist, then return null.
+    public RequestResult<List<Group>> getGroupByName(String groupName) {
         String query = "SELECT * FROM UsersGroup WHERE group_name = ?";
     
         try (PreparedStatement stmt = DBConnection.getConnection().prepareStatement(query)) {    
@@ -70,6 +71,7 @@ public class GroupDao {
         }
         return null; 
     }    
+    */
     
     // Returns the id of the admin of the group.
     public RequestResult<Integer> getGroupAdminID(int groupID) {
@@ -190,7 +192,7 @@ public class GroupDao {
         }
     }
     
-    public RequestResult<Boolean> deleteGroup(int groupID){
+    public RequestResult<List<Integer>> deleteGroup(int groupID){
         String deleteMemberQuery = "DELETE FROM UsersGroupMember WHERE group_ID = ?";
         Connection connection = DBConnection.getConnection();
         try (PreparedStatement preparedStatement = connection.prepareStatement(deleteMemberQuery)){
