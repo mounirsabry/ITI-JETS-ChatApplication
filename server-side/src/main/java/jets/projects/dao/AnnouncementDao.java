@@ -4,7 +4,9 @@ import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.sql.Timestamp;
 import java.time.LocalDateTime;
+import java.time.ZoneId;
 import java.util.List;
 import java.util.ArrayList;
 import jets.projects.classes.RequestResult;
@@ -40,29 +42,36 @@ public class AnnouncementDao {
 //    }
 
     public RequestResult<List<Announcement>> getAllAnnouncements() {
-        List<Announcement> announcements = new ArrayList<>();
-
-        try (Connection connection = ConnectionManager.getConnection()) {
-            String query = "SELECT * FROM Announcement ORDER BY announcement_ID DESC";
-            PreparedStatement preparedStatement = connection.prepareStatement(query);
-
+        String query 
+                = "SELECT * FROM Announcement ORDER BY announcement_ID DESC";
+        
+        try (Connection connection = ConnectionManager.getConnection();
+            PreparedStatement preparedStatement 
+                    = connection.prepareStatement(query);) {
             ResultSet resultSet = preparedStatement.executeQuery();
 
+            List<Announcement> announcements = new ArrayList<>();
             while (resultSet.next()) {
-                int announcementID = resultSet.getInt("announcement_ID");
+                int announcementID = resultSet.getInt(
+                        "announcement_ID");
                 String header = resultSet.getString("header");
                 String content = resultSet.getString("content");
-                LocalDateTime sentAt = resultSet.getDate("sent_at");
+                Timestamp sentAtTimestamp = resultSet.getTimestamp(
+                        "sent_at");
+                ZoneId zoneId = ZoneId.systemDefault();
+                LocalDateTime sentAt = sentAtTimestamp.toInstant()
+                        .atZone(zoneId).toLocalDateTime();
 
                 Announcement announcement = new Announcement(announcementID,
                         header, content, sentAt);
                 announcements.add(announcement);
             }
+            resultSet.close();
+            return new RequestResult<>(announcements, null);
         } catch (SQLException e) {
-            return new RequestResult<>(null, 
+            return new RequestResult<>(null, "DB Error: " +
                     e.getMessage());
         }
-        return new RequestResult<>(announcements, null);
     }
 
     public RequestResult<Boolean> submitNewAnnouncement(Announcement newAnnouncement) {

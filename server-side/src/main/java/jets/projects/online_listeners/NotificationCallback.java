@@ -65,8 +65,10 @@ public class NotificationCallback {
         
     }
     
+    public static void userWent
 
-    public static void userStatusChanged(int userID, NormalUserStatus newStatus) {
+    public static void userStatusChanged(int userID,
+            NormalUserStatus newStatus) {
         /*
         executor.submit(()->{
             ClientAPI client;
