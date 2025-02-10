@@ -105,7 +105,6 @@ public class ContactInvitationCallback {
             }
             ContactInfo contactInfo = contactInfoResult.getResponseData();
             
-            
             var userInfo = table.getOrDefault(senderID, null);
             
             // Sender is offline.

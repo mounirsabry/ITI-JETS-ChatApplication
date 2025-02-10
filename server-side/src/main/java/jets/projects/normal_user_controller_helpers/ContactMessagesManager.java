@@ -209,7 +209,9 @@ public class ContactMessagesManager {
         if (result.getErrorMessage() != null) {
             return result;
         }
+        int messageID = result.getResponseData();
         
+        message.setID(messageID);
         message.setFile(null);
         ContactMessageCallback.contactMessageReceived(message);
         return result;
@@ -257,6 +259,7 @@ public class ContactMessagesManager {
                     ExceptionMessages.NOT_CONTACTS);
         }
         
-        return contactMessagesDao.markContactMessagesAsRead(contactID);
+        return contactMessagesDao.markContactMessagesAsRead(
+                token.getUserID(), contactID);
     }
 }
