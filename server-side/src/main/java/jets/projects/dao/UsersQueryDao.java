@@ -31,8 +31,7 @@ public class UsersQueryDao {
             String phoneNumber) {
         
     }
-    
-    public RequestResult<NormalUser>
+
 
     public RequestResult<NormalUser> getNormalUserByPhoneNumber(String phoneNumber) {
         String query = "SELECT * FROM NormalUser WHERE user_ID = ?";

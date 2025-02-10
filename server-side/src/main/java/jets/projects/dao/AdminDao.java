@@ -13,45 +13,50 @@ public class AdminDao {
         // Admin does not have an online status.
         public RequestResult<AdminSessionData> adminLogin(int userID,
                 String password) {
-        try (Connection connection = ConnectionManager.getConnection()) {
-            
-            PreparedStatement selectStatement = connection.prepareStatement(
-                    "SELECT * FROM AdminUser WHERE user_ID = ?");
+            String query = "SELECT * FROM AdminUser WHERE user_ID = ? AND password = ?";
+        try (Connection connection = ConnectionManager.getConnection();
+             PreparedStatement selectStatement = connection.prepareStatement(
+                     query);) {
             selectStatement.setInt(1, userID);
+            selectStatement.setString(2, password);
             ResultSet resultSet = selectStatement.executeQuery();
         
-            if (resultSet.next() && resultSet.getString("password").equals(password)) {
-                
-                PreparedStatement updateStatement = connection.prepareStatement(
-                        "UPDATE AdminUser SET admin_status = 'ONLINE' WHERE user_ID = ?");
-                updateStatement.setInt(1, userID);
-                if(updateStatement.executeUpdate() != 1)
-                    return null;
-        
+            if (resultSet.next()) {
+
                 AdminSessionData adminSessionData = new AdminSessionData(userID, resultSet.getString("display_name"));
+
+                resultSet.close();
                 return new RequestResult<>(adminSessionData, null);
             } else {
+                resultSet.close();
                 return new RequestResult<>(null, null);
             }
         } catch (SQLException e) {
-            return new RequestResult<>(null, 
+            return new RequestResult<>(null, "DB Error: " +
                     e.getMessage());
         }
     }
 
-    public RequestResult<Boolean> adminLogout(int userID) {
-        try (Connection connection = ConnectionManager.getConnection()) {
-
-            PreparedStatement updateStatement = connection.prepareStatement(
-                    "UPDATE AdminUser SET admin_status = 'OFFLINE' WHERE user_ID = ?");
-            updateStatement.setInt(1, userID);
-            if(updateStatement.executeUpdate() != 1)
-                return new RequestResult<>(false, null);
-            return new RequestResult<>(true, null);
-            
-        } catch (SQLException e) {
-            return new RequestResult<>(null, 
-                    e.getMessage());
-        }
-    }
+//    public RequestResult<Boolean> adminLogout(int userID) {
+//        String query = "SELECT * FROM AdminUser WHERE user_ID = ?";
+//
+//        try (Connection connection = ConnectionManager.getConnection();
+//             PreparedStatement selectStatement = connection.prepareStatement(query);) {
+//
+//            selectStatement.setInt(1, userID);
+//            ResultSet resultSet = selectStatement.executeQuery();
+//
+//            if (resultSet.next()) {
+//                resultSet.close();
+//                return new RequestResult<>(true, null);
+//            } else {
+//                resultSet.close();
+//                return new RequestResult<>(false, null);
+//            }
+//
+//        } catch (SQLException e) {
+//            return new RequestResult<>(null,
+//                    e.getMessage());
+//        }
+//    }
 }
