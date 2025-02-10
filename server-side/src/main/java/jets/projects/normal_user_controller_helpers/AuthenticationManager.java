@@ -73,9 +73,31 @@ public class AuthenticationManager {
             return new RequestResult<>(null,
                     ExceptionMessages.ALREADY_LOGGED_IN);
         }
+        
+        var isPasswordValidResult = usersDao.isPasswordValid(
+                ID, oldPassword);
+        if (isPasswordValidResult.getErrorMessage() != null) {
+            return new RequestResult<>(null,
+                   isPasswordValidResult.getErrorMessage()); 
+        }
+        boolean isPasswordValid = isPasswordValidResult.getResponseData();
+        if (!isPasswordValid) {
+            return new RequestResult<>(null, null);
+        }
+        
+        var passwordUpdateResult = usersDao.updatePassword(
+                ID, oldPassword, newPassword);
+        if (passwordUpdateResult.getErrorMessage() != null) {
+            return new RequestResult<>(null,
+                    passwordUpdateResult.getErrorMessage());
+        }
+        boolean passwordUpdate = passwordUpdateResult.getResponseData();
+        if (!passwordUpdate) {
+            return new RequestResult<>(null, 
+                    "Failed to update the password.");
+        }
 
-        var result = usersDao.adminAccountCreatedFirstLogin(phoneNumber,
-                oldPassword, newPassword);
+        var result = usersDao.clientLogin(phoneNumber, newPassword);
         if (result.getErrorMessage() != null) {
             return result;
         }

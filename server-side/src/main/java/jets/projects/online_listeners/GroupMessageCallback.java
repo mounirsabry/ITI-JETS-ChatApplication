@@ -54,6 +54,7 @@ public class GroupMessageCallback {
     
     public static void groupMessageReceived(GroupMessage message) {
         executor.submit(()->{
+            int senderID = message.getSenderID();
             int groupID = message.getGroupID();
             var table = OnlineNormalUserTable.table;
            
@@ -68,13 +69,20 @@ public class GroupMessageCallback {
                     = groupMembersIDsResult.getResponseData();
             
             for (int ID : membersIDs) {
-                var user = table.getOrDefault(ID, null);
-                if (user == null) {
+                // Skip the sender.
+                if (ID == senderID) {
+                    continue;
+                }
+                
+                var userInfo = table.getOrDefault(ID, null);
+                
+                // The member is offline.
+                if (userInfo == null) {
                     continue;
                 }
 
                 try {
-                    user.getImpl().groupMessageReceived(message);
+                    userInfo.getImpl().groupMessageReceived(message);
                 } catch (RemoteException ex) {
                     System.err.println("Callback Error: " 
                             + ex.getMessage());

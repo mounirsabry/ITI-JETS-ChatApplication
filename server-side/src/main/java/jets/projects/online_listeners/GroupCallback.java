@@ -60,6 +60,15 @@ public class GroupCallback {
     public static void groupPicChanged(int groupID, byte[] newPic) {
         executor.submit(() -> {
             var table = OnlineNormalUserTable.table;
+            
+            var adminIDResult =
+                    groupDao.getGroupAdminID(groupID);
+            if (adminIDResult.getErrorMessage() != null) {
+                System.err.println(
+                    adminIDResult.getErrorMessage());
+                return;
+            }
+            int adminID = adminIDResult.getResponseData();
            
             var groupMembersIDsResult 
                     = groupMemberDao.getGroupMembersIDs(groupID);
@@ -72,7 +81,14 @@ public class GroupCallback {
                     = groupMembersIDsResult.getResponseData();
             
             for (int ID : membersIDs) {
+                // Skip the admin.
+                if (ID == adminID) {
+                    continue;
+                }
+                
                 var user = table.getOrDefault(ID, null);
+                
+                // Member is offline.
                 if (user == null) {
                     continue;
                 }
@@ -90,11 +106,11 @@ public class GroupCallback {
     public static void addedToGroup(int userID, int groupID) {
         executor.submit(()-> {
             var table = OnlineNormalUserTable.table;
-            var receiverUser = table.getOrDefault(
+            var userInfo = table.getOrDefault(
                     userID, null);
             
-            // User is offline.
-            if (receiverUser == null) {
+            // The new group member is offline.
+            if (userInfo == null) {
                 return;
             }
             
@@ -106,7 +122,7 @@ public class GroupCallback {
             Group group = groupInfoResult.getResponseData();
             
             try {
-                receiverUser.getImpl().addedToGroup(group);
+                userInfo.getImpl().addedToGroup(group);
             } catch (RemoteException ex) {
                 System.err.println("Callback Error: " 
                         + ex.getMessage());
@@ -117,16 +133,16 @@ public class GroupCallback {
     public static void removedFromGroup(int userID, int groupID) {
         executor.submit(()-> {
             var table = OnlineNormalUserTable.table;
-            var receiverUser = table.getOrDefault(
+            var userInfo = table.getOrDefault(
                     userID, null);
             
-            // User is offline.
-            if (receiverUser == null) {
+            // The removed group member is offline.
+            if (userInfo == null) {
                 return;
             }
             
             try {
-                receiverUser.getImpl().removedFromGroup(groupID);
+                userInfo.getImpl().removedFromGroup(groupID);
             } catch (RemoteException ex) {
                 System.err.println("Callback Error: " 
                         + ex.getMessage());
@@ -137,16 +153,16 @@ public class GroupCallback {
     public static void leadershipGained(int userID, int groupID) {
         executor.submit(()-> {
             var table = OnlineNormalUserTable.table;
-            var receiverUser = table.getOrDefault(
+            var userInfo = table.getOrDefault(
                     userID, null);
             
-            // User is offline.
-            if (receiverUser == null) {
+            // The new admin is offline.
+            if (userInfo == null) {
                 return;
             }
             
             try {
-                receiverUser.getImpl().leadershipGained(groupID);
+                userInfo.getImpl().leadershipGained(groupID);
             } catch (RemoteException ex) {
                 System.err.println("Callback Error: " 
                         + ex.getMessage());
@@ -169,13 +185,15 @@ public class GroupCallback {
                     = groupMembersIDsResult.getResponseData();
             
             for (int ID : membersIDs) {
-                var user = table.getOrDefault(ID, null);
-                if (user == null) {
+                var userInfo = table.getOrDefault(ID, null);
+                
+                // Member/Admin if offline.
+                if (userInfo == null) {
                     continue;
                 }
                 
                 try {
-                    user.getImpl().groupMemberLeft(groupID, memberID);
+                    userInfo.getImpl().groupMemberLeft(groupID, memberID);
                 } catch (RemoteException ex) {
                     System.err.println("Callback Error: "
                         + ex.getMessage());
@@ -208,13 +226,15 @@ public class GroupCallback {
                     continue;
                 }
 
-                var user = table.getOrDefault(ID, null);
-                if (user == null) {
+                var userInfo = table.getOrDefault(ID, null);
+                
+                // The member is offline.
+                if (userInfo == null) {
                     continue;
                 }
 
                 try {
-                    user.getImpl().newGroupMemberAdded(newMember);
+                    userInfo.getImpl().newGroupMemberAdded(newMember);
                 } catch (RemoteException ex) {
                     System.err.println("Callback Error: "
                         + ex.getMessage());
@@ -243,13 +263,15 @@ public class GroupCallback {
                     continue;
                 }
 
-                var user = table.getOrDefault(ID, null);
-                if (user == null) {
+                var userInfo = table.getOrDefault(ID, null);
+                
+                // The member is offline.
+                if (userInfo == null) {
                     continue;
                 }
 
                 try {
-                    user.getImpl().groupMemberRemoved(groupID, memberID);
+                    userInfo.getImpl().groupMemberRemoved(groupID, memberID);
                 } catch (RemoteException ex) {
                     System.err.println("Callback Error: "
                         + ex.getMessage());
@@ -278,13 +300,15 @@ public class GroupCallback {
                     continue;
                 }
 
-                var user = table.getOrDefault(ID, null);
-                if (user == null) {
+                var userInfo = table.getOrDefault(ID, null);
+                
+                // The member is offline.
+                if (userInfo == null) {
                     continue;
                 }
 
                 try {
-                    user.getImpl().adminChanged(groupID, newAdminID);
+                    userInfo.getImpl().adminChanged(groupID, newAdminID);
                 } catch (RemoteException ex) {
                     System.err.println("Callback Error: "
                         + ex.getMessage());
@@ -303,13 +327,15 @@ public class GroupCallback {
                     continue;
                 }
 
-                var user = table.getOrDefault(ID, null);
-                if (user == null) {
+                var userInfo = table.getOrDefault(ID, null);
+                
+                // Member is offline.
+                if (userInfo == null) {
                     continue;
                 }
 
                 try {
-                    user.getImpl().groupDeleted(groupID);
+                    userInfo.getImpl().groupDeleted(groupID);
                 } catch (RemoteException ex) {
                     System.err.println("Callback Error: "
                         + ex.getMessage());
