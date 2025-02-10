@@ -130,6 +130,8 @@ public interface NormalUserAPI extends Remote {
     public boolean sendContactInvitation(ClientToken token,
             String userPhoneNumber, ContactGroup contactGroup) throws RemoteException;
     
+    // The return type contains the contact who sent
+    // the contact invitation.
     public ContactInfo acceptContactInvitation( ClientToken token,
             int invitationID) throws RemoteException;
     

@@ -1,6 +1,8 @@
 package jets.projects.ClientApiImpl;
 
+import javafx.application.Platform;
 import jets.projects.Classes.ExceptionMessages;
+import jets.projects.Controllers.ClientAlerts;
 import jets.projects.Services.CallBack.*;
 import jets.projects.api.ClientAPI;
 import jets.projects.entities.*;
@@ -84,19 +86,11 @@ public class ClientAPIImpl extends UnicastRemoteObject implements ClientAPI {
     }
 
     @Override
-    public void userStatusChangedNotification(Notification notification) throws RemoteException {
+    public void newNotification(Notification notification) throws RemoteException {
         if(notification == null){
             throw new RemoteException(ExceptionMessages.NULL_DATA_SENT_FORM_SERVER);
         }
-        callBackNotificationService.userStatusChangedNotification(notification);
-    }
-
-    @Override
-    public void contactInvitationNotification(Notification notification) throws RemoteException {
-        if(notification == null){
-            throw new RemoteException(ExceptionMessages.NULL_DATA_SENT_FORM_SERVER);
-        }
-        callBackNotificationService.contactInvitationNotification(notification);
+        callBackNotificationService.newNotification(notification);
     }
 
     @Override
@@ -134,5 +128,12 @@ public class ClientAPIImpl extends UnicastRemoteObject implements ClientAPI {
     @Override
     public void adminChanged(int groupID, int newAdminID) throws RemoteException{
         callBackGroupService.adminChanged(groupID, newAdminID);
+    }
+
+    @Override
+    public void groupMemberLeft(int groupID, int memberID) {
+        Platform.runLater(()->{
+            ClientAlerts.invokeInformationAlert("From server", "member: " + memberID + " , has left the group");
+        });
     }
 }

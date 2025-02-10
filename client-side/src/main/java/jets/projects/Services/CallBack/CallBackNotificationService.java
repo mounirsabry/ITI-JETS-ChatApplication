@@ -10,6 +10,7 @@ public class CallBackNotificationService {
 
     DataCenter dataCenter = DataCenter.getInstance();
 
+    /*
     public void userStatusChangedNotification(Notification notification){
         Platform.runLater(()->{
            dataCenter.getNotificationList().add(notification);
@@ -17,6 +18,11 @@ public class CallBackNotificationService {
     }
 
     public void contactInvitationNotification(Notification notification){
+        Platform.runLater(()->{
+            dataCenter.getNotificationList().add(notification);
+        });
+    }*/
+    public void newNotification(Notification notification){
         Platform.runLater(()->{
             dataCenter.getNotificationList().add(notification);
         });
