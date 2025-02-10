@@ -2,6 +2,7 @@
 
 <?import javafx.geometry.Insets?>
 <?import javafx.scene.control.Button?>
+<?import javafx.scene.control.ComboBox?>
 <?import javafx.scene.control.Label?>
 <?import javafx.scene.control.ListView?>
 <?import javafx.scene.control.Separator?>
@@ -17,20 +18,24 @@
       <Label fx:id="groupName" styleClass="title" stylesheets="@../styles/mainStyles.css" text="A New Group" />
       <Label fx:id="description" styleClass="smallText" stylesheets="@../styles/mainStyles.css" text="description" VBox.vgrow="ALWAYS" />
       <Separator prefWidth="200.0" />
-      <HBox alignment="CENTER_LEFT" prefHeight="22.0" prefWidth="560.0">
+      <HBox alignment="CENTER_LEFT" prefHeight="22.0" prefWidth="560.0" spacing="30.0">
          <children>
             <Label styleClass="subtitle" stylesheets="@../styles/mainStyles.css" text="Group Members" />
+            <ComboBox fx:id="contactsCombobox" prefWidth="150.0" visible="false" />
             <Button fx:id="addmember" maxWidth="27.0" mnemonicParsing="false" onAction="#handleAddMember" prefHeight="28.0" prefWidth="27.0" style="-fx-background-color: transparent;">
                <graphic>
                   <ImageView>
                      <image>
-                        <Image url="@../images/add%20contact.png" />
+                        <Image url="@../images/add_contact.png" />
                      </image>
                   </ImageView>
                </graphic>
                <HBox.margin>
-                  <Insets left="250.0" />
+                  <Insets />
                </HBox.margin>
+               <padding>
+                  <Insets left="50.0" />
+               </padding>
             </Button>
             <Button fx:id="deleteGroup" mnemonicParsing="false" onAction="#handleDeleteGroup" style="-fx-background-color: transparent;">
                <graphic>
@@ -45,7 +50,7 @@
                <graphic>
                   <ImageView>
                      <image>
-                        <Image url="@../images/log%20out.png" />
+                        <Image url="@../images/log_out.png" />
                      </image>
                   </ImageView>
                </graphic>

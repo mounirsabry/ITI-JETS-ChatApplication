@@ -1,4 +1,5 @@
 package jets.projects.Controllers;
+import datastore.DataCenter;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
@@ -13,7 +14,9 @@ import javafx.scene.paint.ImagePattern;
 import javafx.scene.shape.Circle;
 import javafx.stage.FileChooser;
 import javafx.stage.Stage;
+import jets.projects.entities.NormalUser;
 
+import java.io.ByteArrayInputStream;
 import java.io.File;
 import java.util.Locale;
 
@@ -26,7 +29,7 @@ public class EditProfileController {
         private Button addprofilePictureButton;
     
         @FXML
-        private Label username;
+        private TextField username;
     
         @FXML
         private TextField emailField;
@@ -48,22 +51,29 @@ public class EditProfileController {
     
         @FXML
         private Button saveButton;
-        
-        private Stage owner; 
-        private Stage popupStage; 
 
-        public void setOriginalStage(Stage stage) {
-            this.owner = stage;
-        }
-    
-        public void setPopupStage(Stage stage) {
-            this.popupStage = stage;
-        }
+        private Stage owner;
+        private Stage popupStage;
+
         @FXML
         void initialize(){
-            // read logged in user info and initialize the textfields with it
+            // read logged-in user info and initialize the text fields with it
+            NormalUser myprofileInfo = DataCenter.getInstance().getMyProfile();
+            if(myprofileInfo.getPic()!=null){
+                profilePicture.setFill(new ImagePattern(new Image(new ByteArrayInputStream(myprofileInfo.getPic()))));
+            }else{
+                profilePicture.setFill(new ImagePattern(new Image(getClass().getResource("/images/blank-profile.png").toExternalForm())));
+            }
+            username.setText(myprofileInfo.getDisplayName());
+            emailField.setText(myprofileInfo.getEmail());
+            phoneField.setText(myprofileInfo.getPhoneNumber());
+            bioField.setText(myprofileInfo.getBio());
+            genderComboBox.getItems().addAll("Female", "Male");
+            genderComboBox.setValue(myprofileInfo.getGender().toString());
             initCountry();
-            genderComboBox.getItems().addAll("Female" , "Male");
+            if (myprofileInfo.getCountry() != null && countryComboBox.getItems().contains(myprofileInfo.getCountry())) {
+                countryComboBox.setValue(myprofileInfo.getCountry().toString());
+            }
         }
     
         @FXML
@@ -93,11 +103,6 @@ public class EditProfileController {
             if (popupStage != null) {
                 popupStage.close();
             }    
-        }
-    
-        @FXML
-        void handleStatusComboBox(ActionEvent event) {
-            //update status and notify contacts
         }
 
         void initCountry(){

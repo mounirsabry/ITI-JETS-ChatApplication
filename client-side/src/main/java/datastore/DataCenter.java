@@ -14,9 +14,6 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
 
-
-
-
 /**
  * The ContactData class serves as a singleton model.
  * It provides synchronized access to collections that hold different types of
@@ -72,6 +69,8 @@ public class DataCenter {
     private final Map<Integer, ContactInfo> contactInfoMap =
             Collections.synchronizedMap(new HashMap<>());
 
+    private final Map<Integer, Group> groupInfoMap =
+            Collections.synchronizedMap(new HashMap<>());
 
     private final Map<Integer, ObservableList<ContactMessage>> contactMessagesMap =
             Collections.synchronizedMap(new HashMap<>());
@@ -91,13 +90,14 @@ public class DataCenter {
     private final ObservableList<AnnouncementInfo> announcementList =
             FXCollections.synchronizedObservableList(FXCollections.observableArrayList());
 
-
     private final ObservableList<ContactInvitationInfo> contactInvitationList =
             FXCollections.synchronizedObservableList(FXCollections.observableArrayList());
 
-
     private final ObservableList<Notification> notificationList =
             FXCollections.synchronizedObservableList(FXCollections.observableArrayList());
+
+    SimpleIntegerProperty unseenAnnouncementsCount = new SimpleIntegerProperty();
+    SimpleIntegerProperty unseenNotificationsCount = new SimpleIntegerProperty();
 
     /*********************************************************************************************/
 
@@ -132,7 +132,9 @@ public class DataCenter {
     public Map<Integer, ContactInfo> getContactInfoMap() {
         return contactInfoMap;
     }
-
+    public Map<Integer, Group> getGroupInfoMap() {
+        return groupInfoMap;
+    }
     public Map<Integer, IntegerProperty> getUnreadContactMessages() {
         return unreadContactMessages;
     }
@@ -141,4 +143,7 @@ public class DataCenter {
         return groupMembersMap;
     }
 
+    public SimpleIntegerProperty unseenNotificationsCountProperty() { return unseenNotificationsCount; }
+
+    public SimpleIntegerProperty unseenAnnouncementsCountProperty() {return unseenAnnouncementsCount; }
 }
