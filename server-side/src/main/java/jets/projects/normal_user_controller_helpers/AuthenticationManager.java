@@ -7,6 +7,7 @@ import jets.projects.dao.TokenValidatorDao;
 import jets.projects.dao.UsersDao;
 import jets.projects.dao.UsersQueryDao;
 import jets.projects.entities.NormalUser;
+import jets.projects.entities.NormalUserStatus;
 import jets.projects.online_listeners.NotificationCallback;
 import jets.projects.online_listeners.OnlineTracker;
 import jets.projects.session.ClientSessionData;
@@ -48,7 +49,8 @@ public class AuthenticationManager {
 
         int userID = result.getResponseData().getUserID();
         OnlineTracker.track(userID, impl);
-        NotificationCallback.userWentOnline(userID);
+        NotificationCallback.userStatusChanged(
+                userID, NormalUserStatus.AVAILABLE);
         return result;
     }
 
@@ -71,16 +73,39 @@ public class AuthenticationManager {
             return new RequestResult<>(null,
                     ExceptionMessages.ALREADY_LOGGED_IN);
         }
+        
+        var isPasswordValidResult = usersDao.isPasswordValid(
+                ID, oldPassword);
+        if (isPasswordValidResult.getErrorMessage() != null) {
+            return new RequestResult<>(null,
+                   isPasswordValidResult.getErrorMessage()); 
+        }
+        boolean isPasswordValid = isPasswordValidResult.getResponseData();
+        if (!isPasswordValid) {
+            return new RequestResult<>(null, null);
+        }
+        
+        var passwordUpdateResult = usersDao.updatePassword(
+                ID, oldPassword, newPassword);
+        if (passwordUpdateResult.getErrorMessage() != null) {
+            return new RequestResult<>(null,
+                    passwordUpdateResult.getErrorMessage());
+        }
+        boolean passwordUpdate = passwordUpdateResult.getResponseData();
+        if (!passwordUpdate) {
+            return new RequestResult<>(null, 
+                    "Failed to update the password.");
+        }
 
-        var result = usersDao.adminAccountCreatedFirstLogin(phoneNumber,
-                oldPassword, newPassword);
+        var result = usersDao.clientLogin(phoneNumber, newPassword);
         if (result.getErrorMessage() != null) {
             return result;
         }
 
         int userID = result.getResponseData().getUserID();
         OnlineTracker.track(userID, impl);
-        NotificationCallback.userWentOnline(userID);
+        NotificationCallback.userStatusChanged(
+                userID, NormalUserStatus.AVAILABLE);
         return result;
     }
 
@@ -110,7 +135,8 @@ public class AuthenticationManager {
             return result;
         }
         
-        NotificationCallback.userWentOffline(token.getUserID());
+        NotificationCallback.userStatusChanged(token.getUserID(),
+                NormalUserStatus.OFFLINE);
         return result;
     }
 

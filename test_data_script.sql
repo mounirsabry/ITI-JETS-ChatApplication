@@ -39,10 +39,10 @@ INSERT INTO CONTACT VALUES
 (7, 5, 'OTHER');
 
 INSERT INTO ContactInvitation VALUES
-(0, 1, 3, DEFAULT),
-(0, 1, 4, DEFAULT),
-(0, 2, 4, DEFAULT),
-(0, 6, 7, DEFAULT);
+(0, 1, 3, 'OTHER', DEFAULT),
+(0, 1, 4, 'OTHER', DEFAULT),
+(0, 2, 4, 'OTHER', DEFAULT),
+(0, 6, 7, 'OTHER', DEFAULT);
 
 INSERT INTO ContactMessage VALUES
 (0, 1, 2, DEFAULT, 'Hello Hashim', FALSE, FALSE, NULL),
@@ -73,19 +73,10 @@ INSERT INTO Notification VALUES
 (0, 2, 'CONTACT_INVITATION', 'You have accepted Mounir contact invitation, Mounir was added to your contact list.', FALSE, DEFAULT);
 
 INSERT INTO Notification VALUES
-(0, 1, 'STATUS_UPDATE', 'Hashim is now Online.', FALSE, DEFAULT),
-(0, 1, 'STATUS_UPDATE', 'Hashim has changed status, new status is BUSY', FALSE, DEFAULT),
-(0, 1, 'STATUS_UPDATE', 'Hashim has gone Offline.', FALSE, DEFAULT);
-
-INSERT INTO Notification VALUES
 (0, 3, 'CONTACT_INVITATION', 'Mariam has sent you a contact invitation.', FALSE, DEFAULT),
 (0, 4, 'CONTACT_INVITATION', 'You have sent Salma a contact invitation.', FALSE, DEFAULT),
 (0, 3, 'CONTACT_INVITATION', 'You have accepted Mariam contact invitation, Mariam was added to your contact list.', FALSE, DEFAULT),
 (0, 4, 'CONTACT_INVITATION', 'Salma has accepted your contact invitation, Salma was added to your contact list.', FALSE, DEFAULT);
-
-INSERT INTO Notification VALUES
-(0, 4, 'STATUS_UPDATE', 'Salma has became Online.', FALSE, DEFAULT),
-(0, 4, 'STATUS_UPDATE', 'Salma has gone Offline.', FALSE, DEFAULT);
 
 INSERT INTO Announcement VALUES
 (0, 'First Test Announcement', 

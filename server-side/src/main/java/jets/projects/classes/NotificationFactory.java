@@ -2,6 +2,7 @@ package jets.projects.classes;
 
 import jets.projects.entities.NormalUserStatus;
 import jets.projects.entities.Notification;
+import jets.projects.entities.NotificationType;
 
 public class NotificationFactory {
     @SuppressWarnings("unused")
@@ -13,6 +14,7 @@ public class NotificationFactory {
             String displayName) {
         Notification notification = new Notification();
         notification.setContent(displayName + " is now Online.");
+        notification.setType(NotificationType.USER_STATUS);
         return notification;
     }
     
@@ -24,6 +26,7 @@ public class NotificationFactory {
         
         Notification notification = new Notification();
         notification.setContent(contentBuilder.toString());
+        notification.setType(NotificationType.USER_STATUS);
         return notification;
     }
     
@@ -41,6 +44,7 @@ public class NotificationFactory {
         
         Notification notification = new Notification();
         notification.setContent(contentBuilder.toString());
+        notification.setType(NotificationType.USER_STATUS);
         return notification;
     }
     
@@ -52,6 +56,7 @@ public class NotificationFactory {
         
         Notification notification = new Notification();
         notification.setContent(contentBuilder.toString());
+        notification.setType(NotificationType.CONTACT_INVITATION);
         return notification;
     }
     
@@ -64,6 +69,7 @@ public class NotificationFactory {
         
         Notification notification = new Notification();
         notification.setContent(contentBuilder.toString());
+        notification.setType(NotificationType.CONTACT_INVITATION);
         return notification;
     }
     
@@ -78,6 +84,7 @@ public class NotificationFactory {
         
         Notification notification = new Notification();
         notification.setContent(contentBuilder.toString());
+        notification.setType(NotificationType.CONTACT_INVITATION);
         return notification;
     }
     
@@ -91,6 +98,7 @@ public class NotificationFactory {
         
         Notification notification = new Notification();
         notification.setContent(contentBuilder.toString());
+        notification.setType(NotificationType.CONTACT_INVITATION);
         return notification;
     }
     
@@ -103,6 +111,7 @@ public class NotificationFactory {
         
         Notification notification = new Notification();
         notification.setContent(contentBuilder.toString());
+        notification.setType(NotificationType.CONTACT_INVITATION);
         return notification;
     }
     
@@ -114,6 +123,7 @@ public class NotificationFactory {
 
         Notification notification = new Notification();
         notification.setContent(contentBuilder.toString());
+        notification.setType(NotificationType.CONTACT_INVITATION);
         return notification;
     }
 }

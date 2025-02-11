@@ -138,11 +138,14 @@ public class Director{
         stage.setScene(adminHomeScene);
     }
 
+    private static final String ADMIN_SERVICE_NAME = "AdminService";
+    private static final int ADMIN_SERVICE_PORT = 1099;
     private boolean connectToServer() {
         if( adminAPI == null){
             try {
-                Registry reg = LocateRegistry.getRegistry("127.0.0.1", 1099);
-                adminAPI = (AdminAPI) reg.lookup("ADMIN_SERVICE_NAME");
+                Registry reg = LocateRegistry.getRegistry("127.0.0.1",
+                        ADMIN_SERVICE_PORT);
+                adminAPI = (AdminAPI) reg.lookup(ADMIN_SERVICE_NAME);
                 return true;
             } catch (RemoteException | NotBoundException e) {
                 AdminAlerts.invokeWarningAlert("Server Warning", "Server is not running " + e.getMessage());
