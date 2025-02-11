@@ -6,23 +6,28 @@
 <?import javafx.scene.text.Font?>
 <?import javafx.scene.text.Text?>
 
-<HBox fx:id="notificationHbox" alignment="CENTER_LEFT" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="80.0" prefWidth="600.0" spacing="50.0" xmlns="http://javafx.com/javafx/9.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="jets.projects.Controllers.NotificationCardController">
+
+<HBox xmlns="http://javafx.com/javafx/9.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="jets.projects.Controllers.NotificationCardController">
    <children>
-      <Text fx:id="content" fill="#003249" strokeType="OUTSIDE" strokeWidth="0.0" text="Content" wrappingWidth="412.60157775878906" HBox.hgrow="ALWAYS">
-         <font>
-            <Font size="16.0" />
-         </font>
-         <HBox.margin>
-            <Insets left="10.0" />
-         </HBox.margin>
-      </Text>
-      <Button fx:id="deleteButton" mnemonicParsing="false" onAction="#handleDeleteButton" styleClass="primaryButton" stylesheets="@../styles/mainStyles.css" text="Delete">
-         <opaqueInsets>
-            <Insets left="60.0" />
-         </opaqueInsets>
-         <HBox.margin>
-            <Insets left="20.0" />
-         </HBox.margin>
-      </Button>
+      <HBox fx:id="notificationHbox" alignment="CENTER_LEFT" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="80.0" prefWidth="600.0" spacing="50.0" HBox.hgrow="ALWAYS">
+         <children>
+            <Text fx:id="content" fill="#003249" strokeType="OUTSIDE" strokeWidth="0.0" text="Content" wrappingWidth="412.60157775878906" HBox.hgrow="ALWAYS">
+               <font>
+                  <Font size="16.0" />
+               </font>
+               <HBox.margin>
+                  <Insets left="10.0" />
+               </HBox.margin>
+            </Text>
+            <Button fx:id="deleteButton" mnemonicParsing="false" onAction="#handleDeleteButton" styleClass="primaryButton" stylesheets="@../styles/mainStyles.css" text="Delete">
+               <opaqueInsets>
+                  <Insets left="60.0" />
+               </opaqueInsets>
+               <HBox.margin>
+                  <Insets left="20.0" />
+               </HBox.margin>
+            </Button>
+         </children>
+      </HBox>
    </children>
 </HBox>

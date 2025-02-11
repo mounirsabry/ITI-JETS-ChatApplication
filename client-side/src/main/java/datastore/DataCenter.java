@@ -1,18 +1,18 @@
 package datastore;
 
+import javafx.beans.property.IntegerProperty;
+import javafx.beans.property.SimpleIntegerProperty;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import jets.projects.entities.*;
 import jets.projects.entity_info.AnnouncementInfo;
 import jets.projects.entity_info.ContactInfo;
 import jets.projects.entity_info.ContactInvitationInfo;
+import jets.projects.entity_info.GroupMemberInfo;
 
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
-
-
-
 
 /**
  * The ContactData class serves as a singleton model.
@@ -66,16 +66,25 @@ public class DataCenter {
     private final ObservableList<ContactInfo> contactList =
             FXCollections.synchronizedObservableList(FXCollections.observableArrayList());
 
+    private final Map<Integer, ContactInfo> contactInfoMap =
+            Collections.synchronizedMap(new HashMap<>());
+
+    private final Map<Integer, Group> groupInfoMap =
+            Collections.synchronizedMap(new HashMap<>());
+
     private final Map<Integer, ObservableList<ContactMessage>> contactMessagesMap =
             Collections.synchronizedMap(new HashMap<>());
 
-    private final Map<Integer, Integer> unreadContactMessages =
+    private final Map<Integer, IntegerProperty> unreadContactMessages =
             Collections.synchronizedMap(new HashMap<>());
 
     private final ObservableList<Group> groupList =
             FXCollections.synchronizedObservableList(FXCollections.observableArrayList());
 
     private final Map<Integer, ObservableList<GroupMessage>> groupMessagesMap =
+            Collections.synchronizedMap(new HashMap<>());
+
+    private final Map<Integer, ObservableList<GroupMemberInfo>> groupMembersMap =
             Collections.synchronizedMap(new HashMap<>());
 
     private final ObservableList<AnnouncementInfo> announcementList =
@@ -86,6 +95,10 @@ public class DataCenter {
 
     private final ObservableList<Notification> notificationList =
             FXCollections.synchronizedObservableList(FXCollections.observableArrayList());
+
+    SimpleIntegerProperty unseenAnnouncementsCount = new SimpleIntegerProperty();
+    SimpleIntegerProperty unseenNotificationsCount = new SimpleIntegerProperty();
+
     /*********************************************************************************************/
 
     public ObservableList<ContactInfo> getContactList() {
@@ -116,5 +129,21 @@ public class DataCenter {
         return notificationList;
     }
 
+    public Map<Integer, ContactInfo> getContactInfoMap() {
+        return contactInfoMap;
+    }
+    public Map<Integer, Group> getGroupInfoMap() {
+        return groupInfoMap;
+    }
+    public Map<Integer, IntegerProperty> getUnreadContactMessages() {
+        return unreadContactMessages;
+    }
 
+    public Map<Integer, ObservableList<GroupMemberInfo>> getGroupMembersMap() {
+        return groupMembersMap;
+    }
+
+    public SimpleIntegerProperty unseenNotificationsCountProperty() { return unseenNotificationsCount; }
+
+    public SimpleIntegerProperty unseenAnnouncementsCountProperty() {return unseenAnnouncementsCount; }
 }

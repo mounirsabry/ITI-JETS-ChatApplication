@@ -1,5 +1,6 @@
 package jets.projects.Services.Request;
 
+import javafx.application.Platform;
 import jets.projects.Controllers.ClientAlerts;
 import jets.projects.Services.ServerConnectivityService;
 import jets.projects.api.NormalUserAPI;
@@ -27,7 +28,9 @@ public class ClientContactMessageService {
 
     public byte[] getContactMessageFile(int contactID, int messageID){
         if(!ServerConnectivityService.check()){
-            ClientAlerts.invokeWarningAlert("Get Contact Message File", "Can't connect to server");
+            Platform.runLater(()->{
+                ClientAlerts.invokeWarningAlert("Get Contact Message File", "Can't connect to server");
+            });
             return null;
         }
         NormalUserAPI serverAPI = ServerConnectivityService.getServerAPI();
@@ -35,7 +38,10 @@ public class ClientContactMessageService {
         try{
             return serverAPI.getContactMessageFile(myToken, contactID, messageID);
         } catch (RemoteException e) {
-            ClientAlerts.invokeErrorAlert("Get Contact Message File Error", e.getMessage());
+            Platform.runLater(()->{
+                ClientAlerts.invokeErrorAlert("Get Contact Message File Error", e.getMessage());
+            });
+
             return null;
         }
     }

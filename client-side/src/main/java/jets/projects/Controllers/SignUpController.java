@@ -1,7 +1,14 @@
 package jets.projects.Controllers;
 import java.io.File;
 import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.Locale;
+import java.time.Instant;
+import java.time.LocalDate;
+import java.time.ZoneId;
+import java.util.Date;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
@@ -18,15 +25,12 @@ import javafx.scene.shape.Circle;
 import javafx.stage.FileChooser;
 import javafx.stage.Stage;
 import jets.projects.Director;
+import jets.projects.Services.Request.ClientAuthenticationService;
+import jets.projects.entities.Country;
+import jets.projects.entities.Gender;
+import jets.projects.entities.NormalUser;
 
 public class SignUpController {
-
-    @FXML
-    private ToggleButton signInToggleButton;
-
-    @FXML
-    private ToggleButton signUpToggleButton;
-
     @FXML
     private Circle profilepicture;
 
@@ -61,6 +65,10 @@ public class SignUpController {
     private Button signUpButton;
     private Stage stage;
     private Director myDirector;
+    private byte[] imageBytes;
+
+    ClientAuthenticationService authenticationService;
+
 
     public void setDirector(Stage stage, Director myDirector) {
         this.stage = stage;
@@ -68,6 +76,7 @@ public class SignUpController {
     }
 
     public void perform() {
+        authenticationService = new ClientAuthenticationService();
         genderComboBox.getItems().addAll("Female" , "Male");
         profilepicture.setFill(new ImagePattern(new Image(getClass().getResource("/images/blank-profile.png").toExternalForm())));
         initCountry();
@@ -81,6 +90,7 @@ public class SignUpController {
         if (selectedFile != null) {
             try {
                 Image image = new Image(selectedFile.toURI().toString());
+                imageBytes = convertImageFileToByteArray(selectedFile.getAbsolutePath());
                 profilepicture.setFill(new ImagePattern(image));
             } catch (Exception e) {
                 System.out.println("Could not load the image: " + e.getMessage());
@@ -100,9 +110,33 @@ public class SignUpController {
     }
     @FXML
     void handleSignUpButton(ActionEvent event) throws IOException {
-       myDirector.signin();
+        if (!passwordField.getText().equals(confirmPasswordFiled.getText())) {
+            ClientAlerts.invokeErrorAlert("Invalid Password", "Passwords do not match");
+        }else{
+            // save data
+            NormalUser user = new NormalUser();
+            user.setDisplayName(nameField.getText());
+            user.setEmail(emailField.getText());
+            user.setPhoneNumber(phoneField.getText());
+            user.setPassword(passwordField.getText());
+            user.setGender(Gender.valueOf(genderComboBox.getValue()));
+            user.setBirthDate(convertLocalDateToDate(dobField.getValue()));
+            user.setCountry(Country.valueOf(countryComboBox.getValue()));
+            if (imageBytes != null)
+                user.setPic(imageBytes);
+            authenticationService.register(user);
+        }
+        myDirector.signin();
     }
 
+
+    public static byte[] convertImageFileToByteArray(String imagePath) throws IOException {
+        Path path = Paths.get(imagePath);
+        return Files.readAllBytes(path);
+    }
+    public static Date convertLocalDateToDate(LocalDate localDate) {
+        return Date.from(localDate.atStartOfDay(ZoneId.systemDefault()).toInstant());
+    }
     void initCountry(){
         // Get all country names
         String[] countryCodes = Locale.getISOCountries();
