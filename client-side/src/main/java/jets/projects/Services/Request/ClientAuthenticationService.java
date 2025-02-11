@@ -24,29 +24,33 @@ public class ClientAuthenticationService {
     public boolean login(String phoneNumber, String password) {
          ServiceManager serviceManager = ServiceManager.getInstance();
          if(serviceManager == null){
-             ClientAlerts.invokeWarningAlert("Server Warning", "Can't connect to server");
+             ClientAlerts.invokeWarningAlert("Server Warning", "Can't connect to server server manager = null");
              return false;
          }
          NormalUserAPI normalUserAPI = serviceManager.getNormalUserAPI();
+        System.out.println(normalUserAPI);
          if(normalUserAPI == null){
-             ClientAlerts.invokeWarningAlert("Server Warning", "Can't connect to server");
+             ClientAlerts.invokeWarningAlert("Server Warning", "Can't connect to server api = null");
              return false;
          }
          try{
+             System.out.println(serviceManager.getMyClientAPIImpl());
              ClientSessionData mySession = normalUserAPI.login(phoneNumber, password, serviceManager.getMyClientAPIImpl());
+             System.out.println(mySession);
              if(mySession == null){
                  ClientAlerts.invokeWarningAlert("Server Warning", "User not found");
                  return false;
              }
              serviceManager.setClientSessionData(mySession);
              ServerConnectivityService.getExecutorService().submit(() -> {
+                 System.out.println("thread");
                  while (!Thread.currentThread().isInterrupted()) {
                      try {
-                         ServerConnectivityService.getServerAPI().sendPulse(ServerConnectivityService.getMyToken());
-                         Thread.sleep(500);
+                         ServerConnectivityService.getServerAPI().sendPulse(serviceManager.getClientToken());
+                         Thread.sleep(1000);
                      } catch (InterruptedException | RemoteException e) {
                          Platform.runLater(()->{
-                             ClientAlerts.invokeWarningAlert("Server Warning", e.getMessage());
+                             ClientAlerts.invokeWarningAlert("Server Warning from heart beat", e.getMessage());
                          });
                          Thread.currentThread().interrupt();
                      }
@@ -58,6 +62,7 @@ public class ClientAuthenticationService {
              if(e.getMessage().equals((ExceptionMessages.USER_MUST_CHANGE_PASSWORD_FOR_FIRST_LOGIN))){
                  ClientAlerts.invokeWarningAlert("Password Change Required", "You must change your password before logging in for the first time.");
              }
+             System.out.println(e.getMessage());
              ClientAlerts.invokeWarningAlert("Server Warning", e.getMessage());
              return false;
          }
