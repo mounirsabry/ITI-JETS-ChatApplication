@@ -20,6 +20,9 @@ public class App extends Application {
     private Parent homeParent;
     private HomeScreenController homeScreenController;
 
+    private Parent loadingParent;
+    private LoadingController loadingController;
+
     @Override
     public void start(Stage stage) {
 
@@ -29,9 +32,11 @@ public class App extends Application {
         final String signinName = "/fxml/signin.fxml";
         final String signupName = "/fxml/signup.fxml";
         final String homeName = "/fxml/homeScreen.fxml";
+        final String loadingName = "/fxml/loading.fxml";
         loadHomePage(homeName);
     	loadSignInPage(signinName);
         loadSignUpPage(signupName);
+        loadLoadingPage(loadingName);
 
 
         if (signInParent == null || signinController == null 
@@ -46,7 +51,8 @@ public class App extends Application {
             Director myDirector = new Director(stage,
                 signInParent, signinController,
                 signUpParent, signUpController,
-                homeParent, homeScreenController);
+                homeParent, homeScreenController,
+                    loadingParent, loadingController);
             myDirector.startWorking();
         }
 
@@ -87,5 +93,15 @@ public class App extends Application {
             System.out.println("Error in load " + pageName + " function.");
             ex.printStackTrace();
         } 
+    }
+
+    public void loadLoadingPage(String pageName) {
+        try {
+            FXMLLoader loader = new FXMLLoader(getClass().getResource(pageName));
+            loadingParent = loader.load();
+            loadingController = loader.getController();
+        } catch (IOException ex) {
+            System.out.println("Error in load " + pageName + " function.");
+        }
     }
 }

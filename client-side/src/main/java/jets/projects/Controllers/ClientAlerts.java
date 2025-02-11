@@ -30,6 +30,5 @@ public class ClientAlerts {
             alert.setContentText(content);
             alert.showAndWait();
         });
-
     }
 }

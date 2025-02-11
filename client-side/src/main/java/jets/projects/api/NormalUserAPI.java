@@ -50,6 +50,9 @@ public interface NormalUserAPI extends Remote {
     public NormalUser getContactProfile(ClientToken token,
             int contactID) throws RemoteException;
     
+    public NormalUserStatus getContactOnlineStatus(ClientToken token,
+            int contactID) throws RemoteException;
+
     // Files not included.
     public List<ContactMessage> getAllContactMessages(ClientToken token,
             int contactID) throws RemoteException;
@@ -125,9 +128,11 @@ public interface NormalUserAPI extends Remote {
             ClientToken token) throws RemoteException;
     
     public boolean sendContactInvitation(ClientToken token,
-            String userPhoneNumber) throws RemoteException;
+            String userPhoneNumber, ContactGroup contactGroup) throws RemoteException;
     
-    public boolean acceptContactInvitation( ClientToken token,
+    // The return type contains the contact who sent
+    // the contact invitation.
+    public ContactInfo acceptContactInvitation( ClientToken token,
             int invitationID) throws RemoteException;
     
     public boolean rejectContactInvitation(ClientToken token,

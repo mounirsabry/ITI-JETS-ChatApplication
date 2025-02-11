@@ -1,13 +1,17 @@
 package jets.projects.Services.Request;
 
+import javafx.application.Platform;
 import jets.projects.Classes.ExceptionMessages;
 import jets.projects.Controllers.ClientAlerts;
 import jets.projects.ServiceManager;
+import jets.projects.Services.ServerConnectivityService;
 import jets.projects.api.NormalUserAPI;
 import jets.projects.entities.NormalUser;
 import jets.projects.session.ClientSessionData;
 import jets.projects.session.ClientToken;
 import java.rmi.RemoteException;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
 
 
 /**
@@ -35,10 +39,24 @@ public class ClientAuthenticationService {
                  return false;
              }
              serviceManager.setClientSessionData(mySession);
+             ServerConnectivityService.getExecutorService().submit(() -> {
+                 while (!Thread.currentThread().isInterrupted()) {
+                     try {
+                         ServerConnectivityService.getServerAPI().sendPulse(ServerConnectivityService.getMyToken());
+                         Thread.sleep(500);
+                     } catch (InterruptedException | RemoteException e) {
+                         Platform.runLater(()->{
+                             ClientAlerts.invokeWarningAlert("Server Warning", e.getMessage());
+                         });
+                         Thread.currentThread().interrupt();
+                     }
+                 }
+             });
+
              return true;
          } catch (RemoteException e) {
              if(e.getMessage().equals((ExceptionMessages.USER_MUST_CHANGE_PASSWORD_FOR_FIRST_LOGIN))){
-                 //
+                 ClientAlerts.invokeWarningAlert("Password Change Required", "You must change your password before logging in for the first time.");
              }
              ClientAlerts.invokeWarningAlert("Server Warning", e.getMessage());
              return false;
@@ -82,6 +100,7 @@ public class ClientAuthenticationService {
         }
         try{
             if(normalUserAPI.logout(clientToken)){
+                ServerConnectivityService.getExecutorService().shutdownNow();
                 return true;
             }else{
                 ClientAlerts.invokeWarningAlert("Server Warning", "Logout failed");

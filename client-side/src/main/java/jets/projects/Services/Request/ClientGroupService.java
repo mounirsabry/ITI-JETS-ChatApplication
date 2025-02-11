@@ -10,7 +10,7 @@ import jets.projects.session.ClientToken;
 import java.rmi.RemoteException;
 import java.util.List;
 
-class ClientGroupService{
+public class ClientGroupService{
     
     public List<Group> getGroups() {
         if (!ServerConnectivityService.check()) {
