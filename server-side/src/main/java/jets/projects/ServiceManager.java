@@ -29,13 +29,18 @@ public class ServiceManager {
         
         Registry reg;
         try {
-            reg = LocateRegistry.createRegistry(ADMIN_SERVICE_PORT);
+            reg = LocateRegistry.getRegistry(ADMIN_SERVICE_PORT);
+            reg.list();
         } catch (AccessException ex) {
             System.err.println("Server denied access to registry.");
             return false;
         } catch (RemoteException ex) {
-            System.err.println("Server could not create a registry.");
-            return false;
+            try {
+                reg = LocateRegistry.createRegistry(ADMIN_SERVICE_PORT);
+            } catch (RemoteException innerEx) {
+                System.err.println("Server could not create a registry.");
+                return false;
+            }
         }
         
         try {
@@ -63,13 +68,18 @@ public class ServiceManager {
         
         Registry reg;
         try {
-            reg = LocateRegistry.createRegistry(NORMAL_USER_SERVICE_PORT);
+            reg = LocateRegistry.getRegistry(NORMAL_USER_SERVICE_PORT);
+            reg.list();
         } catch (AccessException ex) {
             System.err.println("Server denied access to registry.");
             return false;
         } catch (RemoteException ex) {
-            System.err.println("Server could not create a registry.");
-            return false;
+            try {
+                reg = LocateRegistry.createRegistry(NORMAL_USER_SERVICE_PORT);
+            } catch (RemoteException innerEx) {
+                System.err.println("Server could not create a registry.");
+                return false;
+            }
         }
         
         try {
@@ -89,36 +99,7 @@ public class ServiceManager {
         isNormalUserServiceOnline = true;
         return true;
     }
-    
-    static boolean stopNormalUserService() {
-        if (!isNormalUserServiceOnline) {
-            return true;
-        }
-        
-        Registry reg;
-        try {
-            reg = LocateRegistry.getRegistry(1099);
-        } catch (AccessException ex) {
-            System.err.println("Server denied access to registry.");
-            return false;
-        } catch (RemoteException ex) {
-            System.err.println("Server could not create a registry.");
-            return false;
-        }
-        
-        try {
-            reg.unbind(NORMAL_USER_SERVICE_NAME);
-        } catch (NotBoundException ex) {
-            System.out.println("The service is already unbounded.");
-        } catch (RemoteException ex) {
-            System.err.println("Failed to unbind the service.");
-            return false;
-        }
-        
-        isNormalUserServiceOnline = false;
-        return true;
-    }
-    
+
     static boolean stopAdminService() {
         if (!isAdminServiceOnline) {
             return true;
@@ -126,7 +107,7 @@ public class ServiceManager {
         
         Registry reg;
         try {
-            reg = LocateRegistry.getRegistry(1099);
+            reg = LocateRegistry.getRegistry(ADMIN_SERVICE_PORT);
         } catch (AccessException ex) {
             System.err.println("Server denied access to registry.");
             return false;
@@ -145,6 +126,35 @@ public class ServiceManager {
         }
         
         isAdminServiceOnline = false;
+        return true;
+    }
+    
+    static boolean stopNormalUserService() {
+        if (!isNormalUserServiceOnline) {
+            return true;
+        }
+        
+        Registry reg;
+        try {
+            reg = LocateRegistry.getRegistry(NORMAL_USER_SERVICE_PORT);
+        } catch (AccessException ex) {
+            System.err.println("Server denied access to registry.");
+            return false;
+        } catch (RemoteException ex) {
+            System.err.println("Server could not create a registry.");
+            return false;
+        }
+        
+        try {
+            reg.unbind(NORMAL_USER_SERVICE_NAME);
+        } catch (NotBoundException ex) {
+            System.out.println("The service is already unbounded.");
+        } catch (RemoteException ex) {
+            System.err.println("Failed to unbind the service.");
+            return false;
+        }
+        
+        isNormalUserServiceOnline = false;
         return true;
     }
     

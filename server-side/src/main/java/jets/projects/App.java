@@ -40,6 +40,10 @@ public class App {
             ServerCommand nextCommand = myManager.getAndSetNextCommand(
                     ServerCommand.WAIT);
             
+            if (nextCommand != ServerCommand.WAIT) {
+                System.out.println("Command issued to server: " + nextCommand);
+            }
+            
             if (nextCommand == ServerCommand.START_NORMAL_USER_SERVICE) {
                 ServiceManager.startNormalUserService();
                 executorsManager.startExecutors();

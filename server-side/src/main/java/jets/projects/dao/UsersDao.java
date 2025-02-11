@@ -21,7 +21,7 @@ public class UsersDao {
         String query = "SELECT * FROM NormalUser"
                 + " WHERE phone_number = ? AND password = ?";
         String updateStatusQuery = "UPDATE NormalUser"
-                + " SET status = AVAILABLE"
+                + " SET status = 'AVAILABLE'"
                 + " WHERE user_ID = ?";
         
         try (Connection connection = ConnectionManager.getConnection();
