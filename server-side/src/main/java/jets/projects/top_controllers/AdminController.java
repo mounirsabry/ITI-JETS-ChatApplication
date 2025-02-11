@@ -1,7 +1,6 @@
 package jets.projects.top_controllers;
 
 import jets.projects.classes.ServerCommand;
-import java.rmi.RemoteException;
 import java.util.List;
 import java.util.Map;
 import jets.projects.ServerManager;
@@ -21,8 +20,6 @@ import jets.projects.dao.UsersQueryDao;
 import jets.projects.entities.Announcement;
 import jets.projects.entities.Country;
 import jets.projects.entities.NormalUser;
-
-import javax.swing.text.StyledEditorKit;
 
 public class AdminController {
     private static ServerManager serverManager;

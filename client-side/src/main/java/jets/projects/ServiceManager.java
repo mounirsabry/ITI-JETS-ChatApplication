@@ -16,6 +16,9 @@ public class ServiceManager {
     private ClientAPIImpl myClientAPIImpl = null;
     private ClientSessionData mySession = null;
     private ClientToken myToken = null;
+    
+    private static final String NORMAL_USER_SERVICE_NAME = "NormalUserChatService";
+    private static final int NORMAL_USER_SERVICE_PORT = 1100;
 
     private static ServiceManager serviceManager = null;
     private ServiceManager(){
@@ -33,8 +36,10 @@ public class ServiceManager {
     }
     private boolean startServiceManager() {
         try {
-            Registry reg = LocateRegistry.getRegistry("127.0.0.1", 1099);
-            serverAPI = (NormalUserAPI)reg.lookup("NORMAL_USER_SERVICE_NAME");
+            Registry reg = LocateRegistry.getRegistry("127.0.0.1", 
+                    NORMAL_USER_SERVICE_PORT);
+            serverAPI = (NormalUserAPI)reg.lookup(
+                    NORMAL_USER_SERVICE_NAME);
             myClientAPIImpl = new ClientAPIImpl();
             return true;
         } catch (RemoteException | NotBoundException e) {
