@@ -1,5 +1,6 @@
 package jets.projects.normal_user_controller_helpers;
 
+import java.time.LocalDateTime;
 import java.util.List;
 
 import jets.projects.classes.ExceptionMessages;
@@ -67,7 +68,7 @@ public class GroupMessagesManager {
                     ExceptionMessages.NOT_MEMBER);
         }
         
-        return groupMessagesDao.getGroupMessages(token.getUserID());
+        return groupMessagesDao.getGroupMessages(groupID);
     }
     
     public RequestResult<byte[]> getGroupMessageFile(ClientToken token,
@@ -157,12 +158,17 @@ public class GroupMessagesManager {
                     ExceptionMessages.NOT_MEMBER);
         }
         
+        // Work around, fix later, I should return the generated ID.
         var result = groupMessagesDao.sendGroupMessage(message);
         if (result.getErrorMessage() != null) {
             return result;
         }
         
         message.setFile(null);
+        
+        // Work around, fix later.
+        message.setSentAt(LocalDateTime.now());
+        
         GroupMessageCallback.groupMessageReceived(message);
         return result;
     }

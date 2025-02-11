@@ -58,16 +58,20 @@ public class ContactCallback {
             
             var result = contactDao.getAllContactsIDs(contactID);
             if (result.getErrorMessage() != null) {
-                System.err.println("DB Error: " 
-                        + result.getErrorMessage());
+                System.err.println(result.getErrorMessage());
             }
             List<Integer> IDs = result.getResponseData();
+            
             for (int ID : IDs) {
+                var user = table.getOrDefault(
+                        ID, null);
+
+                // Contact is offline.
+                if (user == null) {
+                    continue;
+                }
+                
                 try {
-                    var user = table.getOrDefault(ID, null);
-                    if (user == null) {
-                        continue;
-                    }
                     user.getImpl().contactUpdateInfo(
                             contactID, newDisplayName, newPic);
                 } catch (RemoteException ex) {

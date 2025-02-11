@@ -53,15 +53,13 @@ public class AdminAPIImpl extends UnicastRemoteObject
         if (!validToken(token)) {
             throw new RemoteException(ExceptionMessages.INVALID_TOKEN_FORMAT);
         }
-        
-        return true;
-        /*
+
         var result = controller.logout(token);
         if (result.getErrorMessage() != null) {
             throw new RemoteException(result.getErrorMessage());
         }
         return result.getResponseData();
-        */
+
     }
     
     @Override
@@ -222,6 +220,7 @@ public class AdminAPIImpl extends UnicastRemoteObject
         if (result.getErrorMessage() != null) {
             throw new RemoteException(result.getErrorMessage());
         }
+
         return result.getResponseData();
     }
     

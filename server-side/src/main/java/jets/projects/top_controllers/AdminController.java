@@ -8,6 +8,7 @@ import jets.projects.ServerManager;
 import jets.projects.ServiceManager;
 import jets.projects.classes.ExceptionMessages;
 
+import jets.projects.online_listeners.AnnouncementCallback;
 import jets.projects.session.AdminSessionData;
 import jets.projects.session.AdminToken;
 import jets.projects.classes.RequestResult;
@@ -20,6 +21,8 @@ import jets.projects.dao.UsersQueryDao;
 import jets.projects.entities.Announcement;
 import jets.projects.entities.Country;
 import jets.projects.entities.NormalUser;
+
+import javax.swing.text.StyledEditorKit;
 
 public class AdminController {
     private static ServerManager serverManager;
@@ -45,9 +48,9 @@ public class AdminController {
     }
 
     public RequestResult<AdminSessionData> login(int userID,
-            String password) throws RemoteException {
-        var result = adminDao.adminLogin(userID, password);
-        return result;
+            String password) {
+        return adminDao.adminLogin(userID, password);
+
     }
 
     public RequestResult<Boolean> logout(AdminToken token) {
@@ -61,8 +64,7 @@ public class AdminController {
             return new RequestResult<>(null,
                     ExceptionMessages.INVALID_TOKEN);
         }
-        
-        return adminDao.adminLogout(token.getUserID());
+        return new RequestResult<>(true, null);
     }
     
     public RequestResult<Boolean> getNormalUserServiceStatus(AdminToken token) {
@@ -206,7 +208,7 @@ public class AdminController {
     }
 
     public RequestResult<Boolean> submitNewAnnouncement(AdminToken token,
-            Announcement newAnnouncement) {
+                                                                           Announcement newAnnouncement) {
         RequestResult<Boolean> isValidTokenResult = 
                 validatorDao.checkAdminToken(token);
         if (isValidTokenResult.getErrorMessage() != null) {
@@ -217,8 +219,13 @@ public class AdminController {
             return new RequestResult<>(null,
                     ExceptionMessages.INVALID_TOKEN);
         }
-        
-        return announcementDao.submitNewAnnouncement(newAnnouncement);
+
+        var result = announcementDao.submitNewAnnouncement(newAnnouncement);
+        if(result.getErrorMessage() != null){
+            return new RequestResult<>(null, result.getErrorMessage());
+        }
+        AnnouncementCallback.newAnnouncementAdded(result.getResponseData());
+        return new RequestResult<>(true, null);
     }
 
     public RequestResult<List<Integer>> getOnlineOfflineStats(AdminToken token) {

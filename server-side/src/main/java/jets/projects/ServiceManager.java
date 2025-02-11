@@ -11,8 +11,10 @@ import jets.projects.impl.AdminAPIImpl;
 import jets.projects.impl.NormalUserAPIImpl;
 
 public class ServiceManager {
-    private static final String NORMAL_USER_SERVICE_NAME = "NormalUserChatService";
     private static final String ADMIN_SERVICE_NAME = "AdminService";
+    private static final int ADMIN_SERVICE_PORT = 1099;
+    private static final String NORMAL_USER_SERVICE_NAME = "NormalUserChatService";
+    private static final int NORMAL_USER_SERVICE_PORT = 1100;
     
     private static boolean isNormalUserServiceOnline = false;
     private static boolean isAdminServiceOnline = false;
@@ -27,7 +29,7 @@ public class ServiceManager {
         
         Registry reg;
         try {
-            reg = LocateRegistry.createRegistry(1099);
+            reg = LocateRegistry.createRegistry(ADMIN_SERVICE_PORT);
         } catch (AccessException ex) {
             System.err.println("Server denied access to registry.");
             return false;
@@ -61,7 +63,7 @@ public class ServiceManager {
         
         Registry reg;
         try {
-            reg = LocateRegistry.createRegistry(1099);
+            reg = LocateRegistry.createRegistry(NORMAL_USER_SERVICE_PORT);
         } catch (AccessException ex) {
             System.err.println("Server denied access to registry.");
             return false;

@@ -35,7 +35,8 @@ public class OnlineCleaner {
         }
         executor = Executors.newSingleThreadScheduledExecutor();
         executor.scheduleAtFixedRate(checkTask, 0,
-                Delays.TIMEOUT_USER_CHECK_DELAY, TimeUnit.SECONDS);
+                Delays.TIMEOUT_USER_CHECK_DELAY,
+                TimeUnit.SECONDS);
     }
     
     public void shutDown() {
@@ -64,9 +65,9 @@ public class OnlineCleaner {
                     LocalDateTime.now());
             if (difference.getSeconds() >= Delays.USER_TIMEOUT_DELAY) {
                 table.remove(entry.getKey());
-                var queryResult = usersDao.clientLogout(userID);
-                if (queryResult.getErrorMessage() != null) {
-                    System.err.println(queryResult.getErrorMessage());
+                var logoutResult = usersDao.clientLogout(userID);
+                if (logoutResult.getErrorMessage() != null) {
+                    System.err.println(logoutResult.getErrorMessage());
                 }
                 NotificationCallback.userTimeout(userID);
             }
