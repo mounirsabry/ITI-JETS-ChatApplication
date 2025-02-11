@@ -302,6 +302,15 @@ public class HomeScreenController {
     }
     @FXML
     void handleLogOutButton(ActionEvent event) throws IOException {
+        // clear all cached data
+        DataCenter.getInstance().getContactList().clear();
+        DataCenter.getInstance().getAnnouncementList().clear();
+        DataCenter.getInstance().getNotificationList().clear();
+        DataCenter.getInstance().getContactMessagesMap().clear();
+        DataCenter.getInstance().getGroupMessagesMap().clear();
+        DataCenter.getInstance().getGroupList().clear();
+        DataCenter.getInstance().unseenAnnouncementsCountProperty().set(0);
+        DataCenter.getInstance().unseenNotificationsCountProperty().set(0);
         boolean loggedOut = authenticationService.logout();
         if(!loggedOut) ClientAlerts.invokeErrorAlert("Error" , "Failed to logout");
         myDirector.signin();

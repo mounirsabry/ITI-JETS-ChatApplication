@@ -10,15 +10,25 @@ import javafx.scene.control.DatePicker;
 import javafx.scene.control.Label;
 import javafx.scene.control.TextField;
 import javafx.scene.image.Image;
+import javafx.scene.image.PixelReader;
+import javafx.scene.image.PixelWriter;
+import javafx.scene.image.WritableImage;
 import javafx.scene.paint.ImagePattern;
 import javafx.scene.shape.Circle;
 import javafx.stage.FileChooser;
 import javafx.stage.Stage;
+import jets.projects.Services.Request.ClientProfileService;
 import jets.projects.entities.NormalUser;
 
 import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
+import java.io.DataOutputStream;
 import java.io.File;
+import java.io.IOException;
+import java.util.Date;
 import java.util.Locale;
+
+
 
 public class EditProfileController {
     
@@ -97,12 +107,78 @@ public class EditProfileController {
         @FXML
         void handleSaveButton(ActionEvent event) {
             // save changes and close popup
-            if (owner != null) {
-                owner.getScene().getRoot().setEffect(null); // Remove blur effect
+            String bio = bioField.getText().trim();
+            java.time.LocalDate dob = dobField.getValue();
+            Date birthDate = (dob != null) ? java.util.Date.from(dob.atStartOfDay(java.time.ZoneId.systemDefault()).toInstant()) : null;
+            
+            
+            byte[] profilePic = null;
+        if (profilePicture.getFill() instanceof ImagePattern) {
+            ImagePattern pattern = (ImagePattern) profilePicture.getFill();
+            Image image = pattern.getImage();
+            profilePic = convertImageToByteArray(image);  
+        }
+
+        ClientProfileService profileService = new ClientProfileService();
+        boolean success = profileService.editProfile(username.getText(), birthDate, bio, profilePic);
+
+        if (success) {
+                ClientAlerts.invokeInformationAlert("Saved","Edit Successfully");
+            
+        }
+        else{
+
+            ClientAlerts.invokeErrorAlert("Error", "Cant Save Edit Profile");
+        }
+           
+        }
+
+        private byte[] convertImageToByteArray(Image image) {
+    int width = (int) image.getWidth();
+    int height = (int) image.getHeight();
+    
+    WritableImage writableImage = new WritableImage(width, height);
+    PixelReader pixelReader = image.getPixelReader();
+    PixelWriter pixelWriter = writableImage.getPixelWriter();
+    
+    // Copy pixels manually
+    for (int y = 0; y < height; y++) {
+        for (int x = 0; x < width; x++) {
+            pixelWriter.setArgb(x, y, pixelReader.getArgb(x, y));
+        }
+    }
+
+    ByteArrayOutputStream byteArrayOutputStream = new ByteArrayOutputStream();
+    
+    try {
+        // Manually encode the image as raw pixel data
+        DataOutputStream dataOutputStream = new DataOutputStream(byteArrayOutputStream);
+        for (int y = 0; y < height; y++) {
+            for (int x = 0; x < width; x++) {
+                int argb = pixelReader.getArgb(x, y);
+                dataOutputStream.writeInt(argb);
             }
-            if (popupStage != null) {
-                popupStage.close();
-            }    
+        }
+        dataOutputStream.close();
+    } catch (IOException e) {
+        e.printStackTrace();
+    }
+
+    return byteArrayOutputStream.toByteArray();
+}
+
+
+  
+
+
+    
+
+
+
+    
+        @FXML
+        void handleStatusComboBox(ActionEvent event) {
+            //update status and notify contacts
         }
 
         void initCountry(){
