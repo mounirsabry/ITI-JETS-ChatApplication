@@ -68,7 +68,7 @@ public class GroupMessagesManager {
                     ExceptionMessages.NOT_MEMBER);
         }
         
-        return groupMessagesDao.getGroupMessages(token.getUserID());
+        return groupMessagesDao.getGroupMessages(groupID);
     }
     
     public RequestResult<byte[]> getGroupMessageFile(ClientToken token,
