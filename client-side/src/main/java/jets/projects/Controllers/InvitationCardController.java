@@ -8,11 +8,15 @@ import javafx.scene.image.ImageView;
 import javafx.scene.layout.HBox;
 import javafx.scene.paint.ImagePattern;
 import javafx.scene.shape.Circle;
+import jets.projects.Services.Request.ClientInvitationService;
+import jets.projects.entity_info.ContactInfo;
 import jets.projects.entity_info.ContactInvitationInfo;
+import datastore.DataCenter;
 
 import java.io.ByteArrayInputStream;
 
 public class InvitationCardController {
+    private int invitationID;
 
     @FXML
     private HBox requestHbox;
@@ -33,6 +37,11 @@ public class InvitationCardController {
     private Button rejectButton;
 
     void setData(ContactInvitationInfo senderInfo) {
+
+        invitationID= senderInfo.getInvitation().getInvitationID();
+
+       
+
         if (senderInfo.getSenderPic()!= null){
             userprofilepicture.setFill(new ImagePattern(new Image(new ByteArrayInputStream(senderInfo.getSenderPic()))));
         } else {
@@ -46,9 +55,25 @@ public class InvitationCardController {
     @FXML
     void handleAcceptButton(ActionEvent event) {
 
+      
+    ClientInvitationService invitationService = new ClientInvitationService();
+    ContactInfo contactInfo = invitationService.acceptContactInvitation(invitationID);
+
+    if (contactInfo != null) {
+        
+        DataCenter.getInstance().getContactList().add(contactInfo);
+    }
+
+    
+  
+
+
     }
     @FXML
     void handleRejectButton(ActionEvent event) {
+
+        ClientInvitationService invitationService = new ClientInvitationService();
+        invitationService.rejectContactInvitation(invitationID);
 
     }
 

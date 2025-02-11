@@ -1,4 +1,6 @@
 package jets.projects.Controllers;
+
+
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.scene.control.Button;
@@ -10,8 +12,13 @@ import javafx.scene.image.ImageView;
 import javafx.scene.layout.HBox;
 import javafx.scene.text.Text;
 import javafx.stage.Stage;
+import jets.projects.Services.Request.ClientProfileService;
+import jets.projects.entities.NormalUserStatus;
 
 public class SettingsController {
+
+    @FXML
+    private TextField oldpasswordField;
 
     @FXML
     private TextField passwordField;
@@ -41,13 +48,56 @@ public class SettingsController {
 
     @FXML
     void handleSave(ActionEvent event) {
-        //save changes
-        if (owner != null) {
-            owner.getScene().getRoot().setEffect(null); // Remove blur effect
+
+    ClientProfileService profileService = new ClientProfileService();
+
+    String oldPassword = oldpasswordField.getText();
+    String newPassword = passwordField.getText();
+    String confirmPassword = confirmPasswordField.getText();
+
+    // Check if password fields are filled and validate them
+    if (!oldPassword.isEmpty() || !newPassword.isEmpty() || !confirmPassword.isEmpty()) {
+        if (oldPassword.isEmpty() || newPassword.isEmpty() || confirmPassword.isEmpty()) {
+            ClientAlerts.invokeErrorAlert("Password Error", "Please fill in all password fields.");
+            
         }
-        if (popupStage != null) {
-            popupStage.close();
-        } 
+        if (!newPassword.equals(confirmPassword)) {
+            ClientAlerts.invokeErrorAlert("Password Error", "New password and confirmation password do not match.");
+           
+        }
+        boolean passwordChanged = profileService.changePassword(oldPassword, newPassword);
+        if (!passwordChanged) {
+
+           ClientAlerts.invokeErrorAlert("Cant Change Password","Failed To Change Password"); 
+           
+        }
+    }
+
+    HBox selectedStatusBox = statusComboBox.getValue();
+    if (selectedStatusBox != null) {
+        Text statusText = (Text) selectedStatusBox.getChildren().get(1);
+        String selectedStatus = statusText.getText().toUpperCase();
+
+        try {
+            NormalUserStatus newStatus = NormalUserStatus.valueOf(selectedStatus);
+            Boolean result =profileService.setOnlineStatusABoolean(newStatus);
+            if(result){
+                ClientAlerts.invokeInformationAlert("Update", "Successfully");
+
+
+            }
+        
+
+        } catch (IllegalArgumentException e) {
+            ClientAlerts.invokeErrorAlert("Status Error", "Invalid status selection.");
+        }
+    }
+
+   
+  
+   
+
+
     }
     void initStatus() {
         HBox available = new HBox(10); 

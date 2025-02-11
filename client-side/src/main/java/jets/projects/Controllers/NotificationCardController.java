@@ -1,4 +1,5 @@
 package jets.projects.Controllers;
+import datastore.DataCenter;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.scene.control.Button;
@@ -6,6 +7,7 @@ import javafx.scene.control.ListView;
 import javafx.scene.layout.HBox;
 import javafx.scene.shape.Circle;
 import javafx.scene.text.Text;
+import jets.projects.Services.Request.ClientNotificationService;
 import jets.projects.entities.Notification;
 
 public class NotificationCardController {
@@ -22,6 +24,8 @@ public class NotificationCardController {
     private Notification currentItem;
     private ListView<Notification> parentListView;
 
+    
+
     public  void setData(Notification notification , ListView<Notification> listView){
         content.setText(notification.getContent());
         this.currentItem = notification;
@@ -29,7 +33,17 @@ public class NotificationCardController {
     }
     @FXML
     void handleDeleteButton(ActionEvent event) {
-        parentListView.getItems().remove(currentItem);
+        
+       ClientNotificationService notificationService = new ClientNotificationService();
+       boolean markedAsRead = notificationService.deleteNotification(currentItem.getNotificationID());
+       DataCenter.getInstance().getNotificationList().remove(currentItem);
+
+       if (!markedAsRead) {
+        ClientAlerts.invokeErrorAlert("Error", "Failed To Delete Notification");
+          
+         
+       } 
+
     }
 
 }

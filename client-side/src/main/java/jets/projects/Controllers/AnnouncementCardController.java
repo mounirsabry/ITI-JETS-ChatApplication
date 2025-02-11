@@ -1,5 +1,6 @@
 package jets.projects.Controllers;
 
+import datastore.DataCenter;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.scene.control.Button;
@@ -32,6 +33,6 @@ public class AnnouncementCardController {
 
     @FXML
     void handleDeleteButton(ActionEvent event) {
-        parentListView.getItems().remove(currentItem);
+        DataCenter.getInstance().getAnnouncementList().remove(currentItem);
     }
 }
