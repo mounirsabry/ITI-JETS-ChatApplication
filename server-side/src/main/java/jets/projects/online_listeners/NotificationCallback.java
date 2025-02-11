@@ -87,8 +87,10 @@ public class NotificationCallback {
                 System.err.println(saveNotificationResult.getErrorMessage());
                 return;
             }
-            int notificationID = saveNotificationResult.getResponseData();
-            notification.setNotificationID(notificationID);
+            Notification savedNotification = saveNotificationResult.getResponseData();
+            notification.setNotificationID(
+                    savedNotification.getNotificationID());
+            notification.setSentAt(savedNotification.getSentAt());
 
             var userInfo = table.getOrDefault(senderID, null);
 
@@ -130,8 +132,10 @@ public class NotificationCallback {
                 System.err.println(saveNotificationResult.getErrorMessage());
                 return;
             }
-            int notificationID = saveNotificationResult.getResponseData();
-            notification.setNotificationID(notificationID);
+            Notification savedNotification = saveNotificationResult.getResponseData();
+            notification.setNotificationID(
+                    savedNotification.getNotificationID());
+            notification.setSentAt(savedNotification.getSentAt());
 
             var userInfo = table.getOrDefault(receiverID, null);
 
@@ -173,8 +177,10 @@ public class NotificationCallback {
                 System.err.println(saveNotificationResult.getErrorMessage());
                 return;
             }
-            int notificationID = saveNotificationResult.getResponseData();
-            notification.setNotificationID(notificationID);
+            Notification savedNotification = saveNotificationResult.getResponseData();
+            notification.setNotificationID(
+                    savedNotification.getNotificationID());
+            notification.setSentAt(savedNotification.getSentAt());
 
             var userInfo = table.getOrDefault(senderID, null);
 
@@ -216,8 +222,10 @@ public class NotificationCallback {
                 System.err.println(saveNotificationResult.getErrorMessage());
                 return;
             }
-            int notificationID = saveNotificationResult.getResponseData();
-            notification.setNotificationID(notificationID);
+            Notification savedNotification = saveNotificationResult.getResponseData();
+            notification.setNotificationID(
+                    savedNotification.getNotificationID());
+            notification.setSentAt(savedNotification.getSentAt());
 
             var userInfo = table.getOrDefault(receiverID, null);
 

@@ -207,14 +207,15 @@ public class ContactMessagesManager {
         
         var result = contactMessagesDao.sendContactMessage(message);
         if (result.getErrorMessage() != null) {
-            return result;
+            return new RequestResult<>(null,
+                    result.getErrorMessage());
         }
         int messageID = result.getResponseData();
         
         message.setID(messageID);
         message.setFile(null);
         ContactMessageCallback.contactMessageReceived(message);
-        return result;
+        return new RequestResult<>(true, null);
     }
 
     public RequestResult<Boolean> markContactMessagesAsRead(ClientToken token,
