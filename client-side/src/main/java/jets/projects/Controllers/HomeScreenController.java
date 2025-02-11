@@ -211,7 +211,7 @@ public class HomeScreenController {
                     status.setText("UNKNOWN");
                     status.setStyle("-fx-text-fill: red;");
                 }
-                List<ContactMessage> messages = contactMessagesMap.get(Integer.parseInt(contactId));
+                ObservableList<ContactMessage> messages = contactMessagesMap.get(Integer.parseInt(contactId));
                 // open chat
                 Platform.runLater(() -> {
                     contactMessagesListView.setVisible(true);
@@ -255,7 +255,7 @@ public class HomeScreenController {
                     pic.setFill(new ImagePattern(new Image(getClass().getResource("/images/blank-group-picture.png").toExternalForm())));
                 }
                 name.setText(groupInfo.getGroupName());
-                List<GroupMessage> messages = groupMessagesMap.get(Integer.parseInt(groupID.getText()));
+                ObservableList<GroupMessage> messages = groupMessagesMap.get(Integer.parseInt(groupID.getText()));
                 Platform.runLater(() -> {
                     groupMessagesListView.setVisible(true);
                     contactMessagesListView.setVisible(false);

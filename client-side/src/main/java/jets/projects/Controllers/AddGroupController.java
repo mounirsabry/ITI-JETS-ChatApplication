@@ -59,12 +59,7 @@ public class AddGroupController {
     @FXML
     void handleAddGroup(ActionEvent event) {
         // save data
-        if (owner != null) {
-            owner.getScene().getRoot().setEffect(null); // Remove blur effect
-        }
-        if (popupStage != null) {
-            popupStage.close();
-        }
+
     }
 
     @FXML

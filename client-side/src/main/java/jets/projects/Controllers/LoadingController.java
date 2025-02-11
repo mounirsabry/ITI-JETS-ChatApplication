@@ -41,7 +41,6 @@ public class LoadingController{
         this.stage = stage;
         this.director = director;
     }
-
     public void perform() {
         Platform.runLater(() -> progressBar.setProgress(ProgressBar.INDETERMINATE_PROGRESS));
 

@@ -117,6 +117,7 @@ public class GroupInfoController {
         boolean leftGroup = false;
         if (loggedInUserID != groupAdminID) {
             leftGroup = groupService.leaveGroupAsMember(groupId);
+            DataCenter.getInstance().getGroupMembersMap().get(groupId).removeIf(member -> member.getMember().getMemberID() == loggedInUserID);
         } else {
             // Pick a random new admin from group members
             if (members != null && members.size() > 1) {
@@ -126,6 +127,7 @@ public class GroupInfoController {
                 } while (members.get(randomIndex).getMember().getMemberID() == loggedInUserID); // Ensure new admin is not the current admin
                 int newAdminID = members.get(randomIndex).getMember().getMemberID();
                 leftGroup = groupService.leaveGroupAsAdmin(groupId, newAdminID);
+
             } else {
                 ClientAlerts.invokeWarningAlert("Error", "No other members available to assign as admin");
                 groupService.deleteGroup(groupId);
