@@ -12,14 +12,19 @@ import javafx.scene.paint.ImagePattern;
 import javafx.scene.shape.Circle;
 import javafx.stage.FileChooser;
 import javafx.stage.Stage;
+import jets.projects.ServiceManager;
+import jets.projects.Services.Request.ClientGroupService;
+import jets.projects.entities.Group;
 
 import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
 
+import datastore.DataCenter;
 import javafx.event.ActionEvent;
 
 public class AddGroupController {
+    private byte[] selectedImageBytes = null;
 
     @FXML
     private Button addContactButton;
@@ -34,6 +39,10 @@ public class AddGroupController {
     private Circle groupPicture;
     @FXML
     private Button chooseGroupIconButton;
+    @FXML
+    private TextField groupName;
+    @FXML
+    private TextField groupDesc;
 
     @FXML
     private TextField addmemberTextField;
@@ -58,13 +67,20 @@ public class AddGroupController {
     }
     @FXML
     void handleAddGroup(ActionEvent event) {
-        // save data
-        if (owner != null) {
-            owner.getScene().getRoot().setEffect(null); // Remove blur effect
-        }
-        if (popupStage != null) {
-            popupStage.close();
-        }
+    
+
+        ClientGroupService clientgroupservice = new ClientGroupService();
+        Group newGroup = new Group();
+        int loggedinUserID = ServiceManager.getInstance().getClientToken().getUserID();
+        newGroup.setGroupAdminID(loggedinUserID);
+        newGroup.setGroupDesc(groupDesc.getText().trim());
+        newGroup.setGroupName(groupName.getText().trim());
+        newGroup.setPic(selectedImageBytes);
+        clientgroupservice.createGroup(newGroup);
+        DataCenter.getInstance().getGroupList().add(newGroup);
+        
+
+   
     }
 
     @FXML
@@ -92,12 +108,15 @@ public class AddGroupController {
 
     @FXML
     void handleChooseGroupIcon(ActionEvent event) {
+
         FileChooser fileChooser = new FileChooser();
         fileChooser.getExtensionFilters().add(new FileChooser.ExtensionFilter("Image Files", "*.png", "*.jpg", "*.jpeg", "*.gif"));
         File selectedFile = fileChooser.showOpenDialog((Stage) chooseGroupIconButton.getScene().getWindow());
 
         if (selectedFile != null) {
             try {
+
+                selectedImageBytes = java.nio.file.Files.readAllBytes(selectedFile.toPath());
                 Image image = new Image(selectedFile.toURI().toString());
                 groupPicture.setFill(new ImagePattern(image));
             } catch (Exception e) {
