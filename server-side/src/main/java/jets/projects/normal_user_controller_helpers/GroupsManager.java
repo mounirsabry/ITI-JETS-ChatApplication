@@ -99,7 +99,7 @@ public class GroupsManager {
         return result;
     }
 
-    public RequestResult<Boolean> createGroup(ClientToken token,
+    public RequestResult<Integer> createGroup(ClientToken token,
             Group newGroup) {
         var validationResult = tokenValidator.checkClientToken(token);
         if (validationResult.getErrorMessage() != null) {
