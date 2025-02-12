@@ -63,11 +63,11 @@ public class SettingsController {
     if (!oldPassword.isEmpty() || !newPassword.isEmpty() || !confirmPassword.isEmpty()) {
         if (oldPassword.isEmpty() || newPassword.isEmpty() || confirmPassword.isEmpty()) {
             ClientAlerts.invokeErrorAlert("Password Error", "Please fill in all password fields.");
-            
+            return;
         }
         if (!newPassword.equals(confirmPassword)) {
             ClientAlerts.invokeErrorAlert("Password Error", "New password and confirmation password do not match.");
-           
+            return;
         }
         boolean passwordChanged = profileService.changePassword(oldPassword, newPassword);
         if (!passwordChanged) {
