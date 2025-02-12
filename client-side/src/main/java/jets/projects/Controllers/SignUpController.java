@@ -119,9 +119,9 @@ public class SignUpController {
             user.setEmail(emailField.getText());
             user.setPhoneNumber(phoneField.getText());
             user.setPassword(passwordField.getText());
-            user.setGender(Gender.valueOf(genderComboBox.getValue()));
+            user.setGender(Gender.valueOf(genderComboBox.getValue().toUpperCase()));
             user.setBirthDate(convertLocalDateToDate(dobField.getValue()));
-            user.setCountry(Country.valueOf(countryComboBox.getValue()));
+            user.setCountry(Country.valueOf(countryComboBox.getValue().toUpperCase()));
             if (imageBytes != null)
                 user.setPic(imageBytes);
             authenticationService.register(user);
@@ -151,31 +151,6 @@ public class SignUpController {
         addSearchFeature();
     }
     private void addSearchFeature() {
-        countryComboBox.setEditable(true); 
-
-        // Add a listener to filter items based on user input
-        countryComboBox.getEditor().textProperty().addListener((obs, oldValue, newValue) -> {
-            ObservableList<String> filteredList = FXCollections.observableArrayList();
-
-            for (String country : countryComboBox.getItems()) {
-                if (country.toLowerCase().contains(newValue.toLowerCase())) {
-                    filteredList.add(country);
-                }
-            }
-            countryComboBox.setItems(filteredList);
-            if (!filteredList.isEmpty()) {
-                countryComboBox.show();
-            }
-        });
-        // Restore the original list when focus is lost
-        countryComboBox.focusedProperty().addListener((obs, wasFocused, isNowFocused) -> {
-            if (!isNowFocused) {
-                countryComboBox.setItems(FXCollections.observableArrayList(Locale.getISOCountries())
-                        .stream()
-                        .map(code -> new Locale("", code).getDisplayCountry())
-                        .sorted()
-                        .collect(FXCollections::observableArrayList, ObservableList::add, ObservableList::addAll));
-            }
-        });
+        countryComboBox.setEditable(true);
     }
 }

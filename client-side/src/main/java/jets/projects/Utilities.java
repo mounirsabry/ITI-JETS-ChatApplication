@@ -9,6 +9,7 @@ import java.util.function.Consumer;
 
 import datastore.DataCenter;
 import javafx.beans.property.IntegerProperty;
+import javafx.beans.property.SimpleIntegerProperty;
 import javafx.fxml.FXMLLoader;
 import javafx.geometry.Pos;
 import javafx.scene.Node;
@@ -158,7 +159,7 @@ public class Utilities {
         nameLabel.setFont(Font.font("Arial", FontWeight.BOLD, 14));
 
         // Unread messages icon
-        int unread = unreadMessagesMap.get(contact.getContact().getSecondID()).get();
+        int unread = unreadMessagesMap.getOrDefault(contact.getContact().getSecondID(),new SimpleIntegerProperty(0)).get();
         Label unreadLabel = new Label(String.valueOf(unread));
         unreadLabel.setStyle("-fx-text-fill: white; -fx-background-color: #80ced7;" +
                 "-fx-min-width: 20px; -fx-min-height: 20px;" +

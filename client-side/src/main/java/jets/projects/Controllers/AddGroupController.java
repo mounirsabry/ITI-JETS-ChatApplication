@@ -32,17 +32,17 @@ public class AddGroupController {
     @FXML
     private VBox groupIcon;
     @FXML
-    private VBox groupMembers;  
-    @FXML
-    private VBox addedMembersVbox;
-    @FXML
     private Circle groupPicture;
-    @FXML
-    private Button chooseGroupIconButton;
     @FXML
     private TextField groupName;
     @FXML
     private TextField groupDesc;
+    @FXML
+    private VBox groupMembers;  
+    @FXML
+    private VBox addedMembersVbox;
+    @FXML
+    private Button chooseGroupIconButton;
 
     @FXML
     private TextField addmemberTextField;
@@ -65,18 +65,23 @@ public class AddGroupController {
     public void setPopupStage(Stage stage) {
         this.popupStage = stage;
     }
-  
     @FXML
     void handleAddGroup(ActionEvent event) {
         ClientGroupService clientgroupservice = new ClientGroupService();
         Group newGroup = new Group();
         int loggedinUserID = ServiceManager.getInstance().getClientToken().getUserID();
         newGroup.setGroupAdminID(loggedinUserID);
-        newGroup.setGroupDesc(groupDesc.getText().trim());
+        if(groupDesc.getText()!=null)
+            newGroup.setGroupDesc(groupDesc.getText().trim());
         newGroup.setGroupName(groupName.getText().trim());
         newGroup.setPic(selectedImageBytes);
-        clientgroupservice.createGroup(newGroup);
-        DataCenter.getInstance().getGroupList().add(newGroup);
+        boolean created = clientgroupservice.createGroup(newGroup);
+        if(created){
+            ClientAlerts.invokeInformationAlert("Create Group" , "Created Group Successfully");
+            DataCenter.getInstance().getGroupList().add(newGroup);
+        }else {
+            ClientAlerts.invokeErrorAlert("Create Group" , "Failed to create group");
+        }
     }
 
     @FXML

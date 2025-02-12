@@ -21,7 +21,6 @@ public class InvitationsController {
 
     @FXML
     private ListView<ContactInvitationInfo> invitationList;
-    private ObservableList<ContactInvitationInfo> invitationObservableList = DataCenter.getInstance().getContactInvitationList();
 
     private Stage stage;
     private Director director;
@@ -33,7 +32,7 @@ public class InvitationsController {
     @FXML
     private void initialize() {
         // Bind the ListView to the observable list
-        invitationList.setItems(invitationObservableList);
+        invitationList.setItems(DataCenter.getInstance().getContactInvitationList());
 
         URL fxmlURL = getClass().getResource("/fxml/requestCard.fxml");
         if (fxmlURL == null) {

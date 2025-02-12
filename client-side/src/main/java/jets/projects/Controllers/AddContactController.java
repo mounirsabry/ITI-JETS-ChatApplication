@@ -9,22 +9,15 @@ import jets.projects.entities.ContactGroup;
 import javafx.event.ActionEvent;
 
 public class AddContactController {
-
-   
-   
-    
-@FXML
+    @FXML
     private Button addContactButton;
     @FXML
     private TextField phoneField;
-
-
     @FXML
     private ComboBox<String> categoryComboBox;
     
     private Stage owner; 
     private Stage popupStage; 
-   
 
     @FXML
     private void initialize(){
@@ -32,7 +25,6 @@ public class AddContactController {
     }
     @FXML
     void handleAddContact(ActionEvent event) {
-
         String category = categoryComboBox.getValue().toUpperCase();
         String phoneNumber = phoneField.getText(); 
         
@@ -40,17 +32,11 @@ public class AddContactController {
             ClientAlerts.invokeWarningAlert("Add Contact", "Please enter a phone number and select a category.");
             return;
         }
-        
-        
         ClientInvitationService invitationService = new ClientInvitationService();
         boolean success = invitationService.sendContactInvitation(phoneNumber,ContactGroup.valueOf(category) );
-
-
-        
         if (success) {
            ClientAlerts.invokeInformationAlert("Add Contact", "Sent Contact Invitation Successfully");
         }
-
 
     }
 

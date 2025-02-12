@@ -67,11 +67,6 @@
             <VBox alignment="CENTER" GridPane.columnIndex="1" GridPane.rowIndex="1">
                <children>
                   <ComboBox fx:id="categoryComboBox" prefHeight="23.0" prefWidth="338.0" promptText="Choose category" styleClass="comboBox" stylesheets="@../styles/mainStyles.css" />
-                  <TextField fx:id="customCategoryTextField" onAction="#handleCustomCategory" promptText="Enter custom category" styleClass="textField" stylesheets="@../styles/mainStyles.css" visible="false">
-                     <VBox.margin>
-                        <Insets left="60.0" right="60.0" top="10.0" />
-                     </VBox.margin>
-                  </TextField>
                </children>
             </VBox>
          </children>

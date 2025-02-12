@@ -4,11 +4,11 @@ import javafx.fxml.FXML;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.image.Image;
-import javafx.scene.image.ImageView;
 import javafx.scene.layout.HBox;
 import javafx.scene.paint.ImagePattern;
 import javafx.scene.shape.Circle;
 import jets.projects.Services.Request.ClientInvitationService;
+import jets.projects.entities.ContactInvitation;
 import jets.projects.entity_info.ContactInfo;
 import jets.projects.entity_info.ContactInvitationInfo;
 import datastore.DataCenter;
@@ -16,65 +16,41 @@ import datastore.DataCenter;
 import java.io.ByteArrayInputStream;
 
 public class InvitationCardController {
-    private int invitationID;
-
-    @FXML
-    private HBox requestHbox;
-
     @FXML
     private Circle userprofilepicture;
-
-    @FXML
-    private HBox userInfoHbox;
-
     @FXML
     private Label userName;
+    private ContactInvitation invitation;
+    ClientInvitationService invitationService;
 
-    @FXML
-    private Button acceptButton;
-
-    @FXML
-    private Button rejectButton;
-
-    void setData(ContactInvitationInfo senderInfo) {
-
-        invitationID= senderInfo.getInvitation().getInvitationID();
-
-       
-
-        if (senderInfo.getSenderPic()!= null){
-            userprofilepicture.setFill(new ImagePattern(new Image(new ByteArrayInputStream(senderInfo.getSenderPic()))));
+    void setData(ContactInvitationInfo invitationInfo) {
+        this.invitation = invitationInfo.getInvitation();
+        invitationService = new ClientInvitationService();
+        if (invitationInfo.getSenderPic()!= null){
+            userprofilepicture.setFill(new ImagePattern(new Image(new ByteArrayInputStream(invitationInfo.getSenderPic()))));
         } else {
             userprofilepicture.setFill(new ImagePattern(new Image(getClass().getResource("/images/blank-profile.png").toExternalForm())));
         }
-        userName.setText(senderInfo.getSenderDisplayName());
+        userName.setText(invitationInfo.getSenderDisplayName());
     }
     @FXML
     void initialize(){}
 
     @FXML
     void handleAcceptButton(ActionEvent event) {
-
-      
-    ClientInvitationService invitationService = new ClientInvitationService();
-    ContactInfo contactInfo = invitationService.acceptContactInvitation(invitationID);
-
+    ContactInfo contactInfo = invitationService.acceptContactInvitation(invitation.getInvitationID());
     if (contactInfo != null) {
-        
-        DataCenter.getInstance().getContactList().add(contactInfo);
-    }
-
-    
-  
-
-
+            DataCenter.getInstance().getContactList().add(contactInfo);
+            DataCenter.getInstance().getContactInfoMap().putIfAbsent(invitation.getSenderID(),contactInfo);
+            DataCenter.getInstance().getContactInvitationList().removeIf(inv -> inv.getInvitation().getInvitationID() == invitation.getInvitationID());
+        }
     }
     @FXML
     void handleRejectButton(ActionEvent event) {
-
-        ClientInvitationService invitationService = new ClientInvitationService();
-        invitationService.rejectContactInvitation(invitationID);
-
+        boolean isRejected = invitationService.rejectContactInvitation(invitation.getInvitationID());
+        if(isRejected) {
+            DataCenter.getInstance().getContactInvitationList().removeIf(inv -> inv.getInvitation().getInvitationID() == invitation.getInvitationID());
+        }
     }
 
 }

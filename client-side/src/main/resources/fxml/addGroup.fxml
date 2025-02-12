@@ -15,7 +15,6 @@
 <?import javafx.scene.shape.Circle?>
 <?import javafx.scene.text.Font?>
 
-
 <BorderPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="400.0" prefWidth="600.0" styleClass="popup" stylesheets="@../styles/mainStyles.css" xmlns="http://javafx.com/javafx/9.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="jets.projects.Controllers.AddGroupController">
    <center>
       <GridPane BorderPane.alignment="CENTER">
@@ -41,7 +40,7 @@
             <RowConstraints maxHeight="51.0" minHeight="10.0" percentHeight="10.0" prefHeight="32.0" vgrow="ALWAYS" />
          </rowConstraints>
          <children>
-            <TextField prefHeight="28.0" prefWidth="283.0" promptText="Enter group name" styleClass="textField" stylesheets="@../styles/mainStyles.css" GridPane.columnIndex="1" GridPane.columnSpan="3" GridPane.rowIndex="1">
+            <TextField fx:id="groupName" prefHeight="28.0" prefWidth="283.0" promptText="Enter group name" styleClass="textField" stylesheets="@../styles/mainStyles.css" GridPane.columnIndex="1" GridPane.columnSpan="3" GridPane.rowIndex="1">
                <GridPane.margin>
                   <Insets left="50.0" right="50.0" />
                </GridPane.margin>
@@ -62,7 +61,7 @@
                   </Button>
                </children>
             </VBox>
-            <TextField prefHeight="28.0" prefWidth="283.0" promptText="Enter group description" styleClass="textField" stylesheets="@../styles/mainStyles.css" GridPane.columnIndex="1" GridPane.columnSpan="3" GridPane.rowIndex="2">
+            <TextField fx:id="groupDesc" prefHeight="28.0" prefWidth="283.0" promptText="Enter group description" styleClass="textField" stylesheets="@../styles/mainStyles.css" GridPane.columnIndex="1" GridPane.columnSpan="3" GridPane.rowIndex="2">
                <GridPane.margin>
                   <Insets left="50.0" right="50.0" />
                </GridPane.margin>
