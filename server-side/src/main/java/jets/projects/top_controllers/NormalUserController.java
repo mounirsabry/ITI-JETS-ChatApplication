@@ -133,7 +133,7 @@ public class NormalUserController {
                 contactID);
     }
 
-    public RequestResult<Boolean> sendContactMessage(ClientToken token,
+    public RequestResult<Integer> sendContactMessage(ClientToken token,
             ContactMessage message) {
         return contactMessagesManager.sendContactMessage(token, message);
     }

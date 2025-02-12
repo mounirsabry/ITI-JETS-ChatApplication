@@ -1,6 +1,5 @@
 package jets.projects.dao;
 
-import java.net.ConnectException;
 import java.sql.*;
 import java.util.ArrayList;
 import java.util.List;

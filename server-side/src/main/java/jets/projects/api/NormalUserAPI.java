@@ -71,7 +71,7 @@ public interface NormalUserAPI extends Remote {
             ClientToken token, int otherID) throws RemoteException;
     
     // File included.
-    public boolean sendContactMessage(ClientToken token,
+    public Integer sendContactMessage(ClientToken token,
             ContactMessage message) throws RemoteException;
     
     public boolean markContactMessagesAsRead(ClientToken token, 

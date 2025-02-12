@@ -163,7 +163,7 @@ public class ContactMessagesManager {
                 token.getUserID());
     }
 
-    public RequestResult<Boolean> sendContactMessage(ClientToken token,
+    public RequestResult<Integer> sendContactMessage(ClientToken token,
             ContactMessage message) {
         var validationResult = tokenValidator.checkClientToken(token);
         if (validationResult.getErrorMessage() != null) {
@@ -207,15 +207,14 @@ public class ContactMessagesManager {
         
         var result = contactMessagesDao.sendContactMessage(message);
         if (result.getErrorMessage() != null) {
-            return new RequestResult<>(null,
-                    result.getErrorMessage());
+            return result;
         }
         int messageID = result.getResponseData();
         
         message.setID(messageID);
         message.setFile(null);
         ContactMessageCallback.contactMessageReceived(message);
-        return new RequestResult<>(true, null);
+        return result;
     }
 
     public RequestResult<Boolean> markContactMessagesAsRead(ClientToken token,
