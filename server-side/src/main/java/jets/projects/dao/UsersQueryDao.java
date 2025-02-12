@@ -96,7 +96,12 @@ public class UsersQueryDao {
             user.setPhoneNumber(resultSet.getString("phone_number"));
             user.setEmail(resultSet.getString("email"));
             
-            user.setPic(resultSet.getBytes("pic"));
+            Blob blob = resultSet.getBlob("pic");
+            if (blob == null) {
+                user.setPic(null);
+            } else {
+                user.setPic(blob.getBytes(1, (int) blob.length()));
+            }
             /*
             Blob picBlob = resultSet.getBlob("pic");
             if (picBlob != null) {
