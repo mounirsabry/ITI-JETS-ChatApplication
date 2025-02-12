@@ -1,6 +1,9 @@
 # Ignore Intellij Generated folder.
 .idea/
 
+# Ignore netbeans files.
+nbproject/
+
 target/
 pom.xml.tag
 pom.xml.releaseBackup

@@ -6,6 +6,7 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Timestamp;
+import java.sql.Types;
 import java.util.Date;
 import jets.projects.classes.RequestResult;
 import jets.projects.db_connections.ConnectionManager;
@@ -94,9 +95,8 @@ public class UsersDao {
             stmt.setString(i++, user.getDisplayName());
             stmt.setString(i++, user.getPhoneNumber());
             stmt.setString(i++, user.getEmail());
-            
-            Blob blob = connection.createBlob();
-            blob.setBytes(1, user.getPic());
+           
+            stmt.setBytes(i++, user.getPic());
             
             stmt.setString(i++, user.getPassword());
             stmt.setString(i++, user.getGender().toString());

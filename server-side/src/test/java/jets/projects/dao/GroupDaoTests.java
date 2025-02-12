@@ -26,6 +26,12 @@ public class GroupDaoTests {
         Group newGroup = new Group();
         newGroup.setGroupName("Some name");
         newGroup.setGroupDesc("Some desc");
-        //newGroup.set
+        newGroup.setGroupAdminID(2);
+        var result = groupDao.createGroup(newGroup);
+        if (result.getErrorMessage() != null) {
+            fail(result.getErrorMessage());
+        }
+        int ID = result.getResponseData();
+        assertEquals(2, ID);
     }
 }

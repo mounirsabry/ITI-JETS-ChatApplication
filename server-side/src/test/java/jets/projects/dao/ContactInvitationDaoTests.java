@@ -12,7 +12,6 @@ import static org.junit.jupiter.api.Assertions.*;
 public class ContactInvitationDaoTests {
     private static final ContactInvitationDao contactInvitationDao
             = new ContactInvitationDao();
-    
     @BeforeAll
     public static void init() {
         boolean isInit = DBInitializer.init();

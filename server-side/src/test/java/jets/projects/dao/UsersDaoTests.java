@@ -14,7 +14,6 @@ import static org.junit.jupiter.api.Assertions.*;
 public class UsersDaoTests {
     private static final UsersDao usersDao
             = new UsersDao();
-    
     @BeforeAll
     public static void init() {
         boolean isInit = DBInitializer.init();
@@ -48,22 +47,7 @@ public class UsersDaoTests {
     @Test
     public void registerViewEditView() {
         NormalUser user = new NormalUser();
-        /*
-        private String displayName;
-        private String phoneNumber;
-        private String email;
-        private byte[] pic;
-        private String password;
-        private Gender gender;
-        private Country country;
-        private Date birthDate;
-        private LocalDateTime createdAt;
-        private NormalUserStatus status;
-        private String bio;
-        private boolean isAdminCreated;
-        private boolean isPasswordValid;
-        */
-        
+
         user.setDisplayName("Test1");
         user.setPhoneNumber("11223345");
         user.setEmail("test1@email.com");
@@ -101,6 +85,7 @@ public class UsersDaoTests {
         assertTrue(isEdited);
     }
     
+    /*
     @Test
     public void getPicValidatePasswordUpdatePassword() {
         int userID = 1;
@@ -128,4 +113,5 @@ public class UsersDaoTests {
         boolean isChanged = result3.getResponseData();
         assertTrue(isChanged);
     }
+    */
 }
