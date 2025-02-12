@@ -12,6 +12,7 @@ import jets.projects.online_listeners.NotificationCallback;
 import jets.projects.online_listeners.OnlineTracker;
 import jets.projects.session.ClientSessionData;
 import jets.projects.session.ClientToken;
+import jets.projects.shared_ds.OnlineNormalUserTable;
 
 public class AuthenticationManager {
     private final UsersQueryDao usersQueryDao;
@@ -137,6 +138,9 @@ public class AuthenticationManager {
         
         NotificationCallback.userStatusChanged(token.getUserID(),
                 NormalUserStatus.OFFLINE);
+
+        var table = OnlineNormalUserTable.table;
+        table.remove(token.getUserID());
         return result;
     }
 

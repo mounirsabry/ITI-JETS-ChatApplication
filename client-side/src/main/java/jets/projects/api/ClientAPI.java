@@ -35,7 +35,7 @@ public interface ClientAPI extends Remote {
     public void removedFromGroup(int groupID) throws RemoteException;
     public void leadershipGained(int groupID) throws RemoteException;
     
-    public void groupMemberLeft(int groupID, int memberID);
+    public void groupMemberLeft(int groupID, int memberID) throws RemoteException;
     // Should not called on the admin nor the member affected.
     public void newGroupMemberAdded(GroupMemberInfo newMember) throws RemoteException;
     public void groupMemberRemoved(int groupID, int memberID) throws RemoteException;
@@ -55,4 +55,6 @@ public interface ClientAPI extends Remote {
     
     public void newAnnouncementAdded(
             Announcement announcement) throws RemoteException;
+
+
 }

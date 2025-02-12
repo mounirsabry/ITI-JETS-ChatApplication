@@ -27,7 +27,7 @@ public class ServiceManager {
     public static ServiceManager getInstance(){
         if(serviceManager == null){
            serviceManager = new ServiceManager();
-           if(!serviceManager.startServiceManager()) {
+           if(serviceManager.startServiceManager() == false) {
                serviceManager = null;
                return null;
            }
@@ -43,6 +43,7 @@ public class ServiceManager {
             myClientAPIImpl = new ClientAPIImpl();
             return true;
         } catch (RemoteException | NotBoundException e) {
+            System.out.println(e.getMessage());
             return false;
         }
     }
@@ -58,6 +59,7 @@ public class ServiceManager {
     public ClientSessionData getClientSessionData() {
         return mySession;
     }
+
     public ClientToken getClientToken() {
         return myToken;
     }

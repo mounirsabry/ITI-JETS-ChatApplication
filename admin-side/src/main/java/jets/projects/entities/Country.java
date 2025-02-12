@@ -1,5 +1,6 @@
 package jets.projects.entities;
 
+
 public enum Country {
     ARUBA,
     AFGHANISTAN,
@@ -238,6 +239,5 @@ public enum Country {
     YUGOSLAVIA,
     SOUTH_AFRICA,
     ZAMBIA,
-    ZIMBABWE;
-
+    ZIMBABWE
 }

@@ -2,7 +2,9 @@ package jets.projects.entity_info;
 
 import jets.projects.entities.ContactInvitation;
 
-public class ContactInvitationInfo {
+import java.io.Serializable;
+
+public class ContactInvitationInfo implements Serializable {
     private ContactInvitation invitation;
     
     private String senderDisplayName;

@@ -64,8 +64,6 @@ public class HomeScreenController {
     ClientContactService contactService = new ClientContactService();
     ClientContactMessageService contactMessageService = new ClientContactMessageService();
     ClientGroupMessageService groupMessageService = new ClientGroupMessageService();
-    private ObservableList<ContactMessage> contactMessageObservableList = FXCollections.observableArrayList() ;
-    private ObservableList<GroupMessage> groupMessageObservableList = FXCollections.observableArrayList() ;
     private ObservableList<ContactInfo> contactsList = DataCenter.getInstance().getContactList();
     private ObservableList<AnnouncementInfo> announcementsList = DataCenter.getInstance().getAnnouncementList();
     private ObservableList<Notification> notificationsList = DataCenter.getInstance().getNotificationList();
@@ -81,7 +79,11 @@ public class HomeScreenController {
     }
     public void perform() {
         NormalUser myprofile = DataCenter.getInstance().getMyProfile();
-        myprofilepicture.setFill(new ImagePattern(new Image(new ByteArrayInputStream(myprofile.getPic()))));
+        if(myprofile.getPic() != null){
+            myprofilepicture.setFill(new ImagePattern(new Image(new ByteArrayInputStream(myprofile.getPic()))));
+        }else{
+            myprofilepicture.setFill(new ImagePattern(new Image(getClass().getResource("/images/blank-profile.png").toExternalForm())));
+        }
         String statusType = myprofile.getStatus().toString().toLowerCase();
         String statusPath = String.format("/images/%s.png", statusType);
         mystatus.setFill(new ImagePattern(new Image(getClass().getResource(statusPath).toExternalForm())));
@@ -146,27 +148,32 @@ public class HomeScreenController {
         TreeItem<String> familyItem = new TreeItem<>("Family");
         TreeItem<String> friendsItem = new TreeItem<>("Friends");
         TreeItem<String> workItem = new TreeItem<>("Work");
+        TreeItem<String> otherItem = new TreeItem<>("Others");
         List<ContactInfo> familyContacts = new ArrayList<>();
         List<ContactInfo> workContacts = new ArrayList<>();
         List<ContactInfo> friendsContacts = new ArrayList<>();
+        List<ContactInfo> otherContacts = new ArrayList<>();
         for (ContactInfo contact : contactsList) {
             switch (contact.getContact().getContactGroup()) {
                 case FAMILY -> {familyContacts.add(contact);}
                 case WORK -> {workContacts.add(contact);}
                 case FRIENDS -> {friendsContacts.add(contact);}
+                case OTHER -> {otherContacts.add(contact);}
                 default -> {}
             }
         }
         Utilities.populateTree(familyItem,familyContacts);
         Utilities.populateTree(friendsItem,friendsContacts);
         Utilities.populateTree(workItem,workContacts);
+        Utilities.populateTree(otherItem,otherContacts);
 
         familyItem.setExpanded(true);
         friendsItem.setExpanded(true);
         workItem.setExpanded(true);
+        otherItem.setExpanded(true);
         treeView.setRoot(rootItem);
         treeView.setShowRoot(false);
-        treeView.getRoot().getChildren().addAll(Arrays.asList(familyItem, friendsItem, workItem));
+        treeView.getRoot().getChildren().addAll(Arrays.asList(familyItem, friendsItem, workItem, otherItem));
         treeView.setCellFactory(param -> new TreeCell<>() {
             @Override
             protected void updateItem(String item, boolean empty) {
@@ -194,9 +201,11 @@ public class HomeScreenController {
         }
         // view contact chat on selecting this contact from contact list
         treeView.getSelectionModel().selectedItemProperty().addListener((obs, oldItem, newItem) -> {
-            if (newItem != null) {
+            if (newItem != null && newItem.getParent() != rootItem) { // Ensure it's not a category
                 String contactId = newItem.getValue();
-                ContactInfo contactInfo = DataCenter.getInstance().getContactInfoMap().get(Integer.parseInt(contactId));
+                int contactIdInt = Integer.parseInt(contactId); // Parse safely
+
+                ContactInfo contactInfo = DataCenter.getInstance().getContactInfoMap().get(contactIdInt);
                 if(contactInfo.getPic()!=null){
                     pic.setFill(new ImagePattern(new Image(new ByteArrayInputStream(contactInfo.getPic()))));
                 }else{
@@ -211,16 +220,23 @@ public class HomeScreenController {
                     status.setText("UNKNOWN");
                     status.setStyle("-fx-text-fill: red;");
                 }
-                ObservableList<ContactMessage> messages = contactMessagesMap.get(Integer.parseInt(contactId));
+                int contact_ID = Integer.parseInt(contactId);
                 // open chat
                 Platform.runLater(() -> {
                     contactMessagesListView.setVisible(true);
                     groupMessagesListView.setVisible(false);
-                    contactMessagesListView.setItems(contactMessageObservableList);
+                    contactMessagesListView.setItems(DataCenter.getInstance().getContactMessagesMap().get(contact_ID));
+                    //scrollable
+                    (DataCenter.getInstance().getContactMessagesMap().get(contact_ID)).addListener((ListChangeListener<ContactMessage>) change -> {
+                        while (change.next()) {
+                            if (change.wasAdded()) {
+                                // Scroll to the last item
+                                contactMessagesListView.scrollTo(DataCenter.getInstance().getContactMessagesMap().get(contact_ID).size() - 1);
+                            }
+                        }
+                    });
                     contactMessagesListView.setCellFactory(lv -> new MessageContactCard());
                     contactMessagesListView.scrollTo(contactMessagesListView.getItems().size() -1);
-                    contactMessageObservableList.clear();
-                    contactMessageObservableList.addAll(messages);
                     boolean read = contactMessageService.markContactMessagesAsRead(Integer.parseInt(contactId));
                     if(!read) ClientAlerts.invokeErrorAlert("Error" , "Failed to mark messages as read");
                 });
@@ -255,15 +271,21 @@ public class HomeScreenController {
                     pic.setFill(new ImagePattern(new Image(getClass().getResource("/images/blank-group-picture.png").toExternalForm())));
                 }
                 name.setText(groupInfo.getGroupName());
-                ObservableList<GroupMessage> messages = groupMessagesMap.get(Integer.parseInt(groupID.getText()));
+
                 Platform.runLater(() -> {
                     groupMessagesListView.setVisible(true);
                     contactMessagesListView.setVisible(false);
-                    groupMessagesListView.setItems(groupMessageObservableList);
+                    groupMessagesListView.setItems(DataCenter.getInstance().getGroupMessagesMap().get(Integer.parseInt(groupID.getText())));
+                    (DataCenter.getInstance().getGroupMessagesMap().get(Integer.parseInt(groupID.getText()))).addListener((ListChangeListener<GroupMessage>) change -> {
+                        while (change.next()) {
+                            if (change.wasAdded()) {
+                                // Scroll to the last item
+                                groupMessagesListView.scrollTo(DataCenter.getInstance().getGroupMessagesMap().get(Integer.parseInt(groupID.getText())).size() - 1);
+                            }
+                        }
+                    });
                     groupMessagesListView.setCellFactory(lv -> new MessageGroupCard());
                     groupMessagesListView.scrollTo(groupMessagesListView.getItems().size() -1);
-                    groupMessageObservableList.clear();
-                    groupMessageObservableList.addAll(messages);
                 });
             }
         });
@@ -320,11 +342,12 @@ public class HomeScreenController {
         if(contactMessagesListView.isVisible()){
             ContactMessage message = new ContactMessage();
             message.setSenderID(DataCenter.getInstance().getMyProfile().getUserID());
-            message.setReceiverID(Integer.parseInt(id.getText()));
+            Integer contact_id = Integer.parseInt(id.getText());
+            message.setReceiverID(contact_id);
             message.setSentAt(LocalDateTime.now());
             message.setContent(messageTextArea.getText());
             messageTextArea.clear();
-            contactMessageObservableList.add(message);
+            DataCenter.getInstance().getContactMessagesMap().get(contact_id).add(message);
             contactMessagesListView.scrollTo(contactMessagesListView.getItems().size() -1);
             boolean sent = contactMessageService.sendContactMessage(message);
             if(!sent) ClientAlerts.invokeErrorAlert("Error" , "Failed to send contact message");
@@ -336,8 +359,7 @@ public class HomeScreenController {
             message.setSentAt(LocalDateTime.now());
             message.setContent(messageTextArea.getText());
             messageTextArea.clear();
-            groupMessageObservableList.add(message);
-            groupMessagesListView.scrollTo(contactMessagesListView.getItems().size() -1);
+            DataCenter.getInstance().getGroupMessagesMap().get(Integer.parseInt(id.getText())).add(message);
             boolean sent = groupMessageService.sendGroupMessage(message);
             if(!sent) ClientAlerts.invokeErrorAlert("Error" , "Failed to send group message");
         }
@@ -368,7 +390,7 @@ public class HomeScreenController {
                     attachmentMessage.setContent("Attachment: " + fileName);
                     attachmentMessage.setContainsFile(true);
                     attachmentMessage.setFile(fileBytes);
-                    contactMessageObservableList.add(attachmentMessage);
+                    DataCenter.getInstance().getContactMessagesMap().get(Integer.parseInt(id.getText())).add(attachmentMessage);
                     contactMessagesListView.scrollTo(contactMessagesListView.getItems().size() - 1);
                     boolean sent = contactMessageService.sendContactMessage(attachmentMessage);
                     if (!sent) ClientAlerts.invokeErrorAlert("Error", "Failed to send contact message");
@@ -382,7 +404,7 @@ public class HomeScreenController {
                     attachmentMessage.setContent("Attachment: " + fileName);
                     attachmentMessage.setContainsFile(true);
                     attachmentMessage.setFile(fileBytes);
-                    groupMessageObservableList.add(attachmentMessage);
+                    DataCenter.getInstance().getGroupMessagesMap().get(Integer.parseInt(id.getText())).add(attachmentMessage);
                     groupMessagesListView.scrollTo(groupMessagesListView.getItems().size() - 1);
                     boolean sent = groupMessageService.sendGroupMessage(attachmentMessage);
                     if (!sent) ClientAlerts.invokeErrorAlert("Error", "Failed to send group message");

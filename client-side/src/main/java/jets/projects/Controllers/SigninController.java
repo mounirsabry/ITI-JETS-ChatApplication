@@ -45,8 +45,7 @@ public class SigninController {
         if(clientAuthenticationService.login(phoneField.getText(), passwordField.getText())){
             myDirector.loading();
         }
-        // remove it
-        myDirector.loading();
+
     }
 
     @FXML
