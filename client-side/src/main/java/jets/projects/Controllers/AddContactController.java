@@ -4,57 +4,56 @@ import javafx.scene.control.Button;
 import javafx.scene.control.ComboBox;
 import javafx.scene.control.TextField;
 import javafx.stage.Stage;
+import jets.projects.Services.Request.ClientInvitationService;
+import jets.projects.entities.ContactGroup;
 import javafx.event.ActionEvent;
 
 public class AddContactController {
+
+   
+   
     
 @FXML
     private Button addContactButton;
+    @FXML
+    private TextField phoneField;
+
 
     @FXML
     private ComboBox<String> categoryComboBox;
-
-    @FXML
-    private TextField customCategoryTextField;
     
     private Stage owner; 
     private Stage popupStage; 
+   
 
     @FXML
     private void initialize(){
         categoryComboBox.getItems().addAll("Family", "Friends", "Work", "Other");
     }
-    public void setOriginalStage(Stage stage) {
-        this.owner = stage;
-    }
-
-    public void setPopupStage(Stage stage) {
-        this.popupStage = stage;
-    }
-
     @FXML
     void handleAddContact(ActionEvent event) {
-        // save data
-        if (owner != null) {
-            owner.getScene().getRoot().setEffect(null); // Remove blur effect
+
+        String category = categoryComboBox.getValue().toUpperCase();
+        String phoneNumber = phoneField.getText(); 
+        
+        if (category == null || phoneNumber.isEmpty()) {
+            ClientAlerts.invokeWarningAlert("Add Contact", "Please enter a phone number and select a category.");
+            return;
         }
-        if (popupStage != null) {
-            popupStage.close();
+        
+        
+        ClientInvitationService invitationService = new ClientInvitationService();
+        boolean success = invitationService.sendContactInvitation(phoneNumber,ContactGroup.valueOf(category) );
+
+
+        
+        if (success) {
+           ClientAlerts.invokeInformationAlert("Add Contact", "Sent Contact Invitation Successfully");
         }
+
+
     }
 
-    @FXML
-    void handleCategoryComboBox(ActionEvent event) {
-        if ("Other".equals(categoryComboBox.getValue())) {
-            customCategoryTextField.setVisible(true);
-        } else {
-            customCategoryTextField.setVisible(false);
-        }
-    }
 
-    @FXML
-    void handleCustomCategory(ActionEvent event) {
-        //save choice
-    }
-    
+  
 }

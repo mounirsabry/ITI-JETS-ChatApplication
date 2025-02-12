@@ -7,13 +7,14 @@ import java.util.Map;
 
 public class OnlineNormalUserTable {
     
-    public static Map<Integer, OnlineNormalUserInfo> table;
+    public static Map<Integer, OnlineNormalUserInfo> table 
+            = Collections.synchronizedMap(new HashMap<>());
   
-    public OnlineNormalUserTable() {
-        table = Collections.synchronizedMap(new HashMap<>());
+    private OnlineNormalUserTable() {
+        throw new UnsupportedOperationException("Do not create object.");
     }
     
-    public static Map<Integer , OnlineNormalUserInfo> getTable(){
-		return table;
-	}
+    public static void truncate() {
+        table.clear();
+    }
 }

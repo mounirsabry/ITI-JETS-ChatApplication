@@ -19,6 +19,8 @@ import jets.projects.entities.NormalUserStatus;
 import jets.projects.api.ClientAPI;
 import jets.projects.api.NormalUserAPI;
 import jets.projects.classes.ExceptionMessages;
+import jets.projects.classes.FileChecker;
+import jets.projects.entities.ContactGroup;
 import jets.projects.entity_info.AnnouncementInfo;
 import jets.projects.entity_info.ContactInvitationInfo;
 import jets.projects.top_controllers.NormalUserController;
@@ -37,6 +39,19 @@ public class NormalUserAPIImpl extends UnicastRemoteObject
                 || token.getPhoneNumber() == null
                 || token.getPhoneNumber().isBlank()
                 || token.getUserID() <= 0);
+    }
+    
+    private void checkFile(byte[] file) throws RemoteException {
+        if (file != null) {
+            if (!FileChecker.isSizeValid(file)) {
+                throw new RemoteException(
+                        ExceptionMessages.FILE_TOO_BIG);
+            }
+            if (!FileChecker.isTypeValid(file)) {
+                throw new RemoteException(
+                        ExceptionMessages.FILE_TYPE_NOT_SUPPORTED);
+            }
+        }
     }
 
     @Override
@@ -87,6 +102,8 @@ public class NormalUserAPIImpl extends UnicastRemoteObject
         ||  user.getIsPasswordValid() == true) {
             throw new RemoteException(ExceptionMessages.INVALID_INPUT_DATA);
         }
+        
+        checkFile(user.getPic());
         
         if (user.getBio() == null) {
             user.setBio("");
@@ -150,6 +167,8 @@ public class NormalUserAPIImpl extends UnicastRemoteObject
         &&  birthDate.compareTo(Date.from(Instant.MIN)) <= 0)) {
             throw new RemoteException(ExceptionMessages.INVALID_INPUT_DATA);
         }
+        
+        checkFile(profilePic);
         
         if (bio == null) {
             bio = "";
@@ -237,6 +256,25 @@ public class NormalUserAPIImpl extends UnicastRemoteObject
         }
         return result.getResponseData();
     }
+    
+    @Override
+    public NormalUserStatus getContactOnlineStatus(ClientToken token,
+            int contactID) throws RemoteException {
+        if (!validToken(token)) {
+            throw new RemoteException(ExceptionMessages.INVALID_TOKEN);
+        }
+        
+        if (contactID <= 0) {
+            throw new RemoteException(ExceptionMessages.INVALID_INPUT_DATA);
+        }
+        
+        var result = controller.getContactOnlineStatus(token,
+                contactID);
+        if (result.getErrorMessage() != null) {
+            throw new RemoteException(result.getErrorMessage());
+        }
+        return result.getResponseData();
+    }
 
     @Override
     public List<ContactMessage> getAllContactMessages(ClientToken token,
@@ -308,6 +346,8 @@ public class NormalUserAPIImpl extends UnicastRemoteObject
             throw new RemoteException(ExceptionMessages.INVALID_INPUT_DATA);
         }
         
+        checkFile(message.getFile());
+        
         var result = controller.sendContactMessage(token, message);
         if (result.getErrorMessage() != null) {
             throw new RemoteException(result.getErrorMessage());
@@ -357,6 +397,8 @@ public class NormalUserAPIImpl extends UnicastRemoteObject
         if (groupID <= 0) {
             throw new RemoteException(ExceptionMessages.INVALID_INPUT_DATA);
         }
+        
+        checkFile(pic);
 
         var result = controller.setGroupPic(token, groupID, pic);
         if (result.getErrorMessage() != null) {
@@ -377,6 +419,8 @@ public class NormalUserAPIImpl extends UnicastRemoteObject
         ||  newGroup.getGroupID() <= 0) {
             throw new RemoteException(ExceptionMessages.INVALID_INPUT_DATA);
         }
+        
+        checkFile(newGroup.getPic());
         
         var result = controller.createGroup(token, newGroup);
         if (result.getErrorMessage() != null) {
@@ -464,7 +508,8 @@ public class NormalUserAPIImpl extends UnicastRemoteObject
             throw new RemoteException(ExceptionMessages.INVALID_TOKEN);
         }
         
-        if (groupID <= 0 || newAdminID < 0) {
+        if (groupID <= 0 || newAdminID < 0
+        ||  token.getUserID() == newAdminID) {
             throw new RemoteException(ExceptionMessages.INVALID_INPUT_DATA);
         }
         
@@ -482,7 +527,8 @@ public class NormalUserAPIImpl extends UnicastRemoteObject
             throw new RemoteException(ExceptionMessages.INVALID_TOKEN);
         }
         
-        if (groupID <= 0 || newAdminID <= 0) {
+        if (groupID <= 0 || newAdminID <= 0
+        ||  token.getUserID() == newAdminID) {
             throw new RemoteException(ExceptionMessages.INVALID_INPUT_DATA);
         }
         
@@ -537,6 +583,7 @@ public class NormalUserAPIImpl extends UnicastRemoteObject
         }
         
         if (groupID <= 0 || messageID <= 0) {
+            System.out.println("file error");
             throw new RemoteException(ExceptionMessages.INVALID_INPUT_DATA);
         }
         
@@ -557,6 +604,8 @@ public class NormalUserAPIImpl extends UnicastRemoteObject
         if (message == null) {
             throw new RemoteException(ExceptionMessages.INVALID_INPUT_DATA);
         }
+        
+        checkFile(message.getFile());
         
         var result = controller.sendGroupMessage(token, message);
         if (result.getErrorMessage() != null) {
@@ -607,16 +656,19 @@ public class NormalUserAPIImpl extends UnicastRemoteObject
 
     @Override
     public boolean sendContactInvitation(ClientToken token,
-            String userPhoneNumber) throws RemoteException {
+            String userPhoneNumber,
+            ContactGroup contactGroup) throws RemoteException {
         if (!validToken(token)) {
             throw new RemoteException(ExceptionMessages.INVALID_TOKEN);
         }
         
-        if (userPhoneNumber == null || userPhoneNumber.isBlank()) {
+        if (userPhoneNumber == null || userPhoneNumber.isBlank()
+        || contactGroup == null) {
             throw new RemoteException(ExceptionMessages.INVALID_INPUT_DATA);
         }
         
-        var result = controller.sendContactInvitation(token, userPhoneNumber);
+        var result = controller.sendContactInvitation(token,
+                userPhoneNumber, contactGroup);
         if (result.getErrorMessage() != null) {
             throw new RemoteException(result.getErrorMessage());
         }
@@ -624,7 +676,7 @@ public class NormalUserAPIImpl extends UnicastRemoteObject
     }
 
     @Override
-    public boolean acceptContactInvitation(ClientToken token, int invitationID)
+    public ContactInfo acceptContactInvitation(ClientToken token, int invitationID)
             throws RemoteException {
         if (!validToken(token)) {
             throw new RemoteException(ExceptionMessages.INVALID_TOKEN);

@@ -12,6 +12,7 @@ import jets.projects.top_controllers.AdminController;
 import jets.projects.entities.Announcement;
 import jets.projects.api.AdminAPI;
 import jets.projects.classes.ExceptionMessages;
+import jets.projects.classes.FileChecker;
 import jets.projects.entities.Country;
 import jets.projects.entities.NormalUser;
 
@@ -52,11 +53,13 @@ public class AdminAPIImpl extends UnicastRemoteObject
         if (!validToken(token)) {
             throw new RemoteException(ExceptionMessages.INVALID_TOKEN_FORMAT);
         }
+
         var result = controller.logout(token);
         if (result.getErrorMessage() != null) {
             throw new RemoteException(result.getErrorMessage());
         }
         return result.getResponseData();
+
     }
     
     @Override
@@ -144,7 +147,19 @@ public class AdminAPIImpl extends UnicastRemoteObject
         &&  user.getBirthDate().compareTo(Date.from(Instant.MIN)) <= 0)
         ||  user.getIsAdminCreated() == false
         ||  user.getIsPasswordValid() == true) {
-            throw new RemoteException(ExceptionMessages.INVALID_INPUT_DATA);
+            throw new RemoteException(
+                    ExceptionMessages.INVALID_INPUT_DATA);
+        }
+        
+        if (user.getPic() != null) {
+            if (!FileChecker.isSizeValid(user.getPic())) {
+                throw new RemoteException(
+                        ExceptionMessages.FILE_TOO_BIG);
+            }
+            if (!FileChecker.isTypeValid(user.getPic())) {
+                throw new RemoteException(
+                        ExceptionMessages.FILE_TYPE_NOT_SUPPORTED);
+            }
         }
         
         if (user.getBio() == null) {
@@ -205,6 +220,7 @@ public class AdminAPIImpl extends UnicastRemoteObject
         if (result.getErrorMessage() != null) {
             throw new RemoteException(result.getErrorMessage());
         }
+
         return result.getResponseData();
     }
     

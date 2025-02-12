@@ -8,6 +8,7 @@ import jets.projects.dao.TokenValidatorDao;
 import jets.projects.dao.UsersDao;
 import jets.projects.entities.NormalUser;
 import jets.projects.entities.NormalUserStatus;
+import jets.projects.online_listeners.ContactCallback;
 import jets.projects.online_listeners.NotificationCallback;
 import jets.projects.online_listeners.OnlineTracker;
 import jets.projects.session.ClientToken;
@@ -33,7 +34,7 @@ public class ProfilesManager {
                     ExceptionMessages.INVALID_TOKEN);
         }
         
-        if (!OnlineTracker.isOnline(true)) {
+        if (!OnlineTracker.isOnline(token.getUserID())) {
             return new RequestResult<>(null,
                     ExceptionMessages.USER_TIMEOUT);
         }
@@ -55,13 +56,20 @@ public class ProfilesManager {
                     ExceptionMessages.INVALID_TOKEN);
         }
         
-        if (!OnlineTracker.isOnline(true)) {
+        if (!OnlineTracker.isOnline(token.getUserID())) {
             return new RequestResult<>(null,
                     ExceptionMessages.USER_TIMEOUT);
         }
         
-        return usersDao.editProfile(token.getUserID(), username,
+        var result = usersDao.editProfile(token.getUserID(), username,
                 birthDate, bio, profilePic);
+        if (result.getErrorMessage() != null) {
+            return result;
+        }
+        
+        ContactCallback.contactUpdateInfo(token.getUserID(),
+                username, profilePic);
+        return result;
     }
 
     public RequestResult<Boolean> changePassword(ClientToken token,
@@ -77,7 +85,7 @@ public class ProfilesManager {
                     ExceptionMessages.INVALID_TOKEN);
         }
         
-        if (!OnlineTracker.isOnline(true)) {
+        if (!OnlineTracker.isOnline(token.getUserID())) {
             return new RequestResult<>(null,
                     ExceptionMessages.USER_TIMEOUT);
         }
@@ -109,7 +117,7 @@ public class ProfilesManager {
                     ExceptionMessages.INVALID_TOKEN);
         }
         
-        if (!OnlineTracker.isOnline(true)) {
+        if (!OnlineTracker.isOnline(token.getUserID())) {
             return new RequestResult<>(null,
                     ExceptionMessages.USER_TIMEOUT);
         }
@@ -130,7 +138,7 @@ public class ProfilesManager {
                     ExceptionMessages.INVALID_TOKEN);
         }
         
-        if (!OnlineTracker.isOnline(true)) {
+        if (!OnlineTracker.isOnline(token.getUserID())) {
             return new RequestResult<>(null,
                     ExceptionMessages.USER_TIMEOUT);
         }

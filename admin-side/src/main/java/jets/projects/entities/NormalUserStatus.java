@@ -1,6 +1,7 @@
 package jets.projects.entities;
 
-public enum NormalUserStatus {
+
+public enum NormalUserStatus{
     AVAILABLE,
     BUSY,
     AWAY,

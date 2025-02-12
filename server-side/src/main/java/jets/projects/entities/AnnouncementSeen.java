@@ -1,6 +1,8 @@
 package jets.projects.entities;
 
-public class AnnouncementSeen {
+import java.io.Serializable;
+
+public class AnnouncementSeen implements Serializable {
     private int announcementID;
     private int userID;
     private boolean isRead;

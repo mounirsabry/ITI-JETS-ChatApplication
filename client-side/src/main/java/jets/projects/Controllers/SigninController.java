@@ -45,6 +45,7 @@ public class SigninController {
         if(clientAuthenticationService.login(phoneField.getText(), passwordField.getText())){
             myDirector.loading();
         }
+
     }
 
     @FXML

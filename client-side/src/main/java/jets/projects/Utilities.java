@@ -5,7 +5,10 @@ import java.net.URL;
 import java.util.List;
 import java.util.Map;
 import java.util.function.BiConsumer;
+import java.util.function.Consumer;
 
+import datastore.DataCenter;
+import javafx.beans.property.IntegerProperty;
 import javafx.fxml.FXMLLoader;
 import javafx.geometry.Pos;
 import javafx.scene.Node;
@@ -13,18 +16,22 @@ import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.control.Label;
 import javafx.scene.control.ListCell;
+import javafx.scene.control.ListView;
 import javafx.scene.control.TreeItem;
 import javafx.scene.effect.GaussianBlur;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.GridPane;
 import javafx.scene.layout.HBox;
+import javafx.scene.paint.ImagePattern;
+import javafx.scene.shape.Circle;
 import javafx.scene.text.Font;
 import javafx.scene.text.FontWeight;
+import javafx.scene.text.Text;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
+import jets.projects.entities.Group;
 import jets.projects.entity_info.ContactInfo;
-import jets.projects.entity_info.ContactMessagesInfo;
 
 public class Utilities {
     
@@ -44,7 +51,6 @@ public class Utilities {
         };
     }
     public static <T, U> ListCell<T> createCustomCell(URL fxmlURL, BiConsumer<U, T> controllerSetup) {
-        System.out.println("custom cell is called");
         return new ListCell<T>(){
             @Override
             protected void updateItem(T item,boolean empty){
@@ -58,7 +64,7 @@ public class Utilities {
                         Node cellContent = loader.load();
                         U controller = loader.getController();
                         controllerSetup.accept(controller , item);
-                        setGraphic(cellContent); 
+                        setGraphic(cellContent);
                     } catch (IOException e) {
                         e.printStackTrace();
                         setText("Error loading item.");
@@ -82,11 +88,38 @@ public class Utilities {
 
             Scene scene = new Scene(popupContent, width, height);
             popupStage.setScene(scene);
-            popupStage.setResizable(false);
+            popupStage.setResizable(true);
 
             // Remove blur effect when popup closes
             popupStage.setOnCloseRequest(ev -> owner.getScene().getRoot().setEffect(null));
             popupStage.showAndWait(); 
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+    public static void showPopup(Stage owner, URL fxmlURL, double width, double height, Consumer<Object> controllerSetup) {
+        try {
+            // Load the popup content
+            FXMLLoader loader = new FXMLLoader(fxmlURL);
+            Parent popupContent = loader.load();
+            Object controller = loader.getController();
+            if (controllerSetup != null && controller != null) {
+                controllerSetup.accept(controller);
+            }
+            Stage popupStage = new Stage();
+            popupStage.initOwner(owner);
+            popupStage.initModality(Modality.APPLICATION_MODAL);
+
+            // Apply blur to the owner stage
+            GaussianBlur blur = new GaussianBlur();
+            owner.getScene().getRoot().setEffect(blur);
+            Scene scene = new Scene(popupContent, width, height);
+            popupStage.setScene(scene);
+            popupStage.setResizable(true);
+
+            // Remove blur effect when popup closes
+            popupStage.setOnCloseRequest(ev -> owner.getScene().getRoot().setEffect(null));
+            popupStage.showAndWait();
         } catch (IOException e) {
             e.printStackTrace();
         }
@@ -104,37 +137,59 @@ public class Utilities {
         }
         return null; //node not found
     }
-    public static void populateTree(TreeItem<String> rootItem, List<ContactInfo> contactList, Map<Integer, ContactMessagesInfo> messagesInfoMap) {
+
+    // creates contacts list treeview based on category
+    public static void populateTree(TreeItem<String> rootItem, List<ContactInfo> contactList) {
         for (ContactInfo contact : contactList) {
-            ContactMessagesInfo currentMessagesInfo = messagesInfoMap.get(contact.getContact().getSecondID());
-            rootItem.getChildren().add(createContactItem(contact,currentMessagesInfo.getUnread()));
+            rootItem.getChildren().add(createContactItem(contact));
         }
     }
-    private static TreeItem<String> createContactItem(ContactInfo contact , int unread) {
-        // Load profile picture (default if not available)
-        ImageView profileImage = new ImageView();
+    private static TreeItem<String> createContactItem(ContactInfo contact){
+        Map<Integer , IntegerProperty> unreadMessagesMap = DataCenter.getInstance().getUnreadContactMessages();
+
+        Circle profileImage = new Circle();
         if (contact.getPic() != null){
-            profileImage.setImage(new Image(new ByteArrayInputStream(contact.getPic())));
+            profileImage.setFill(new ImagePattern(new Image(new ByteArrayInputStream(contact.getPic()))));
         } else {
-            profileImage.setImage(new Image(Utilities.class.getResource("/images/blank-profile.png").toExternalForm()));
+            profileImage.setFill(new ImagePattern(new Image(Utilities.class.getResource("/images/blank-profile.png").toExternalForm())));
         }
-        profileImage.setFitWidth(25);
-        profileImage.setFitHeight(25);
-        
+        profileImage.setRadius(25);
         Label nameLabel = new Label(contact.getName());
         nameLabel.setFont(Font.font("Arial", FontWeight.BOLD, 14));
 
         // Unread messages icon
+        int unread = unreadMessagesMap.get(contact.getContact().getSecondID()).get();
         Label unreadLabel = new Label(String.valueOf(unread));
         unreadLabel.setStyle("-fx-text-fill: white; -fx-background-color: #80ced7;" +
                 "-fx-min-width: 20px; -fx-min-height: 20px;" +
                 "-fx-background-radius: 50%; -fx-border-radius: 50%; " +
                 "-fx-alignment: center");
+        if(unread==0) unreadLabel.setVisible(false);
 
         HBox contactBox = new HBox(5, profileImage, nameLabel, unreadLabel);
 
         // Create TreeItem with HBox as its display node
         return new TreeItem<>(String.valueOf(contact.getContact().getSecondID()), contactBox);
+    }
+    // populate group List with all user's groups
+    public static void populateGroupsList(ListView<HBox> groupListView , List<Group> groupsList) {
+        for(Group group : groupsList){
+            HBox groupHbox = new HBox(10);
+            Circle groupPic = new Circle();
+            if (group.getPic() != null){
+                groupPic.setFill(new ImagePattern(new Image(new ByteArrayInputStream(group.getPic()))));
+            } else {
+                groupPic.setFill(new ImagePattern(new Image(Utilities.class.getResource("/images/blank-group-picture.png").toExternalForm())));
+            }
+            groupPic.setRadius(25);
+            Label groupname = new Label(group.getGroupName());
+            groupname.setFont(Font.font("Arial", FontWeight.BOLD, 14));
+            Text groupID = new Text(String.valueOf(group.getGroupID()));
+            groupID.setVisible(false);
+            groupHbox.getChildren().addAll(groupPic,groupname,groupID);
+            groupListView.getItems().add(groupHbox);
+        }
+
     }
 }
     

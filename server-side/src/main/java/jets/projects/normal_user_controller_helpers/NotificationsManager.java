@@ -1,15 +1,11 @@
 package jets.projects.normal_user_controller_helpers;
 
-import java.rmi.RemoteException;
 import java.util.List;
 
 import jets.projects.classes.ExceptionMessages;
 import jets.projects.classes.RequestResult;
-import jets.projects.dao.ContactDao;
 import jets.projects.dao.NotificationDao;
 import jets.projects.dao.TokenValidatorDao;
-import jets.projects.dao.UsersDao;
-import jets.projects.dao.UsersQueryDao;
 import jets.projects.entities.Notification;
 import jets.projects.online_listeners.OnlineTracker;
 import jets.projects.session.ClientToken;
@@ -35,7 +31,7 @@ public class NotificationsManager {
                     ExceptionMessages.INVALID_TOKEN);
         }
         
-        if (!OnlineTracker.isOnline(true)) {
+        if (!OnlineTracker.isOnline(token.getUserID())) {
             return new RequestResult<>(null,
                     ExceptionMessages.USER_TIMEOUT);
         }
@@ -56,7 +52,7 @@ public class NotificationsManager {
                     ExceptionMessages.INVALID_TOKEN);
         }
         
-        if (!OnlineTracker.isOnline(true)) {
+        if (!OnlineTracker.isOnline(token.getUserID())) {
             return new RequestResult<>(null,
                     ExceptionMessages.USER_TIMEOUT);
         }
@@ -77,7 +73,7 @@ public class NotificationsManager {
                     ExceptionMessages.INVALID_TOKEN);
         }
         
-        if (!OnlineTracker.isOnline(true)) {
+        if (!OnlineTracker.isOnline(token.getUserID())) {
             return new RequestResult<>(null,
                     ExceptionMessages.USER_TIMEOUT);
         }
@@ -98,7 +94,7 @@ public class NotificationsManager {
                     ExceptionMessages.INVALID_TOKEN);
         }
         
-        if (!OnlineTracker.isOnline(true)) {
+        if (!OnlineTracker.isOnline(token.getUserID())) {
             return new RequestResult<>(null,
                     ExceptionMessages.USER_TIMEOUT);
         }

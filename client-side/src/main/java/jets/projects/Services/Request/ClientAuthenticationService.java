@@ -1,13 +1,17 @@
 package jets.projects.Services.Request;
 
+import javafx.application.Platform;
 import jets.projects.Classes.ExceptionMessages;
 import jets.projects.Controllers.ClientAlerts;
 import jets.projects.ServiceManager;
+import jets.projects.Services.ServerConnectivityService;
 import jets.projects.api.NormalUserAPI;
 import jets.projects.entities.NormalUser;
 import jets.projects.session.ClientSessionData;
 import jets.projects.session.ClientToken;
 import java.rmi.RemoteException;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
 
 
 /**
@@ -20,26 +24,50 @@ public class ClientAuthenticationService {
     public boolean login(String phoneNumber, String password) {
          ServiceManager serviceManager = ServiceManager.getInstance();
          if(serviceManager == null){
-             ClientAlerts.invokeWarningAlert("Server Warning", "Can't connect to server");
+             ClientAlerts.invokeWarningAlert("Server Warning", "Can't connect to server server manager = null");
              return false;
          }
          NormalUserAPI normalUserAPI = serviceManager.getNormalUserAPI();
+        System.out.println(normalUserAPI);
          if(normalUserAPI == null){
-             ClientAlerts.invokeWarningAlert("Server Warning", "Can't connect to server");
+             ClientAlerts.invokeWarningAlert("Server Warning", "Can't connect to server api = null");
              return false;
          }
          try{
+             System.out.println(serviceManager.getMyClientAPIImpl());
              ClientSessionData mySession = normalUserAPI.login(phoneNumber, password, serviceManager.getMyClientAPIImpl());
+             System.out.println(mySession);
              if(mySession == null){
                  ClientAlerts.invokeWarningAlert("Server Warning", "User not found");
                  return false;
              }
              serviceManager.setClientSessionData(mySession);
+             ServerConnectivityService.getExecutorService().submit(() -> {
+                 System.out.println("thread");
+                 while (!Thread.currentThread().isInterrupted()) {
+                     try {
+                         ServerConnectivityService.getServerAPI().registerPulse(serviceManager.getClientToken());
+                         Thread.sleep(1000);
+                     } catch (InterruptedException e) {
+                         Platform.runLater(()->{
+                             ClientAlerts.invokeWarningAlert("Server Warning from heart beat interrupted", e.getMessage());
+                         });
+                         Thread.currentThread().interrupt();
+                     } catch (RemoteException e) {
+                         Platform.runLater(()->{
+                             ClientAlerts.invokeWarningAlert("Server Warning from heart beat remote", e.getMessage());
+                         });
+                         Thread.currentThread().interrupt();
+                     }
+                 }
+             });
+
              return true;
          } catch (RemoteException e) {
              if(e.getMessage().equals((ExceptionMessages.USER_MUST_CHANGE_PASSWORD_FOR_FIRST_LOGIN))){
-                 //
+                 ClientAlerts.invokeWarningAlert("Password Change Required", "You must change your password before logging in for the first time.");
              }
+             System.out.println(e.getMessage());
              ClientAlerts.invokeWarningAlert("Server Warning", e.getMessage());
              return false;
          }
@@ -82,6 +110,7 @@ public class ClientAuthenticationService {
         }
         try{
             if(normalUserAPI.logout(clientToken)){
+                ServerConnectivityService.getExecutorService().shutdownNow();
                 return true;
             }else{
                 ClientAlerts.invokeWarningAlert("Server Warning", "Logout failed");

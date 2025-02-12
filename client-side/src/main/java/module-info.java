@@ -8,4 +8,5 @@ module jets.projects {
     exports jets.projects.Controllers;    
     opens jets.projects to javafx.fxml;
     opens jets.projects.Controllers to javafx.fxml;
+    exports jets.projects.api;
 }

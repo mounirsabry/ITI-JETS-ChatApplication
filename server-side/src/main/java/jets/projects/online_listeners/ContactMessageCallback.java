@@ -7,12 +7,13 @@ import java.util.concurrent.TimeUnit;
 import jets.projects.classes.Delays;
 import jets.projects.classes.MyExecutorFactory;
 import jets.projects.entities.ContactMessage;
+import jets.projects.shared_ds.OnlineNormalUserTable;
 
 public class ContactMessageCallback {
     private static ExecutorService executor;
     
     private static boolean isInit = false;
-    public ContactCallback() {
+    public ContactMessageCallback() {
         if (isInit) {
             throw new UnsupportedOperationException(
                     "Object has already been init.");
@@ -49,18 +50,23 @@ public class ContactMessageCallback {
     }
     
     public static void contactMessageReceived(ContactMessage message) {
-        int receiverID = message.getReceiverID();
-
-        //ClientAPI client = OnlineNormalUserTable.getOnlineUsersTable().get(receiverID).getImpl();
-        if (client != null) {
-            executor.submit(() -> {
-                try {
-                    client.contactMessageReceived(message); 
-                } catch (RemoteException e) {
-                    System.err.println("Failed to send contact message callback: " 
-                            + e.getMessage());
-                }
-            });
-        }
+        executor.submit(() -> {
+            var table = OnlineNormalUserTable.table;
+            int receiverID = message.getReceiverID();
+            var userInfo = table.getOrDefault(
+                    receiverID, null);
+            
+            // Receiver is offline.
+            if (userInfo == null) {
+                return;
+            }
+            
+            try {
+                userInfo.getImpl().contactMessageReceived(message); 
+            } catch (RemoteException e) {
+                System.err.println("Callback Error: " 
+                        + e.getMessage());
+            }
+        });
     }
 }

@@ -1,12 +1,18 @@
 package jets.projects.online_listeners;
 
+import java.rmi.RemoteException;
+import java.util.List;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.TimeUnit;
 import jets.projects.classes.Delays;
 import jets.projects.classes.MyExecutorFactory;
+import jets.projects.dao.ContactDao;
+import jets.projects.shared_ds.OnlineNormalUserTable;
 
 public class ContactCallback {
     private static ExecutorService executor;
+    private static final ContactDao contactDao
+            = new ContactDao();
     
     private static boolean isInit = false;
     public ContactCallback() {
@@ -43,5 +49,37 @@ public class ContactCallback {
         } finally {
             executor = null;
         }
+    }
+    
+    public static void contactUpdateInfo(int contactID,
+            String newDisplayName, byte[] newPic) {
+        executor.submit(() -> {
+            var table = OnlineNormalUserTable.table;
+            
+            var result = contactDao.getAllContactsIDs(contactID);
+            if (result.getErrorMessage() != null) {
+                System.err.println(result.getErrorMessage());
+            }
+            List<Integer> IDs = result.getResponseData();
+            
+            for (int ID : IDs) {
+                var user = table.getOrDefault(
+                        ID, null);
+
+                // Contact is offline.
+                if (user == null) {
+                    continue;
+                }
+                
+                try {
+                    user.getImpl().contactUpdateInfo(
+                            contactID, newDisplayName, newPic);
+                } catch (RemoteException ex) {
+                    System.err.println("Callback Error: "
+                            + ex.getMessage());
+                            
+                }
+            }
+        });
     }
 }

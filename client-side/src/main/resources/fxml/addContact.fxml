@@ -13,8 +13,7 @@
 <?import javafx.scene.layout.RowConstraints?>
 <?import javafx.scene.layout.VBox?>
 
-<BorderPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="400.0" prefWidth="600.0" styleClass="popup" stylesheets="@../styles/mainStyles.css" xmlns="http://javafx.com/javafx/9.0.1" xmlns:fx="http://javafx.com/fxml/1" 
-fx:controller="jets.projects.Controllers.AddContactController">
+<BorderPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="400.0" prefWidth="600.0" styleClass="popup" stylesheets="@../styles/mainStyles.css" xmlns="http://javafx.com/javafx/9.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="jets.projects.Controllers.AddContactController">
    <top>
       <VBox prefHeight="85.0" prefWidth="578.0" style="-fx-background-color: #f1f2f6; -fx-border-radius: 20; -fx-background-radius: 20;" BorderPane.alignment="CENTER">
          <children>
@@ -49,7 +48,7 @@ fx:controller="jets.projects.Controllers.AddContactController">
           <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="ALWAYS" />
         </rowConstraints>
          <children>
-            <TextField prefHeight="28.0" prefWidth="340.0" promptText="Enter phone number" styleClass="textField" stylesheets="@../styles/mainStyles.css" GridPane.columnIndex="1">
+            <TextField fx:id="phoneField" prefHeight="28.0" prefWidth="340.0" promptText="Enter phone number" styleClass="textField" stylesheets="@../styles/mainStyles.css" GridPane.columnIndex="1">
                <GridPane.margin>
                   <Insets left="50.0" right="50.0" />
                </GridPane.margin>
@@ -67,7 +66,7 @@ fx:controller="jets.projects.Controllers.AddContactController">
             </Button>
             <VBox alignment="CENTER" GridPane.columnIndex="1" GridPane.rowIndex="1">
                <children>
-                  <ComboBox fx:id="categoryComboBox" onAction="#handleCategoryComboBox" prefHeight="23.0" prefWidth="338.0" promptText="Choose category" styleClass="comboBox" stylesheets="@../styles/mainStyles.css" />
+                  <ComboBox fx:id="categoryComboBox" prefHeight="23.0" prefWidth="338.0" promptText="Choose category" styleClass="comboBox" stylesheets="@../styles/mainStyles.css" />
                   <TextField fx:id="customCategoryTextField" onAction="#handleCustomCategory" promptText="Enter custom category" styleClass="textField" stylesheets="@../styles/mainStyles.css" visible="false">
                      <VBox.margin>
                         <Insets left="60.0" right="60.0" top="10.0" />

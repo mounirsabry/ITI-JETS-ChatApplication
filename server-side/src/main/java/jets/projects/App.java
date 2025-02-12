@@ -3,6 +3,7 @@ package jets.projects;
 import jets.projects.classes.Delays;
 import jets.projects.classes.ServerCommand;
 import jets.projects.db_connections.ConnectionManager;
+import jets.projects.shared_ds.OnlineNormalUserTable;
 import jets.projects.top_controllers.AdminController;
 
 public class App {
@@ -39,6 +40,10 @@ public class App {
             ServerCommand nextCommand = myManager.getAndSetNextCommand(
                     ServerCommand.WAIT);
             
+            if (nextCommand != ServerCommand.WAIT) {
+                System.out.println("Command issued to server: " + nextCommand);
+            }
+            
             if (nextCommand == ServerCommand.START_NORMAL_USER_SERVICE) {
                 ServiceManager.startNormalUserService();
                 executorsManager.startExecutors();
@@ -47,11 +52,13 @@ public class App {
             if (nextCommand == ServerCommand.STOP_NORMAL_USER_SERVICE) {
                 ServiceManager.stopNormalUserService();
                 executorsManager.stopExecutors();
+                OnlineNormalUserTable.truncate();
             }
             
             if (nextCommand == ServerCommand.SHUT_DOWN) {
                 ServiceManager.stopNormalUserService();
                 executorsManager.stopExecutors();
+                OnlineNormalUserTable.truncate();
                 ServiceManager.stopAdminService();
                 break;
             }

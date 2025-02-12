@@ -40,7 +40,7 @@ public class ContactMessagesManager {
                     ExceptionMessages.INVALID_TOKEN);
         }
         
-        if (!OnlineTracker.isOnline(true)) {
+        if (!OnlineTracker.isOnline(token.getUserID())) {
             return new RequestResult<>(null,
                     ExceptionMessages.USER_TIMEOUT);
         }
@@ -85,7 +85,7 @@ public class ContactMessagesManager {
                     ExceptionMessages.INVALID_TOKEN);
         }
         
-        if (!OnlineTracker.isOnline(true)) {
+        if (!OnlineTracker.isOnline(token.getUserID())) {
             return new RequestResult<>(null,
                     ExceptionMessages.USER_TIMEOUT);
         }
@@ -130,7 +130,7 @@ public class ContactMessagesManager {
                     ExceptionMessages.INVALID_TOKEN);
         }
         
-        if (!OnlineTracker.isOnline(true)) {
+        if (!OnlineTracker.isOnline(token.getUserID())) {
             return new RequestResult<>(null,
                     ExceptionMessages.USER_TIMEOUT);
         }
@@ -176,7 +176,7 @@ public class ContactMessagesManager {
                     ExceptionMessages.INVALID_TOKEN);
         }
         
-        if (!OnlineTracker.isOnline(true)) {
+        if (!OnlineTracker.isOnline(token.getUserID())) {
             return new RequestResult<>(null,
                     ExceptionMessages.USER_TIMEOUT);
         }
@@ -207,11 +207,15 @@ public class ContactMessagesManager {
         
         var result = contactMessagesDao.sendContactMessage(message);
         if (result.getErrorMessage() != null) {
-            return result;
+            return new RequestResult<>(null,
+                    result.getErrorMessage());
         }
+        int messageID = result.getResponseData();
         
+        message.setID(messageID);
+        message.setFile(null);
         ContactMessageCallback.contactMessageReceived(message);
-        return result;
+        return new RequestResult<>(true, null);
     }
 
     public RequestResult<Boolean> markContactMessagesAsRead(ClientToken token,
@@ -227,7 +231,7 @@ public class ContactMessagesManager {
                     ExceptionMessages.INVALID_TOKEN);
         }
         
-        if (!OnlineTracker.isOnline(true)) {
+        if (!OnlineTracker.isOnline(token.getUserID())) {
             return new RequestResult<>(null,
                     ExceptionMessages.USER_TIMEOUT);
         }
@@ -256,6 +260,7 @@ public class ContactMessagesManager {
                     ExceptionMessages.NOT_CONTACTS);
         }
         
-        return contactMessagesDao.markContactMessagesAsRead(contactID);
+        return contactMessagesDao.markContactMessagesAsRead(
+                token.getUserID(), contactID);
     }
 }

@@ -5,24 +5,40 @@ import jets.projects.classes.ExceptionMessages;
 import jets.projects.classes.RequestResult;
 import jets.projects.dao.TokenValidatorDao;
 import jets.projects.dao.UsersDao;
+import jets.projects.dao.UsersQueryDao;
 import jets.projects.entities.NormalUser;
+import jets.projects.entities.NormalUserStatus;
 import jets.projects.online_listeners.NotificationCallback;
 import jets.projects.online_listeners.OnlineTracker;
 import jets.projects.session.ClientSessionData;
 import jets.projects.session.ClientToken;
+import jets.projects.shared_ds.OnlineNormalUserTable;
 
 public class AuthenticationManager {
+    private final UsersQueryDao usersQueryDao;
     private final UsersDao usersDao;
     private final TokenValidatorDao tokenValidator;
 
     public AuthenticationManager() {
+        usersQueryDao = new UsersQueryDao();
         usersDao = new UsersDao();
         tokenValidator = new TokenValidatorDao();
     }
 
     public RequestResult<ClientSessionData> login(String phoneNumber,
             String password, ClientAPI impl) {
-        if (OnlineTracker.isOnline(false)) {
+        var getUserIDResult 
+                = usersQueryDao.isNormalUserExistsByPhoneNumber(phoneNumber);
+        if (getUserIDResult.getErrorMessage() != null) {
+            return new RequestResult<>(null,
+                    getUserIDResult.getErrorMessage());
+        }
+        Integer ID = getUserIDResult.getResponseData();
+        if (ID == null) {
+            return new RequestResult<>(null, null);
+        }
+        
+        if (OnlineTracker.isOnline(ID)) {
             return new RequestResult<>(null,
                     ExceptionMessages.ALREADY_LOGGED_IN);
         }
@@ -34,7 +50,8 @@ public class AuthenticationManager {
 
         int userID = result.getResponseData().getUserID();
         OnlineTracker.track(userID, impl);
-        NotificationCallback.userWentOnline(userID);
+        NotificationCallback.userStatusChanged(
+                userID, NormalUserStatus.AVAILABLE);
         return result;
     }
 
@@ -42,20 +59,54 @@ public class AuthenticationManager {
             String phoneNumber,
             String oldPassword, String newPassword,
             ClientAPI impl) {
-        if (OnlineTracker.isOnline(false)) {
+        var getUserIDResult 
+                = usersQueryDao.isNormalUserExistsByPhoneNumber(phoneNumber);
+        if (getUserIDResult.getErrorMessage() != null) {
+            return new RequestResult<>(null,
+                    getUserIDResult.getErrorMessage());
+        }
+        Integer ID = getUserIDResult.getResponseData();
+        if (ID == null) {
+            return new RequestResult<>(null, null);
+        }
+        
+        if (OnlineTracker.isOnline(ID)) {
             return new RequestResult<>(null,
                     ExceptionMessages.ALREADY_LOGGED_IN);
         }
+        
+        var isPasswordValidResult = usersDao.isPasswordValid(
+                ID, oldPassword);
+        if (isPasswordValidResult.getErrorMessage() != null) {
+            return new RequestResult<>(null,
+                   isPasswordValidResult.getErrorMessage()); 
+        }
+        boolean isPasswordValid = isPasswordValidResult.getResponseData();
+        if (!isPasswordValid) {
+            return new RequestResult<>(null, null);
+        }
+        
+        var passwordUpdateResult = usersDao.updatePassword(
+                ID, oldPassword, newPassword);
+        if (passwordUpdateResult.getErrorMessage() != null) {
+            return new RequestResult<>(null,
+                    passwordUpdateResult.getErrorMessage());
+        }
+        boolean passwordUpdate = passwordUpdateResult.getResponseData();
+        if (!passwordUpdate) {
+            return new RequestResult<>(null, 
+                    "Failed to update the password.");
+        }
 
-        var result = usersDao.adminAccountCreatedFirstLogin(phoneNumber,
-                oldPassword, newPassword);
+        var result = usersDao.clientLogin(phoneNumber, newPassword);
         if (result.getErrorMessage() != null) {
             return result;
         }
 
         int userID = result.getResponseData().getUserID();
         OnlineTracker.track(userID, impl);
-        NotificationCallback.userWentOnline(userID);
+        NotificationCallback.userStatusChanged(
+                userID, NormalUserStatus.AVAILABLE);
         return result;
     }
 
@@ -76,7 +127,7 @@ public class AuthenticationManager {
         }
         
         // The user is already logged out or timeout.
-        if (!OnlineTracker.isOnline(true)) {
+        if (!OnlineTracker.isOnline(token.getUserID())) {
             return new RequestResult<>(true, null);
         }
         
@@ -85,7 +136,11 @@ public class AuthenticationManager {
             return result;
         }
         
-        NotificationCallback.userWentOffline(token.getUserID());
+        NotificationCallback.userStatusChanged(token.getUserID(),
+                NormalUserStatus.OFFLINE);
+
+        var table = OnlineNormalUserTable.table;
+        table.remove(token.getUserID());
         return result;
     }
 

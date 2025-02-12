@@ -1,6 +1,8 @@
 package jets.projects.entities;
 
-public class Contact {
+import java.io.Serializable;
+
+public class Contact implements Serializable {
     private int firstID;
     private int secondID;
     private ContactGroup contactGroup;
