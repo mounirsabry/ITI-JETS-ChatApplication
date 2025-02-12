@@ -85,7 +85,7 @@ public interface NormalUserAPI extends Remote {
             int groupID, byte[] pic) throws RemoteException;
     
     // Pic included (Optional).
-    public boolean createGroup(ClientToken token,
+    public int createGroup(ClientToken token,
             Group newGroup) throws RemoteException;
 
     // Pic included.

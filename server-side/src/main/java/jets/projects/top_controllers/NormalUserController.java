@@ -152,7 +152,7 @@ public class NormalUserController {
         return groupsManager.setGroupPic(token, groupID, pic);
     }
     
-    public RequestResult<Boolean> createGroup(ClientToken token, Group newGroup) {
+    public RequestResult<Integer> createGroup(ClientToken token, Group newGroup) {
         return groupsManager.createGroup(token, newGroup);
     }
     

@@ -408,7 +408,7 @@ public class NormalUserAPIImpl extends UnicastRemoteObject
     }
 
     @Override
-    public boolean createGroup(ClientToken token, Group newGroup)
+    public int createGroup(ClientToken token, Group newGroup)
             throws RemoteException {
         if (!validToken(token)) {
             throw new RemoteException(ExceptionMessages.INVALID_TOKEN);
