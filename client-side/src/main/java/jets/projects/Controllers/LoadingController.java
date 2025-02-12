@@ -43,7 +43,6 @@ public class LoadingController {
             NormalUser myProfile = profileService.getMyProfile();
             System.out.println(myProfile);
             List<ContactInfo> contactList = contactService.getContacts();
-            System.out.println(contactList);
             List<Group> groups = groupService.getGroups();
             List<AnnouncementInfo> announcements = announcementService.getAllAnnouncements();
             List<ContactInvitationInfo> invitations = invitationService.getContactInvitations();

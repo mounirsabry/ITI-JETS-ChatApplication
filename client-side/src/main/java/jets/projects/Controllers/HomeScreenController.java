@@ -15,9 +15,12 @@ import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.scene.Node;
+import javafx.scene.chart.PieChart;
 import javafx.scene.control.*;
 import javafx.stage.FileChooser;
+import jets.projects.ServiceManager;
 import jets.projects.Services.Request.*;
+import jets.projects.Services.ServerConnectivityService;
 import jets.projects.Utilities;
 import javafx.scene.image.Image;
 import javafx.scene.layout.GridPane;
@@ -130,7 +133,7 @@ public class HomeScreenController {
         Utilities.showPopup(owner, fxmlURL, 600, 400);
     }
     @FXML
-    void handleContactButton(ActionEvent event) {
+    public void handleContactButton(ActionEvent event) {
         TreeView<String> treeView = new TreeView<>();
         treeView.getStylesheets().add(getClass().getResource("/styles/homeScreenStyles.css").toExternalForm());
         treeView.getStyleClass().add("chatsList");
@@ -319,16 +322,33 @@ public class HomeScreenController {
     @FXML
     void handleLogOutButton(ActionEvent event) throws IOException {
         // clear all cached data
-        DataCenter.getInstance().getContactList().clear();
-        DataCenter.getInstance().getAnnouncementList().clear();
-        DataCenter.getInstance().getNotificationList().clear();
-        DataCenter.getInstance().getContactMessagesMap().clear();
-        DataCenter.getInstance().getGroupMessagesMap().clear();
-        DataCenter.getInstance().getGroupList().clear();
-        DataCenter.getInstance().unseenAnnouncementsCountProperty().set(0);
-        DataCenter.getInstance().unseenNotificationsCountProperty().set(0);
+
+
+
         boolean loggedOut = authenticationService.logout();
         if(!loggedOut) ClientAlerts.invokeErrorAlert("Error" , "Failed to logout");
+        else{
+            DataCenter.getInstance().getContactList().clear();
+            DataCenter.getInstance().getAnnouncementList().clear();
+            DataCenter.getInstance().getNotificationList().clear();
+            DataCenter.getInstance().getContactMessagesMap().clear();
+            DataCenter.getInstance().getGroupMessagesMap().clear();
+            DataCenter.getInstance().getGroupList().clear();
+            DataCenter.getInstance().unseenAnnouncementsCountProperty().set(0);
+            DataCenter.getInstance().unseenNotificationsCountProperty().set(0);
+            DataCenter.getInstance().getContactInfoMap().clear();
+            DataCenter.getInstance().getGroupMembersMap().clear();
+            DataCenter.getInstance().getContactInvitationList().clear();
+            DataCenter.getInstance().setMyProfile(null);
+            DataCenter.getInstance().getUnreadContactMessages().clear();
+            DataCenter.getInstance().getGroupInfoMap().clear();
+            ServerConnectivityService.shutDown();
+            ServiceManager.stopService();
+            contactMessagesListView.getItems().clear();
+            contactMessagesListView.setVisible(false);
+            groupMessagesListView.getItems().clear();
+            groupMessagesListView.setVisible(false);
+        }
         myDirector.signin();
     }
     @FXML

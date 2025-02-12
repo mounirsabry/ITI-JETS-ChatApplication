@@ -6,6 +6,8 @@ import javafx.collections.FXCollections;
 import jets.projects.entity_info.ContactInfo;
 import jets.projects.entity_info.ContactInvitationInfo;
 
+import java.util.ArrayList;
+
 public class CallBackInvitationService {
 
     DataCenter dataCenter = DataCenter.getInstance();
@@ -19,9 +21,11 @@ public class CallBackInvitationService {
     public void contactInvitationAccepted(ContactInfo newContactInfo){
         Platform.runLater(()->{
             dataCenter.getContactList().add(newContactInfo);
+            dataCenter.getContactInfoMap().put(newContactInfo.getContact().getSecondID(), newContactInfo);
+            dataCenter.getContactMessagesMap().put(newContactInfo.getContact().getSecondID(),
+                    FXCollections.synchronizedObservableList(FXCollections.observableArrayList(new ArrayList<>())));
         });
-        dataCenter.getContactMessagesMap().put(newContactInfo.getContact().getSecondID(),
-                FXCollections.synchronizedObservableList(FXCollections.observableArrayList()));
+
     }
 
     public void contactInvitationRejected(int invitationID){

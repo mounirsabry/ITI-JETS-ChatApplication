@@ -1,4 +1,5 @@
 package jets.projects.Controllers;
+import javafx.collections.FXCollections;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.scene.control.Button;
@@ -14,6 +15,7 @@ import jets.projects.entity_info.ContactInvitationInfo;
 import datastore.DataCenter;
 
 import java.io.ByteArrayInputStream;
+import java.util.ArrayList;
 
 public class InvitationCardController {
     @FXML
@@ -43,6 +45,8 @@ public class InvitationCardController {
             DataCenter.getInstance().getContactList().add(contactInfo);
             DataCenter.getInstance().getContactInfoMap().putIfAbsent(invitation.getSenderID(),contactInfo);
             DataCenter.getInstance().getContactInvitationList().removeIf(inv -> inv.getInvitation().getInvitationID() == invitation.getInvitationID());
+            DataCenter.getInstance().getContactMessagesMap().put(contactInfo.getContact().getSecondID()
+                    , FXCollections.synchronizedObservableList(FXCollections.observableArrayList(new ArrayList<>())));
         }
     }
     @FXML
