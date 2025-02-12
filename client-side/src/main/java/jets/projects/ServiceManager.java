@@ -48,6 +48,10 @@ public class ServiceManager {
         }
     }
 
+    public static void stopService(){
+        serviceManager = null;
+    }
+
     public NormalUserAPI getNormalUserAPI(){
         return serverAPI;
     }

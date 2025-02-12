@@ -29,40 +29,24 @@ import java.util.Date;
 import java.util.Locale;
 
 public class EditProfileController {
-    
         @FXML
         private Circle profilePicture;
-    
         @FXML
         private Button addprofilePictureButton;
-    
         @FXML
         private TextField username;
-    
         @FXML
         private TextField emailField;
-    
         @FXML
         private TextField phoneField;
-    
         @FXML
         private TextField bioField;
-    
         @FXML
         private ComboBox<String> genderComboBox;
-    
         @FXML
         private DatePicker dobField;
-    
         @FXML
         private ComboBox<String> countryComboBox;
-    
-        @FXML
-        private Button saveButton;
-
-        private Stage owner;
-        private Stage popupStage;
-
         @FXML
         void initialize(){
             // read logged-in user info and initialize the text fields with it
@@ -108,8 +92,7 @@ public class EditProfileController {
             String bio = bioField.getText().trim();
             java.time.LocalDate dob = dobField.getValue();
             Date birthDate = (dob != null) ? java.util.Date.from(dob.atStartOfDay(java.time.ZoneId.systemDefault()).toInstant()) : null;
-            
-            
+
             byte[] profilePic = null;
           if (profilePicture.getFill() instanceof ImagePattern) {
               ImagePattern pattern = (ImagePattern) profilePicture.getFill();
@@ -130,7 +113,6 @@ public class EditProfileController {
           }
 
           }
-
           private byte[] convertImageToByteArray(Image image) {
             int width = (int) image.getWidth();
             int height = (int) image.getHeight();
@@ -164,12 +146,6 @@ public class EditProfileController {
 
             return byteArrayOutputStream.toByteArray();
         }
-
-        @FXML
-        void handleStatusComboBox(ActionEvent event) {
-            //update status and notify contacts
-        }
-
         void initCountry(){
             // Get all country names
             String[] countryCodes = Locale.getISOCountries();

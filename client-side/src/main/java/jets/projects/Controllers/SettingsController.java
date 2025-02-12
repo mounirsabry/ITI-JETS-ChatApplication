@@ -6,6 +6,7 @@ import javafx.fxml.FXML;
 import javafx.scene.control.Button;
 import javafx.scene.control.ComboBox;
 import javafx.scene.control.ListCell;
+import javafx.scene.control.PasswordField;
 import javafx.scene.control.TextField;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
@@ -17,15 +18,18 @@ import jets.projects.entities.NormalUserStatus;
 
 public class SettingsController {
 
-    @FXML
-    private TextField oldpasswordField;
+
 
     @FXML
-    private TextField passwordField;
+    private PasswordField oldpasswordField;
 
     @FXML
-    private TextField confirmPasswordField;
+    private PasswordField passwordField;
 
+    @FXML
+    private PasswordField confirmPasswordField;
+
+    
     @FXML
     private ComboBox<HBox> statusComboBox;
     @FXML
@@ -59,11 +63,11 @@ public class SettingsController {
     if (!oldPassword.isEmpty() || !newPassword.isEmpty() || !confirmPassword.isEmpty()) {
         if (oldPassword.isEmpty() || newPassword.isEmpty() || confirmPassword.isEmpty()) {
             ClientAlerts.invokeErrorAlert("Password Error", "Please fill in all password fields.");
-            
+            return;
         }
         if (!newPassword.equals(confirmPassword)) {
             ClientAlerts.invokeErrorAlert("Password Error", "New password and confirmation password do not match.");
-           
+            return;
         }
         boolean passwordChanged = profileService.changePassword(oldPassword, newPassword);
         if (!passwordChanged) {

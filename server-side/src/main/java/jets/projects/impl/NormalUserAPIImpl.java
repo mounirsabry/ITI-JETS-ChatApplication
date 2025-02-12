@@ -161,7 +161,6 @@ public class NormalUserAPIImpl extends UnicastRemoteObject
         if (!validToken(token)) {
             throw new RemoteException(ExceptionMessages.INVALID_TOKEN);
         }
-        
         if (displayName == null || displayName.isBlank()
         ||  (birthDate != null 
         &&  birthDate.compareTo(Date.from(Instant.now())) <= 0)) {

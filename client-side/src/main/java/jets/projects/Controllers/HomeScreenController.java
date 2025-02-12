@@ -15,9 +15,12 @@ import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.scene.Node;
+import javafx.scene.chart.PieChart;
 import javafx.scene.control.*;
 import javafx.stage.FileChooser;
+import jets.projects.ServiceManager;
 import jets.projects.Services.Request.*;
+import jets.projects.Services.ServerConnectivityService;
 import jets.projects.Utilities;
 import javafx.scene.image.Image;
 import javafx.scene.layout.GridPane;
@@ -64,14 +67,6 @@ public class HomeScreenController {
     ClientContactService contactService = new ClientContactService();
     ClientContactMessageService contactMessageService = new ClientContactMessageService();
     ClientGroupMessageService groupMessageService = new ClientGroupMessageService();
-    private ObservableList<ContactInfo> contactsList = DataCenter.getInstance().getContactList();
-    private ObservableList<AnnouncementInfo> announcementsList = DataCenter.getInstance().getAnnouncementList();
-    private ObservableList<Notification> notificationsList = DataCenter.getInstance().getNotificationList();
-    private Map<Integer , ObservableList<ContactMessage>> contactMessagesMap =DataCenter.getInstance().getContactMessagesMap();
-    private Map<Integer , ObservableList<GroupMessage>> groupMessagesMap =DataCenter.getInstance().getGroupMessagesMap();
-    private ObservableList<Group> groupsList =DataCenter.getInstance().getGroupList();
-    private SimpleIntegerProperty unseenAnnouncementsCount = DataCenter.getInstance().unseenAnnouncementsCountProperty();
-    private SimpleIntegerProperty unseenNotificationsCount = DataCenter.getInstance().unseenNotificationsCountProperty();
 
     public void setDirector(Stage stage, Director myDirector) {
         this.stage = stage;
@@ -89,14 +84,14 @@ public class HomeScreenController {
         mystatus.setFill(new ImagePattern(new Image(getClass().getResource(statusPath).toExternalForm())));
 
         // Bind unseenCount to changes in lists
-        announcementsList.addListener((ListChangeListener<AnnouncementInfo>) change -> {
-            unseenAnnouncementsCount.set((int) announcementsList.stream().filter(a -> !a.isIsRead()).count());
+        DataCenter.getInstance().getAnnouncementList().addListener((ListChangeListener<AnnouncementInfo>) change -> {
+            DataCenter.getInstance().unseenAnnouncementsCountProperty().set((int) DataCenter.getInstance().getAnnouncementList().stream().filter(a -> !a.isIsRead()).count());
         });
-        notificationsList.addListener((ListChangeListener<Notification>) change -> {
-            unseenNotificationsCount.set((int) notificationsList.stream().filter(n -> !n.isIsRead()).count());
+        DataCenter.getInstance().getNotificationList().addListener((ListChangeListener<Notification>) change -> {
+            DataCenter.getInstance().unseenNotificationsCountProperty().set((int) DataCenter.getInstance().getNotificationList().stream().filter(n -> !n.isIsRead()).count());
         });
-        unseenAnnouncements.textProperty().bind(unseenAnnouncementsCount.asString());
-        unseenNotifications.textProperty().bind(unseenNotificationsCount.asString());
+        unseenAnnouncements.textProperty().bind(DataCenter.getInstance().unseenAnnouncementsCountProperty().asString());
+        unseenNotifications.textProperty().bind(DataCenter.getInstance().unseenNotificationsCountProperty().asString());
     }
     @FXML
     void handleChatProfile(MouseEvent event){
@@ -138,7 +133,7 @@ public class HomeScreenController {
         Utilities.showPopup(owner, fxmlURL, 600, 400);
     }
     @FXML
-    void handleContactButton(ActionEvent event) {
+    public void handleContactButton(ActionEvent event) {
         TreeView<String> treeView = new TreeView<>();
         treeView.getStylesheets().add(getClass().getResource("/styles/homeScreenStyles.css").toExternalForm());
         treeView.getStyleClass().add("chatsList");
@@ -153,7 +148,7 @@ public class HomeScreenController {
         List<ContactInfo> workContacts = new ArrayList<>();
         List<ContactInfo> friendsContacts = new ArrayList<>();
         List<ContactInfo> otherContacts = new ArrayList<>();
-        for (ContactInfo contact : contactsList) {
+        for (ContactInfo contact : DataCenter.getInstance().getContactList()) {
             switch (contact.getContact().getContactGroup()) {
                 case FAMILY -> {familyContacts.add(contact);}
                 case WORK -> {workContacts.add(contact);}
@@ -225,9 +220,9 @@ public class HomeScreenController {
                 Platform.runLater(() -> {
                     contactMessagesListView.setVisible(true);
                     groupMessagesListView.setVisible(false);
-                    contactMessagesListView.setItems(DataCenter.getInstance().getContactMessagesMap().get(contact_ID));
+                    contactMessagesListView.setItems(DataCenter.getInstance().getContactMessagesMap().getOrDefault(contact_ID , FXCollections.observableArrayList()));
                     //scrollable
-                    (DataCenter.getInstance().getContactMessagesMap().get(contact_ID)).addListener((ListChangeListener<ContactMessage>) change -> {
+                    (DataCenter.getInstance().getContactMessagesMap().getOrDefault(contact_ID , FXCollections.observableArrayList())).addListener((ListChangeListener<ContactMessage>) change -> {
                         while (change.next()) {
                             if (change.wasAdded()) {
                                 // Scroll to the last item
@@ -237,8 +232,10 @@ public class HomeScreenController {
                     });
                     contactMessagesListView.setCellFactory(lv -> new MessageContactCard());
                     contactMessagesListView.scrollTo(contactMessagesListView.getItems().size() -1);
-                    boolean read = contactMessageService.markContactMessagesAsRead(Integer.parseInt(contactId));
-                    if(!read) ClientAlerts.invokeErrorAlert("Error" , "Failed to mark messages as read");
+                    if(!DataCenter.getInstance().getContactMessagesMap().get(Integer.parseInt(contactId)).isEmpty()){
+                        boolean read = contactMessageService.markContactMessagesAsRead(Integer.parseInt(contactId));
+                        if(!read) ClientAlerts.invokeErrorAlert("Error" , "Failed to mark messages as read");
+                    }
                 });
             }
         });
@@ -258,7 +255,7 @@ public class HomeScreenController {
             GridPane.setRowSpan(groupsListView , GridPane.REMAINING);
             groupsListView.minWidth(200);
         }
-        Utilities.populateGroupsList(groupsListView,groupsList);
+        Utilities.populateGroupsList(groupsListView,DataCenter.getInstance().getGroupList());
         groupsListView.getSelectionModel().selectedItemProperty().addListener((obs, oldSelection, selectedGroup) -> {
             if (selectedGroup != null) {
                 Text groupID =  (Text) selectedGroup.getChildren().get(2); // extract group id
@@ -325,16 +322,33 @@ public class HomeScreenController {
     @FXML
     void handleLogOutButton(ActionEvent event) throws IOException {
         // clear all cached data
-        DataCenter.getInstance().getContactList().clear();
-        DataCenter.getInstance().getAnnouncementList().clear();
-        DataCenter.getInstance().getNotificationList().clear();
-        DataCenter.getInstance().getContactMessagesMap().clear();
-        DataCenter.getInstance().getGroupMessagesMap().clear();
-        DataCenter.getInstance().getGroupList().clear();
-        DataCenter.getInstance().unseenAnnouncementsCountProperty().set(0);
-        DataCenter.getInstance().unseenNotificationsCountProperty().set(0);
+
+
+
         boolean loggedOut = authenticationService.logout();
         if(!loggedOut) ClientAlerts.invokeErrorAlert("Error" , "Failed to logout");
+        else{
+            DataCenter.getInstance().getContactList().clear();
+            DataCenter.getInstance().getAnnouncementList().clear();
+            DataCenter.getInstance().getNotificationList().clear();
+            DataCenter.getInstance().getContactMessagesMap().clear();
+            DataCenter.getInstance().getGroupMessagesMap().clear();
+            DataCenter.getInstance().getGroupList().clear();
+            DataCenter.getInstance().unseenAnnouncementsCountProperty().set(0);
+            DataCenter.getInstance().unseenNotificationsCountProperty().set(0);
+            DataCenter.getInstance().getContactInfoMap().clear();
+            DataCenter.getInstance().getGroupMembersMap().clear();
+            DataCenter.getInstance().getContactInvitationList().clear();
+            DataCenter.getInstance().setMyProfile(null);
+            DataCenter.getInstance().getUnreadContactMessages().clear();
+            DataCenter.getInstance().getGroupInfoMap().clear();
+            ServerConnectivityService.shutDown();
+            ServiceManager.stopService();
+            contactMessagesListView.getItems().clear();
+            contactMessagesListView.setVisible(false);
+            groupMessagesListView.getItems().clear();
+            groupMessagesListView.setVisible(false);
+        }
         myDirector.signin();
     }
     @FXML
