@@ -65,10 +65,9 @@ public class AddGroupController {
     public void setPopupStage(Stage stage) {
         this.popupStage = stage;
     }
+  
     @FXML
     void handleAddGroup(ActionEvent event) {
-    
-
         ClientGroupService clientgroupservice = new ClientGroupService();
         Group newGroup = new Group();
         int loggedinUserID = ServiceManager.getInstance().getClientToken().getUserID();
@@ -78,9 +77,6 @@ public class AddGroupController {
         newGroup.setPic(selectedImageBytes);
         clientgroupservice.createGroup(newGroup);
         DataCenter.getInstance().getGroupList().add(newGroup);
-        
-
-   
     }
 
     @FXML

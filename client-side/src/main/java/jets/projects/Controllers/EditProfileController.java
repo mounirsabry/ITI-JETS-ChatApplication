@@ -28,8 +28,6 @@ import java.io.IOException;
 import java.util.Date;
 import java.util.Locale;
 
-
-
 public class EditProfileController {
     
         @FXML
@@ -113,69 +111,60 @@ public class EditProfileController {
             
             
             byte[] profilePic = null;
-        if (profilePicture.getFill() instanceof ImagePattern) {
-            ImagePattern pattern = (ImagePattern) profilePicture.getFill();
-            Image image = pattern.getImage();
-            profilePic = convertImageToByteArray(image);  
-        }
+          if (profilePicture.getFill() instanceof ImagePattern) {
+              ImagePattern pattern = (ImagePattern) profilePicture.getFill();
+              Image image = pattern.getImage();
+              profilePic = convertImageToByteArray(image);  
+          }
 
-        ClientProfileService profileService = new ClientProfileService();
-        boolean success = profileService.editProfile(username.getText(), birthDate, bio, profilePic);
+          ClientProfileService profileService = new ClientProfileService();
+          boolean success = profileService.editProfile(username.getText(), birthDate, bio, profilePic);
 
-        if (success) {
-                ClientAlerts.invokeInformationAlert("Saved","Edit Successfully");
-            
-        }
-        else{
+          if (success) {
+                  ClientAlerts.invokeInformationAlert("Saved","Edit Successfully");
 
-            ClientAlerts.invokeErrorAlert("Error", "Cant Save Edit Profile");
-        }
-           
-        }
+          }
+          else{
 
-        private byte[] convertImageToByteArray(Image image) {
-    int width = (int) image.getWidth();
-    int height = (int) image.getHeight();
-    
-    WritableImage writableImage = new WritableImage(width, height);
-    PixelReader pixelReader = image.getPixelReader();
-    PixelWriter pixelWriter = writableImage.getPixelWriter();
-    
-    // Copy pixels manually
-    for (int y = 0; y < height; y++) {
-        for (int x = 0; x < width; x++) {
-            pixelWriter.setArgb(x, y, pixelReader.getArgb(x, y));
-        }
-    }
+              ClientAlerts.invokeErrorAlert("Error", "Cant Save Edit Profile");
+          }
 
-    ByteArrayOutputStream byteArrayOutputStream = new ByteArrayOutputStream();
-    
-    try {
-        // Manually encode the image as raw pixel data
-        DataOutputStream dataOutputStream = new DataOutputStream(byteArrayOutputStream);
-        for (int y = 0; y < height; y++) {
-            for (int x = 0; x < width; x++) {
-                int argb = pixelReader.getArgb(x, y);
-                dataOutputStream.writeInt(argb);
+          }
+
+          private byte[] convertImageToByteArray(Image image) {
+            int width = (int) image.getWidth();
+            int height = (int) image.getHeight();
+
+            WritableImage writableImage = new WritableImage(width, height);
+            PixelReader pixelReader = image.getPixelReader();
+            PixelWriter pixelWriter = writableImage.getPixelWriter();
+
+            // Copy pixels manually
+            for (int y = 0; y < height; y++) {
+                for (int x = 0; x < width; x++) {
+                    pixelWriter.setArgb(x, y, pixelReader.getArgb(x, y));
+                }
             }
+
+            ByteArrayOutputStream byteArrayOutputStream = new ByteArrayOutputStream();
+
+            try {
+                // Manually encode the image as raw pixel data
+                DataOutputStream dataOutputStream = new DataOutputStream(byteArrayOutputStream);
+                for (int y = 0; y < height; y++) {
+                    for (int x = 0; x < width; x++) {
+                        int argb = pixelReader.getArgb(x, y);
+                        dataOutputStream.writeInt(argb);
+                    }
+                }
+                dataOutputStream.close();
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+
+            return byteArrayOutputStream.toByteArray();
         }
-        dataOutputStream.close();
-    } catch (IOException e) {
-        e.printStackTrace();
-    }
 
-    return byteArrayOutputStream.toByteArray();
-}
-
-
-  
-
-
-    
-
-
-
-    
         @FXML
         void handleStatusComboBox(ActionEvent event) {
             //update status and notify contacts
