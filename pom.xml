@@ -11,6 +11,7 @@
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <maven.compiler.release>23</maven.compiler.release>
+        <junit.jupiter.version>5.11.4</junit.jupiter.version>
         <javafx.version>23.0.1</javafx.version>
         <mysql.connectorj.version>9.1.0</mysql.connectorj.version>
     </properties>
@@ -21,6 +22,12 @@
                 <artifactId>maven-compiler-plugin</artifactId>
                 <version>3.13.0</version>
             </plugin>
+            
+            <plugin>
+			    <groupId>org.apache.maven.plugins</groupId>
+			    <artifactId>maven-surefire-plugin</artifactId>
+			    <version>3.5.2</version>
+			</plugin>
         </plugins>
 	
         <pluginManagement>
@@ -42,6 +49,13 @@
   
     <dependencyManagement>
         <dependencies>
+	        <dependency>
+			    <groupId>org.junit.jupiter</groupId>
+			    <artifactId>junit-jupiter-api</artifactId>
+			    <version>${junit.jupiter.version}</version>
+			    <scope>test</scope>
+			</dependency>
+        
             <dependency>
                 <groupId>com.mysql</groupId>
                 <artifactId>mysql-connector-j</artifactId>

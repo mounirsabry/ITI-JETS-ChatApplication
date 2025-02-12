@@ -91,14 +91,15 @@ public class NormalUserAPIImpl extends UnicastRemoteObject
 
     @Override
     public boolean register(NormalUser user) throws RemoteException {
-        if ((user.getDisplayName() == null) || user.getDisplayName().isBlank()
-                || (user.getPhoneNumber() == null) || user.getPhoneNumber().isBlank()
-                || (user.getEmail() == null) || user.getEmail().isBlank()
-                || (user.getPassword() == null) || user.getPassword().isBlank()
-                || (user.getGender() == null)
-                || (user.getCountry() == null)
-                || (!user.getIsAdminCreated())
-                || (user.getIsPasswordValid())){
+        if (user.getDisplayName() == null || user.getDisplayName().isBlank()
+        ||  user.getPhoneNumber() == null || user.getPhoneNumber().isBlank()
+        ||  user.getEmail() == null || user.getEmail().isBlank()
+        ||  user.getPassword() == null || user.getPassword().isBlank()
+        ||  user.getGender() == null
+        ||  user.getCountry() == null
+        ||  user.getBirthDate().compareTo(Date.from(Instant.now())) <= 0
+        ||  user.getIsAdminCreated() == true
+        ||  user.getIsPasswordValid() == false) {
             throw new RemoteException(ExceptionMessages.INVALID_INPUT_DATA);
         }
         
@@ -162,7 +163,7 @@ public class NormalUserAPIImpl extends UnicastRemoteObject
         }
         if (displayName == null || displayName.isBlank()
         ||  (birthDate != null 
-        &&  birthDate.compareTo(Date.from(Instant.MIN)) <= 0)) {
+        &&  birthDate.compareTo(Date.from(Instant.now())) <= 0)) {
             throw new RemoteException(ExceptionMessages.INVALID_INPUT_DATA);
         }
         
