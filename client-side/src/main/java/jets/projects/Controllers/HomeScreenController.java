@@ -1,6 +1,7 @@
 package jets.projects.Controllers;
 import java.io.ByteArrayInputStream;
 import java.io.File;
+import java.io.FileOutputStream;
 import java.io.IOException;
 import java.net.URL;
 import java.nio.file.Files;
@@ -93,6 +94,14 @@ public class HomeScreenController {
         unseenAnnouncements.textProperty().bind(DataCenter.getInstance().unseenAnnouncementsCountProperty().asString());
         unseenNotifications.textProperty().bind(DataCenter.getInstance().unseenNotificationsCountProperty().asString());
     }
+    public void updateProfile(){
+        NormalUser myprofile = DataCenter.getInstance().getMyProfile();
+        if(myprofile.getPic() != null){
+            myprofilepicture.setFill(new ImagePattern(new Image(new ByteArrayInputStream(myprofile.getPic()))));
+        }else{
+            myprofilepicture.setFill(new ImagePattern(new Image(getClass().getResource("/images/blank-profile.png").toExternalForm())));
+        }
+    }
     @FXML
     void handleChatProfile(MouseEvent event){
         if (groupMessagesListView.isVisible()) {
@@ -114,6 +123,7 @@ public class HomeScreenController {
         Stage owner = (Stage)currentNode.getScene().getWindow();
         // load the popup content
         URL fxmlURL = getClass().getResource("/fxml/editProfile.fxml");
+        EditProfileController.setHome(this);
         Utilities.showPopup(owner, fxmlURL, 600, 400);
     }
     @FXML
