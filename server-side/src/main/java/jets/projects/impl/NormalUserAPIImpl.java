@@ -97,9 +97,10 @@ public class NormalUserAPIImpl extends UnicastRemoteObject
         ||  user.getPassword() == null || user.getPassword().isBlank()
         ||  user.getGender() == null
         ||  user.getCountry() == null
-        ||  user.getBirthDate().compareTo(Date.from(Instant.now())) <= 0
+        ||  user.getBirthDate().compareTo(Date.from(Instant.now())) > 0
         ||  user.getIsAdminCreated() == true
         ||  user.getIsPasswordValid() == false) {
+            System.out.println(user);
             throw new RemoteException(ExceptionMessages.INVALID_INPUT_DATA);
         }
         
@@ -163,7 +164,7 @@ public class NormalUserAPIImpl extends UnicastRemoteObject
         }
         if (displayName == null || displayName.isBlank()
         ||  (birthDate != null 
-        &&  birthDate.compareTo(Date.from(Instant.now())) <= 0)) {
+        &&  birthDate.compareTo(Date.from(Instant.now())) > 0)) {
             throw new RemoteException(ExceptionMessages.INVALID_INPUT_DATA);
         }
         
