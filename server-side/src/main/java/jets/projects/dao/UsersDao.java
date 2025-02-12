@@ -85,7 +85,7 @@ public class UsersDao {
                 + ", password, gender, country, birth_date"
                 + ", bio)"
                 + " VALUES"
-                + "(?, ?, ?, ?, ?, ?, ?, ?, ?, ?);";
+                + "(?, ?, ?, ?, ?, ?, ?, ?, ?);";
         
         try (Connection connection = ConnectionManager.getConnection();
             PreparedStatement stmt = connection.prepareStatement(query);) {
@@ -97,8 +97,14 @@ public class UsersDao {
             stmt.setString(i++, user.getPassword());
             stmt.setString(i++, user.getGender().toString());
             stmt.setString(i++, user.getCountry().toString());
-            stmt.setDate(i++, new java.sql.Date(
-                    user.getBirthDate().getTime()));
+            
+            if (user.getBirthDate() != null) {
+                stmt.setDate(i++, new java.sql.Date(
+                        user.getBirthDate().getTime()));
+            } else {
+                stmt.setDate(i++, null);
+            }
+            
             stmt.setString(i++, user.getBio());
             int rowsInserted = stmt.executeUpdate();
             return new RequestResult<>(rowsInserted > 0, null);
@@ -170,8 +176,12 @@ public class UsersDao {
             PreparedStatement stmt = connection.prepareStatement(query);) {
             int i = 1;
             stmt.setString(i++, username);
-            var sqlDate = new java.sql.Date(birthDate.getTime());
-            stmt.setDate(i++, sqlDate);
+            if (birthDate != null) {
+                var sqlDate = new java.sql.Date(birthDate.getTime());
+                stmt.setDate(i++, sqlDate);
+            } else {
+                stmt.setDate(i++, null);
+            }
             stmt.setString(i++, bio);
             stmt.setBytes(i++, pic);
             stmt.setInt(i++, userID);

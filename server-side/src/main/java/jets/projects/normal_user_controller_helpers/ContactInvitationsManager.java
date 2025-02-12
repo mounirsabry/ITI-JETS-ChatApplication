@@ -116,7 +116,7 @@ public class ContactInvitationsManager {
                 NotificationCallback.receivedContactInvitationSender(
                         token.getUserID(), receiverID);
                 NotificationCallback.receivedContactInvitationReceiver(
-                        receiverID, token.getUserID());
+                        token.getUserID(), receiverID);
                 return new RequestResult<>(true, null);
             }
             case 2 -> {
