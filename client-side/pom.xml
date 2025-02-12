@@ -30,7 +30,7 @@
                 <groupId>org.openjfx</groupId>
                 <artifactId>javafx-maven-plugin</artifactId>
                 <configuration>
-                    <mainClass>jets.projects/jets.projects.App</mainClass>
+                    <mainClass>jets.projects/jets.projects.ClientApp</mainClass>
                 </configuration>
             </plugin>
         </plugins>
