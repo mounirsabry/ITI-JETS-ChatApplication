@@ -46,11 +46,16 @@ public class ClientAuthenticationService {
                  System.out.println("thread");
                  while (!Thread.currentThread().isInterrupted()) {
                      try {
-                         ServerConnectivityService.getServerAPI().sendPulse(serviceManager.getClientToken());
+                         ServerConnectivityService.getServerAPI().registerPulse(serviceManager.getClientToken());
                          Thread.sleep(1000);
-                     } catch (InterruptedException | RemoteException e) {
+                     } catch (InterruptedException e) {
                          Platform.runLater(()->{
-                             ClientAlerts.invokeWarningAlert("Server Warning from heart beat", e.getMessage());
+                             ClientAlerts.invokeWarningAlert("Server Warning from heart beat interrupted", e.getMessage());
+                         });
+                         Thread.currentThread().interrupt();
+                     } catch (RemoteException e) {
+                         Platform.runLater(()->{
+                             ClientAlerts.invokeWarningAlert("Server Warning from heart beat remote", e.getMessage());
                          });
                          Thread.currentThread().interrupt();
                      }

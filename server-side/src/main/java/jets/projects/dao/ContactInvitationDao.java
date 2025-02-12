@@ -17,7 +17,7 @@ public class ContactInvitationDao{
 
             String query = "SELECT * FROM ContactInvitation c " +
                     "JOIN NormalUser u ON c.sender_ID = u.user_ID " +
-                    "WHERE c.receiver_ID = ?" +
+                    "WHERE c.receiver_ID = ? " +
                     "ORDER BY c.sent_at DESC;";
         try (Connection connection = ConnectionManager.getConnection();
         PreparedStatement selectStatement = connection.prepareStatement(query);) {

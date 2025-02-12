@@ -41,7 +41,7 @@ public class GroupMessagesDao {
     }
     
     public RequestResult<byte[]> getGroupMessageFile(int groupID, int messageID) {
-        String query = "SELECT message_file UsersGroupMessage WHERE message_ID = ?;";
+        String query = "SELECT message_file FROM UsersGroupMessage WHERE message_ID = ?;";
         try(Connection connection = ConnectionManager.getConnection();
         PreparedStatement preparedStatement = connection.prepareStatement(query)){
             preparedStatement.setInt(1, messageID);

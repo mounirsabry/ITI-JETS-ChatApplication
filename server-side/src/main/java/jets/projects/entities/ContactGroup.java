@@ -1,6 +1,6 @@
 package jets.projects.entities;
 
-public enum ContactGroup {
+public enum ContactGroup  {
     FAMILY,
     WORK,
     FRIENDS,

@@ -1,6 +1,8 @@
 package jets.projects.entities;
 
-public enum NotificationType {
+import java.io.Serializable;
+
+public enum NotificationType{
     USER_STATUS,
     CONTACT_INVITATION,
     NONE

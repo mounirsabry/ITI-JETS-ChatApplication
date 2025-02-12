@@ -2,7 +2,9 @@ package jets.projects.entity_info;
 
 import jets.projects.entities.Announcement;
 
-public class AnnouncementInfo {
+import java.io.Serializable;
+
+public class AnnouncementInfo implements Serializable {
     private Announcement announcement;
     private int userID;
     private boolean isRead;

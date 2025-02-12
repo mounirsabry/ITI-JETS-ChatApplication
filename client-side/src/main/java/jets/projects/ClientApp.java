@@ -9,7 +9,7 @@ import javafx.scene.text.Text;
 import javafx.stage.Stage;
 import jets.projects.Controllers.*;
 
-public class App extends Application {
+public class ClientApp extends Application {
 
     private Parent signInParent;
     private SigninController signinController;

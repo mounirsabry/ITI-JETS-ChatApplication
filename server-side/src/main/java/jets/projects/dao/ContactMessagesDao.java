@@ -102,7 +102,7 @@ public class ContactMessagesDao{
     }
 
     public RequestResult<Integer> sendContactMessage(ContactMessage message) {
-        String query = "INSERT INTO ContactMessage (sender_ID, receiver_ID, content, is_read, is_file, message_file) " +
+        String query = "INSERT INTO ContactMessage (sender_ID, receiver_ID, content, is_read, contains_file, message_file) " +
                 "VALUES (?, ?, ?, ?, ?, ?)";
 
         try (Connection connection = ConnectionManager.getConnection();

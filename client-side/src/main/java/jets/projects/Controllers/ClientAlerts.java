@@ -10,6 +10,7 @@ public class ClientAlerts {
             alert.setTitle(title);
             alert.setHeaderText(null);
             alert.setContentText(content);
+            alert.setResizable(true);
             alert.showAndWait();
         });
     }
@@ -19,6 +20,7 @@ public class ClientAlerts {
             alert.setTitle(title);
             alert.setHeaderText(null);
             alert.setContentText(content);
+            alert.setResizable(true);
             alert.showAndWait();
         });
     }
@@ -28,6 +30,7 @@ public class ClientAlerts {
             alert.setTitle(title);
             alert.setHeaderText(null);
             alert.setContentText(content);
+            alert.setResizable(true);
             alert.showAndWait();
         });
     }

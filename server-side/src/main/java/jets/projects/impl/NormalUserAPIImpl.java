@@ -583,6 +583,7 @@ public class NormalUserAPIImpl extends UnicastRemoteObject
         }
         
         if (groupID <= 0 || messageID <= 0) {
+            System.out.println("file error");
             throw new RemoteException(ExceptionMessages.INVALID_INPUT_DATA);
         }
         

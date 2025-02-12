@@ -33,7 +33,7 @@ public class AddContactController {
     @FXML
     void handleAddContact(ActionEvent event) {
 
-        String category = categoryComboBox.getValue();
+        String category = categoryComboBox.getValue().toUpperCase();
         String phoneNumber = phoneField.getText(); 
         
         if (category == null || phoneNumber.isEmpty()) {
