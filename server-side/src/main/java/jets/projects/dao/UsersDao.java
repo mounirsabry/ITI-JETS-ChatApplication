@@ -1,5 +1,6 @@
 package jets.projects.dao;
 
+import java.sql.Blob;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
@@ -93,7 +94,10 @@ public class UsersDao {
             stmt.setString(i++, user.getDisplayName());
             stmt.setString(i++, user.getPhoneNumber());
             stmt.setString(i++, user.getEmail());
-            stmt.setBytes(i++, user.getPic());
+            
+            Blob blob = connection.createBlob();
+            blob.setBytes(1, user.getPic());
+            
             stmt.setString(i++, user.getPassword());
             stmt.setString(i++, user.getGender().toString());
             stmt.setString(i++, user.getCountry().toString());
@@ -134,8 +138,13 @@ public class UsersDao {
                     resultSet.getString("phone_number"));
             user.setEmail(
                     resultSet.getString("email"));
-            user.setPic(
-                    resultSet.getBytes("pic"));
+            Blob blob = resultSet.getBlob("pic");
+            if (blob == null) {
+                user.setPic(null);
+            } else {
+                user.setPic(blob.getBytes(1, (int) blob.length()));
+            }
+            
             String genderString = resultSet.getString("gender");
             user.setGender(
                     Gender.valueOf(genderString));
@@ -213,7 +222,13 @@ public class UsersDao {
             if (!resultSet.next()) {
                 return new RequestResult<>(null, null);
             }
-            byte[] pic = resultSet.getBytes("pic");
+            Blob blob = resultSet.getBlob("pic");
+            byte[] pic;
+            if (blob == null) {
+                pic = null;
+            } else {
+                pic = blob.getBytes(1, (int) blob.length());
+            }
             return new RequestResult<>(pic, null);
         } catch (SQLException ex) {
             return new RequestResult<>(null, "DB Error: " 

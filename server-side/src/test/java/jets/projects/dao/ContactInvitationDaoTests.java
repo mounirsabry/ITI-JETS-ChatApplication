@@ -1,7 +1,6 @@
 package jets.projects.dao;
 
 import java.util.List;
-import jets.projects.entities.ContactGroup;
 import jets.projects.entities.ContactInvitation;
 import jets.projects.entity_info.ContactInvitationInfo;
 
