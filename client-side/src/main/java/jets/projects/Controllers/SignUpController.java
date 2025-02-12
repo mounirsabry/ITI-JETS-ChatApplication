@@ -124,6 +124,7 @@ public class SignUpController {
             user.setCountry(Country.valueOf(countryComboBox.getValue().toUpperCase()));
             if (imageBytes != null)
                 user.setPic(imageBytes);
+            System.out.println(user);
             authenticationService.register(user);
         }
         myDirector.signin();

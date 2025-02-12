@@ -141,9 +141,13 @@ public class UsersDao {
                     Gender.valueOf(genderString));
             String countryString = resultSet.getString("country");
             user.setCountry(Country.valueOf(countryString));
-            
-            var sqlDate = resultSet.getDate("birth_date");
-            user.setBirthDate(new java.util.Date(sqlDate.getTime()));
+
+            java.sql.Date sqlDate = resultSet.getDate("birth_date");
+            if (sqlDate != null) {
+                user.setBirthDate(new java.util.Date(sqlDate.getTime()));
+            } else {
+                user.setBirthDate(null); // or handle it appropriately
+            }
             
             Timestamp createdAtStamp 
                     = resultSet.getTimestamp("created_at");

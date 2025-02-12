@@ -53,9 +53,9 @@ public class Director {
        stage.setScene(signInScene);
        /////set on close////
         stage.setOnCloseRequest((event)->{
-            ServerConnectivityService.shutDown();
             ClientAuthenticationService clientAuthenticationService = new ClientAuthenticationService();
             clientAuthenticationService.logout();
+            System.exit(0);
         });
        stage.show();
     }
