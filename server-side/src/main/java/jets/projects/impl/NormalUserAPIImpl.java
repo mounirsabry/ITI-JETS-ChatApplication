@@ -332,7 +332,7 @@ public class NormalUserAPIImpl extends UnicastRemoteObject
     }
 
     @Override
-    public Integer sendContactMessage(ClientToken token,
+    public int sendContactMessage(ClientToken token,
             ContactMessage message) throws RemoteException {
         if (!validToken(token)) {
             throw new RemoteException(ExceptionMessages.INVALID_TOKEN);
@@ -595,7 +595,7 @@ public class NormalUserAPIImpl extends UnicastRemoteObject
     }
 
     @Override
-    public boolean sendGroupMessage(ClientToken token,
+    public int sendGroupMessage(ClientToken token,
             GroupMessage message) throws RemoteException {
         if (!validToken(token)) {
             throw new RemoteException(ExceptionMessages.INVALID_TOKEN);

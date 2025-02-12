@@ -202,7 +202,7 @@ public class NormalUserController {
                 groupID, messageID);
     }
     
-    public RequestResult<Boolean> sendGroupMessage(ClientToken token, GroupMessage message) {
+    public RequestResult<Integer> sendGroupMessage(ClientToken token, GroupMessage message) {
         return groupMessagesManager.sendGroupMessage(token, message);
     }
     

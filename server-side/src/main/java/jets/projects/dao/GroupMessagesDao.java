@@ -60,33 +60,42 @@ public class GroupMessagesDao {
     }
 
 
-    public RequestResult<Boolean> sendGroupMessage(GroupMessage message) {
+    public RequestResult<Integer> sendGroupMessage(GroupMessage message) {
         String query = "INSERT INTO UsersGroupMessage (group_ID, sender_ID, content, contains_file, message_file) " +
                 "VALUES (?, ?, ?, ?, ?)";
 
         try (Connection connection = ConnectionManager.getConnection();
-             PreparedStatement preparedStatement = connection.prepareStatement(query)) {
+             PreparedStatement stmt = connection.prepareStatement(query, Statement.RETURN_GENERATED_KEYS)) {
 
-            preparedStatement.setInt(1, message.getGroupID());
-            preparedStatement.setInt(2, message.getSenderID());
-            preparedStatement.setString(3, message.getContent() != null ? message.getContent() : ""); // Handle null content
-            preparedStatement.setBoolean(4, message.getContainsFile());
+            stmt.setInt(1, message.getGroupID());
+            stmt.setInt(2, message.getSenderID());
+            stmt.setString(3, message.getContent() != null ? message.getContent() : ""); // Handle null content
+            stmt.setBoolean(4, message.getContainsFile());
 
             if (message.getContainsFile() && message.getFile() != null) {
-                preparedStatement.setBytes(5, message.getFile());
+                stmt.setBytes(5, message.getFile());
             } else {
-                preparedStatement.setNull(5, Types.BLOB); // Ensure consistency
+                stmt.setNull(5, Types.BLOB); // Ensure consistency
             }
 
-            int rowsAffected = preparedStatement.executeUpdate();
+            int rowsAffected = stmt.executeUpdate();
+            if (rowsAffected == 0) {
+                return new RequestResult<>(-1, null);
+            }
 
-            if (rowsAffected > 0) {
-                return new RequestResult<>(true, null);
-            } else {
-                return new RequestResult<>(false, "Message sending failed.");
+            try (ResultSet generatedKeys = stmt.getGeneratedKeys()) {
+                if (generatedKeys.next()) {
+                    int messageID = generatedKeys.getInt(1); 
+                    return new RequestResult<>(
+                            messageID, null);
+                } else {
+                    return new RequestResult<>(
+                            -1, null);
+                }
             }
         } catch (SQLException e) {
-            return new RequestResult<>(null, "Database error: " + e.getMessage());
+            return new RequestResult<>(null, "Database error: " 
+                    + e.getMessage());
         }
     }
 
