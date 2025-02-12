@@ -72,6 +72,7 @@ public class ContactCallback {
                 }
                 
                 try {
+                    System.out.println(user.getImpl());
                     user.getImpl().contactUpdateInfo(
                             contactID, newDisplayName, newPic);
                 } catch (RemoteException ex) {

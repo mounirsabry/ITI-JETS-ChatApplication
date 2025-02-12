@@ -111,7 +111,7 @@ public class ContactDao {
     }
     
     public RequestResult<List<Integer>> getAllContactsIDs(int userID) {
-        String query = "SELECT second_ID FROM CONTACT WHERE first_ID = ?";
+        String query = "SELECT second_ID FROM Contact WHERE first_ID = ?";
         try(Connection connection = ConnectionManager.getConnection();
         PreparedStatement preparedStatement = connection.prepareStatement(query);){
             preparedStatement.setInt(1, userID);
