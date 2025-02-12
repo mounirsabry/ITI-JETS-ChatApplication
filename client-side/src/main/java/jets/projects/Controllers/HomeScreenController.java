@@ -361,10 +361,13 @@ public class HomeScreenController {
             message.setSentAt(LocalDateTime.now());
             message.setContent(messageTextArea.getText());
             messageTextArea.clear();
+
+            int message_ID = contactMessageService.sendContactMessage(message);
+            if(message_ID == 0){
+                return;
+            }
+            message.setID(message_ID);
             DataCenter.getInstance().getContactMessagesMap().get(contact_id).add(message);
-            contactMessagesListView.scrollTo(contactMessagesListView.getItems().size() -1);
-            boolean sent = contactMessageService.sendContactMessage(message);
-            if(!sent) ClientAlerts.invokeErrorAlert("Error" , "Failed to send contact message");
         }
         if (groupMessagesListView.isVisible()) {
             GroupMessage message = new GroupMessage();
@@ -373,9 +376,13 @@ public class HomeScreenController {
             message.setSentAt(LocalDateTime.now());
             message.setContent(messageTextArea.getText());
             messageTextArea.clear();
+
+            int i = groupMessageService.sendGroupMessage(message);
+            if(i == 0){
+                return;
+            }
+            message.setMessageID(i);
             DataCenter.getInstance().getGroupMessagesMap().get(Integer.parseInt(id.getText())).add(message);
-            boolean sent = groupMessageService.sendGroupMessage(message);
-            if(!sent) ClientAlerts.invokeErrorAlert("Error" , "Failed to send group message");
         }
     }
 
@@ -404,11 +411,13 @@ public class HomeScreenController {
                     attachmentMessage.setContent("Attachment: " + fileName);
                     attachmentMessage.setContainsFile(true);
                     attachmentMessage.setFile(fileBytes);
-                    DataCenter.getInstance().getContactMessagesMap().get(Integer.parseInt(id.getText())).add(attachmentMessage);
-                    contactMessagesListView.scrollTo(contactMessagesListView.getItems().size() - 1);
-                    boolean sent = contactMessageService.sendContactMessage(attachmentMessage);
-                    if (!sent) ClientAlerts.invokeErrorAlert("Error", "Failed to send contact message");
 
+                    int message_ID = contactMessageService.sendContactMessage(attachmentMessage);
+                    if(message_ID == 0){
+                        return;
+                    }
+                    attachmentMessage.setID(message_ID);
+                    DataCenter.getInstance().getContactMessagesMap().get(Integer.parseInt(id.getText())).add(attachmentMessage);
                 } else if (groupMessagesListView.isVisible()) {
                     // Sending a group message attachment
                     GroupMessage attachmentMessage = new GroupMessage();
@@ -418,10 +427,12 @@ public class HomeScreenController {
                     attachmentMessage.setContent("Attachment: " + fileName);
                     attachmentMessage.setContainsFile(true);
                     attachmentMessage.setFile(fileBytes);
+                    int i = groupMessageService.sendGroupMessage(attachmentMessage);
+                    if(i == 0){
+                        return;
+                    }
+                    attachmentMessage.setMessageID(i);
                     DataCenter.getInstance().getGroupMessagesMap().get(Integer.parseInt(id.getText())).add(attachmentMessage);
-                    groupMessagesListView.scrollTo(groupMessagesListView.getItems().size() - 1);
-                    boolean sent = groupMessageService.sendGroupMessage(attachmentMessage);
-                    if (!sent) ClientAlerts.invokeErrorAlert("Error", "Failed to send group message");
                 }
             } catch (IOException e) {
                 System.err.println("Error reading file: " + e.getMessage());

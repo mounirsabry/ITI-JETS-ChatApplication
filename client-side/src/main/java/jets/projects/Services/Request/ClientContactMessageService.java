@@ -1,6 +1,7 @@
 package jets.projects.Services.Request;
 
 import javafx.application.Platform;
+import jets.projects.ClientApp;
 import jets.projects.Controllers.ClientAlerts;
 import jets.projects.Services.ServerConnectivityService;
 import jets.projects.api.NormalUserAPI;
@@ -60,22 +61,25 @@ public class ClientContactMessageService {
         }
     }
 
-    public boolean sendContactMessage(ContactMessage message) {
+    public int sendContactMessage(ContactMessage message) {
         if (!ServerConnectivityService.check()) {
             ClientAlerts.invokeWarningAlert("Send Contact Message", "Can't connect to server");
-            return false;
+            return 0;
         }
         NormalUserAPI serverAPI = ServerConnectivityService.getServerAPI();
         ClientToken myToken = ServerConnectivityService.getMyToken();
         try {
-            if (serverAPI.sendContactMessage(myToken, message)) {
-                return true;
+            int i = serverAPI.sendContactMessage(myToken, message);
+            if (i == 0) {
+                ClientAlerts.invokeErrorAlert("Send Contact Message Error", "Failed to send message");
+                return 0;
+            }else{
+                return i;
             }
-            ClientAlerts.invokeErrorAlert("Send Contact Message Error", "Failed to send message");
-            return false;
+
         } catch (RemoteException e) {
             ClientAlerts.invokeErrorAlert("Send Contact Message Error", e.getMessage());
-            return false;
+            return 0;
         }
     }
 

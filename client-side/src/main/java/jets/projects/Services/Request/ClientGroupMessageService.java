@@ -42,22 +42,23 @@ public class ClientGroupMessageService {
     }
 
 
-    public boolean sendGroupMessage(GroupMessage message) {
+    public int sendGroupMessage(GroupMessage message) {
         if (!ServerConnectivityService.check()) {
             ClientAlerts.invokeWarningAlert("Send Group Message", "Can't connect to server");
-            return false;
+            return 0;
         }
         NormalUserAPI serverAPI = ServerConnectivityService.getServerAPI();
         ClientToken myToken = ServerConnectivityService.getMyToken();
         try {
-            if( serverAPI.sendGroupMessage(myToken, message)){
-                return true;
+            int i = serverAPI.sendGroupMessage(myToken, message);
+            if(i == 0){
+                ClientAlerts.invokeErrorAlert("Send Group Message Error", "Failed to send message");
+                return 0;
             }
-            ClientAlerts.invokeErrorAlert("Send Group Message Error", "Failed to send message");
-            return false;
+            return i;
         } catch (RemoteException e) {
             ClientAlerts.invokeErrorAlert("Send Group Message Error", e.getMessage());
-            return false;
+            return 0;
         }
     }
 
