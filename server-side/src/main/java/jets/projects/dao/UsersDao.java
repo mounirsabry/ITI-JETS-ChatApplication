@@ -170,7 +170,10 @@ public class UsersDao {
             PreparedStatement stmt = connection.prepareStatement(query);) {
             int i = 1;
             stmt.setString(i++, username);
-            var sqlDate = new java.sql.Date(birthDate.getTime());
+            java.sql.Date sqlDate = null;
+            if (birthDate != null) {
+                sqlDate = new java.sql.Date(birthDate.getTime());
+            }
             stmt.setDate(i++, sqlDate);
             stmt.setString(i++, bio);
             stmt.setBytes(i++, pic);
