@@ -118,7 +118,7 @@
             <String fx:value="list-cell" />
             <String fx:value="list-view" />
          </styleClass></ListView>
-      <ListView prefHeight="200.0" prefWidth="200.0" styleClass="chatsList" stylesheets="@../styles/homeScreenStyles.css" GridPane.columnIndex="1" GridPane.rowIndex="2" GridPane.rowSpan="2147483647" />
+      <ListView fx:id="contactListView" prefHeight="200.0" prefWidth="200.0" styleClass="chatsList" stylesheets="@../styles/homeScreenStyles.css" GridPane.columnIndex="1" GridPane.rowIndex="2" GridPane.rowSpan="2147483647" />
       <VBox alignment="CENTER" minWidth="50.0" spacing="30.0" styleClass="sideBar" stylesheets="@../styles/homeScreenStyles.css" GridPane.columnIndex="0" GridPane.halignment="CENTER" GridPane.hgrow="ALWAYS" GridPane.rowIndex="0" GridPane.rowSpan="2147483647" GridPane.valignment="CENTER" GridPane.vgrow="ALWAYS">
          <GridPane.margin>
             <Insets />

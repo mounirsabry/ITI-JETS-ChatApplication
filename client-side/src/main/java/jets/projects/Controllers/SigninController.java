@@ -41,6 +41,12 @@ public class SigninController {
 
     @FXML
     void handleSignInButton(ActionEvent event) throws IOException {
+        String phone = phoneField.getText();
+        String pass = passwordField.getText();
+        if(phone.trim().isEmpty() || pass.trim().isEmpty()){
+            ClientAlerts.invokeInformationAlert("Login", "please enter valid data");
+            return;
+        }
         //validate data and navigate to loading screen
         if(clientAuthenticationService.login(phoneField.getText(), passwordField.getText())){
             myDirector.loading();
