@@ -26,14 +26,14 @@ public class CallBackContactMessageService {
 
         Map<Integer, ObservableList<ContactMessage>> contactMessagesMap = dataCenter.getContactMessagesMap();
 
-        ObservableList<ContactMessage> contactMessages = contactMessagesMap.getOrDefault(
-                senderID, FXCollections.synchronizedObservableList(FXCollections.observableArrayList()));
+        ObservableList<ContactMessage> contactMessages = contactMessagesMap.get(
+                senderID);
         IntegerProperty n = DataCenter.getInstance().getUnreadContactMessages().get(message.getSenderID());
         n.set(n.getValue()+1);
         String name = dataCenter.getContactInfoMap().get(message.getSenderID()).getName();
         Platform.runLater(()->{
             PopUpNotification.showNotification(name +" has sent you a message");
-            contactMessages.add(message);
+            DataCenter.getInstance().getContactMessagesMap().get(message.getSenderID()).add(message);
         });
     }
 }

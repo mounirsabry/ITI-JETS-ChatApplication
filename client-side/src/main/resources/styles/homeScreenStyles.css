@@ -10,6 +10,41 @@
     -fx-border-radius: 15; 
     -fx-padding: 10; 
 }
+
+.list-cell {
+    -fx-effect: dropshadow(gaussian, rgba(0, 0, 0, 0.5), 10, 0, 0, 0);
+    -fx-background-color: white;
+    -fx-padding: 10px;
+    -fx-border-radius: 5px;
+    -fx-background-radius: 5px;
+}
+
+/* Remove shadow when an item is selected */
+.list-cell:filled:selected {
+    -fx-effect: none;
+    -fx-background-color: #E0E0E0; /* Light gray when selected */
+}
+
+/* Ensure consistent background */
+.list-view {
+    -fx-background-image: url("/images/chat_background.jpg");
+    -fx-background-size: cover;
+    -fx-background-position: center;
+    -fx-background-repeat: no-repeat;
+    -fx-background-color: transparent;
+}
+
+/* Make individual list cells transparent initially */
+.list-cell {
+    -fx-background-color: transparent;
+    -fx-border-width: 0px;
+}
+
+/* Ensure selected messages have a background */
+.list-cell:filled:selected {
+    -fx-background-color: rgba(224, 224, 224, 0.7);
+}
+
 .openChatList{
     -fx-background-color: #f1f2f6;
     -fx-border-radius: 25px;

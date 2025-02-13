@@ -18,14 +18,13 @@ import javafx.fxml.FXML;
 import javafx.scene.Node;
 import javafx.scene.chart.PieChart;
 import javafx.scene.control.*;
+import javafx.scene.layout.*;
 import javafx.stage.FileChooser;
 import jets.projects.ServiceManager;
 import jets.projects.Services.Request.*;
 import jets.projects.Services.ServerConnectivityService;
 import jets.projects.Utilities;
 import javafx.scene.image.Image;
-import javafx.scene.layout.GridPane;
-import javafx.scene.layout.HBox;
 import javafx.scene.paint.ImagePattern;
 import javafx.scene.shape.Circle;
 import javafx.scene.text.Text;
@@ -71,7 +70,6 @@ public class HomeScreenController {
     ClientContactMessageService contactMessageService = new ClientContactMessageService();
     ClientGroupMessageService groupMessageService = new ClientGroupMessageService();
     ClientNotificationService notificationService = new ClientNotificationService();
-    ClientAnnouncementService announcementService = new ClientAnnouncementService();
 
     public void setDirector(Stage stage, Director myDirector) {
         this.stage = stage;
@@ -108,6 +106,7 @@ public class HomeScreenController {
     }
     @FXML
     void handleChatProfile(MouseEvent event){
+
         if (groupMessagesListView.isVisible()) {
             // Show group info
             Node currentNode = (Node) event.getSource();
@@ -146,7 +145,7 @@ public class HomeScreenController {
         URL fxmlURL = getClass().getResource("/fxml/addGroup.fxml");
         Utilities.showPopup(owner, fxmlURL, 600, 400);
     }
-
+@FXML
 public void handleContactButton() {
     TreeView<String> treeView = createTreeView();
 
@@ -187,7 +186,7 @@ public void handleContactButton() {
             Platform.runLater(() -> {
                 contactMessagesListView.setVisible(true);
                 groupMessagesListView.setVisible(false);
-                contactMessagesListView.setItems(DataCenter.getInstance().getContactMessagesMap().getOrDefault(contactIdInt, FXCollections.observableArrayList()));
+                contactMessagesListView.setItems(DataCenter.getInstance().getContactMessagesMap().get(contactIdInt));
 
                 // Scroll to the last item
                 contactMessagesListView.getItems().addListener((ListChangeListener<ContactMessage>) change -> {
@@ -203,7 +202,14 @@ public void handleContactButton() {
 
                 if (!DataCenter.getInstance().getContactMessagesMap().get(contactIdInt).isEmpty()) {
                     boolean read = contactMessageService.markContactMessagesAsRead(contactIdInt);
+
                     if (!read) ClientAlerts.invokeErrorAlert("Error", "Failed to mark messages as read");
+                    else{
+                        DataCenter.getInstance().getContactMessagesMap().get(contactIdInt).forEach(e->{
+                            e.setIsRead(true);
+                        });
+                        DataCenter.getInstance().getUnreadContactMessages().get(contactIdInt).set(0);
+                    }
                 }
             });
         }
