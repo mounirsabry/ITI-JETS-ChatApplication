@@ -137,18 +137,17 @@ public class AdminAPIImpl extends UnicastRemoteObject
         if (!validToken(token)) {
             throw new RemoteException(ExceptionMessages.INVALID_TOKEN_FORMAT);
         }
-        if (user == null 
-        ||  user.getDisplayName() == null || user.getDisplayName().isBlank()
-        ||  user.getPhoneNumber() == null || user.getPhoneNumber().isBlank()
-        ||  user.getEmail() == null || user.getEmail().isBlank()
-        ||  user.getPassword() == null || user.getPassword().isBlank()
-        ||  user.getCountry() == null
-        || (user.getBirthDate() != null 
-        &&  user.getBirthDate().compareTo(Date.from(Instant.MIN)) <= 0)
-        ||  user.getIsAdminCreated() == false
-        ||  user.getIsPasswordValid() == true) {
-            throw new RemoteException(
-                    ExceptionMessages.INVALID_INPUT_DATA);
+        if (user.getDisplayName() == null || user.getDisplayName().isBlank()
+                ||  user.getPhoneNumber() == null || user.getPhoneNumber().isBlank()
+                ||  user.getEmail() == null || user.getEmail().isBlank()
+                ||  user.getPassword() == null || user.getPassword().isBlank()
+                ||  user.getGender() == null
+                ||  user.getCountry() == null
+                ||  user.getBirthDate().compareTo(Date.from(Instant.now())) > 0
+                ||  user.getIsAdminCreated() == false
+                ||  user.getIsPasswordValid() == true) {
+            System.out.println(user);
+            throw new RemoteException(ExceptionMessages.INVALID_INPUT_DATA);
         }
         
         if (user.getPic() != null) {

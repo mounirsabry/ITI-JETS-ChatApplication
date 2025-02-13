@@ -12,7 +12,7 @@ public class UsersManipulationDao {
     public RequestResult<Boolean> addNormalUser(NormalUser user) {
         String query = "INSERT INTO NormalUser"
                 + "(display_name, phone_number, email, pic"
-                + ", password, gender, country, birth_date,"
+                + ", password, gender, country, birth_date"
                 + ", status, bio)"
                 + " VALUES"
                 + "(?, ?, ?, ?, ?, ?, ?, ?, ?, ?);";
@@ -28,11 +28,16 @@ public class UsersManipulationDao {
             stmt.setString(i++, user.getPassword());
             stmt.setString(i++, user.getGender().toString());
             stmt.setString(i++, user.getCountry().toString());
-            
-            java.sql.Date sqlDate = new java.sql.Date(
-                    user.getBirthDate().getTime());
-            stmt.setDate(i++, sqlDate);
-            
+
+            if(user.getBirthDate() != null){
+                java.sql.Date sqlDate = new java.sql.Date(
+                        user.getBirthDate().getTime());
+                stmt.setDate(i++, sqlDate);
+
+            }else{
+                stmt.setDate(i++, null);
+            }
+
             stmt.setString(i++, user.getStatus().toString());
             stmt.setString(i++, user.getBio());
             
