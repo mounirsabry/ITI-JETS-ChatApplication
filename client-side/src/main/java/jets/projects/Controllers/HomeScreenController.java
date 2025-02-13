@@ -1,22 +1,17 @@
 package jets.projects.Controllers;
 import java.io.ByteArrayInputStream;
 import java.io.File;
-import java.io.FileOutputStream;
 import java.io.IOException;
 import java.net.URL;
 import java.nio.file.Files;
 import java.time.LocalDateTime;
-import java.util.*;
 import datastore.DataCenter;
 import javafx.application.Platform;
-import javafx.beans.property.SimpleIntegerProperty;
-import javafx.collections.FXCollections;
 import javafx.collections.ListChangeListener;
 import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.scene.Node;
-import javafx.scene.chart.PieChart;
 import javafx.scene.control.*;
 import javafx.scene.layout.*;
 import javafx.stage.FileChooser;
@@ -36,6 +31,7 @@ import jets.projects.entity_info.AnnouncementInfo;
 import jets.projects.entity_info.ContactInfo;
 
 import static jets.projects.Utilities.createContactItem;
+import jets.projects.session_saving.SessionSaver;
 
 public class HomeScreenController {
     @FXML
@@ -408,6 +404,9 @@ public void handleContactButton() {
             contactMessagesListView.setVisible(false);
             groupMessagesListView.getItems().clear();
             groupMessagesListView.setVisible(false);
+            
+            SessionSaver sessionSaver = new SessionSaver();
+            sessionSaver.deleteSessionFile();
         }
         myDirector.signin();
     }

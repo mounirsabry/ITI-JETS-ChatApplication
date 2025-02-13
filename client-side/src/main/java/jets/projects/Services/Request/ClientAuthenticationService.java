@@ -56,7 +56,7 @@ public class ClientAuthenticationService {
                          ServerConnectivityService.getServerAPI().registerPulse(serviceManager.getClientToken());
                          Thread.sleep(1000);
                      } catch (InterruptedException e) {
-                         Platform.runLater(() -> ClientAlerts.invokeWarningAlert("Server Warning", "Heartbeat interrupted: " + e.getMessage()));
+                         //Platform.runLater(() -> ClientAlerts.invokeWarningAlert("Server Warning", "Heartbeat interrupted: " + e.getMessage()));
                          Thread.currentThread().interrupt();
                      } catch (RemoteException e) {
                          Platform.runLater(() -> ClientAlerts.invokeWarningAlert("Server Warning", "Remote exception: " + e.getMessage()));

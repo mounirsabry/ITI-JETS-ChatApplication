@@ -75,11 +75,13 @@ public class AddGroupController {
             newGroup.setGroupDesc(groupDesc.getText().trim());
         newGroup.setGroupName(groupName.getText().trim());
         newGroup.setPic(selectedImageBytes);
-        boolean created = clientgroupservice.createGroup(newGroup);
-        if(created){
+        
+        int groupID = clientgroupservice.createGroup(newGroup);
+        if(groupID > 0){
             ClientAlerts.invokeInformationAlert("Create Group" , "Created Group Successfully");
+            newGroup.setGroupID(groupID);
             DataCenter.getInstance().getGroupList().add(newGroup);
-        }else {
+        } else {
             ClientAlerts.invokeErrorAlert("Create Group" , "Failed to create group");
         }
     }
