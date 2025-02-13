@@ -12,6 +12,7 @@ import jets.projects.entities.NormalUser;
 
 import java.time.ZoneId;
 import java.util.Date;
+import java.util.Optional;
 
 
 public class AddNewUserController {
@@ -50,7 +51,9 @@ public class AddNewUserController {
         String password = passwordField.getText().trim();
         Country country = countryComboBox.getValue();
         Gender gender = genderComboBox.getValue();
-        Date DOB = DOBField.getValue() == null? null:Date.from(DOBField.getValue().atStartOfDay(ZoneId.systemDefault()).toInstant());
+        Date DOB = Optional.ofNullable(DOBField.getValue())
+                .map(date -> Date.from(date.atStartOfDay(ZoneId.systemDefault()).toInstant()))
+                .orElse(null);
         String phone = phoneField.getText().trim();
 
         if(name.isEmpty() || email.isEmpty() || password.isEmpty() || country == null || gender == null || DOB == null || phone.isEmpty()){
@@ -65,6 +68,8 @@ public class AddNewUserController {
         normalUser.setBirthDate(DOB);
         normalUser.setGender(gender);
         normalUser.setPhoneNumber(phone);
+        normalUser.setIsAdminCreated(true);
+        normalUser.setIsPasswordValid(false);
         director.createAccount(normalUser);
     }
 
