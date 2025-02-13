@@ -6,7 +6,9 @@ import java.net.URL;
 import java.nio.file.Files;
 import java.time.LocalDateTime;
 import datastore.DataCenter;
+import java.util.ArrayList;
 import javafx.application.Platform;
+import javafx.collections.FXCollections;
 import javafx.collections.ListChangeListener;
 import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
@@ -304,6 +306,16 @@ public void handleContactButton() {
             groupsListView.minWidth(200);
         }
         Utilities.populateGroupsList(groupsListView,DataCenter.getInstance().getGroupList());
+        DataCenter.getInstance().getGroupList().addListener((ListChangeListener<Group>) change -> {
+            while (change.next()) {
+                if (change.wasAdded() || change.wasRemoved()) {
+                    Platform.runLater(() -> {
+                        groupsListView.getItems().clear();
+                        Utilities.populateGroupsList(groupsListView, DataCenter.getInstance().getGroupList()); //recreate
+                    });
+                }
+            }
+        });
         groupsListView.getSelectionModel().selectedItemProperty().addListener((obs, oldSelection, selectedGroup) -> {
             if (selectedGroup != null) {
                 Text groupID =  (Text) selectedGroup.getChildren().get(2); // extract group id
@@ -321,7 +333,7 @@ public void handleContactButton() {
                     groupMessagesListView.setVisible(true);
                     contactMessagesListView.setVisible(false);
                     groupMessagesListView.setItems(DataCenter.getInstance().getGroupMessagesMap().get(Integer.parseInt(groupID.getText())));
-                    (DataCenter.getInstance().getGroupMessagesMap().get(Integer.parseInt(groupID.getText()))).addListener((ListChangeListener<GroupMessage>) change -> {
+                    (DataCenter.getInstance().getGroupMessagesMap().getOrDefault(Integer.parseInt(groupID.getText()),FXCollections.observableArrayList(new ArrayList<>()))).addListener((ListChangeListener<GroupMessage>) change -> {
                         while (change.next()) {
                             if (change.wasAdded()) {
                                 // Scroll to the last item
@@ -441,7 +453,7 @@ public void handleContactButton() {
                 return;
             }
             message.setMessageID(i);
-            DataCenter.getInstance().getGroupMessagesMap().get(Integer.parseInt(id.getText())).add(message);
+            DataCenter.getInstance().getGroupMessagesMap().getOrDefault(Integer.parseInt(id.getText()),FXCollections.observableArrayList(new ArrayList<>())).add(message);
         }
     }
 

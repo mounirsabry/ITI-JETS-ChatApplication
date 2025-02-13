@@ -43,6 +43,16 @@ public class AuthenticationManager {
                     ExceptionMessages.ALREADY_LOGGED_IN);
         }
         
+        var isPasswordValidResult = usersDao.isPasswordValid(ID, password);
+        if (isPasswordValidResult.getErrorMessage() != null) {
+            return new RequestResult<>(null, 
+                    isPasswordValidResult.getErrorMessage());
+        }
+        boolean isPasswordValid = isPasswordValidResult.getResponseData();
+        if (!isPasswordValid) {
+            return new RequestResult<>(null, null);
+        }
+        
         var result = usersDao.clientLogin(phoneNumber, password);
         if (result.getErrorMessage() != null) {
             return result;

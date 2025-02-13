@@ -21,6 +21,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import datastore.DataCenter;
+import javafx.collections.FXCollections;
 import javafx.event.ActionEvent;
 
 public class AddGroupController {
@@ -67,20 +68,34 @@ public class AddGroupController {
     }
     @FXML
     void handleAddGroup(ActionEvent event) {
+        if (groupName.getText().isBlank()) {
+            ClientAlerts.invokeInformationAlert("Required", "Group name cannot be empty.");
+            return;
+        }
+        String groupNameInput = groupName.getText().trim();
+        String groupDescInput = groupDesc.getText().trim();
+        
         ClientGroupService clientgroupservice = new ClientGroupService();
         Group newGroup = new Group();
         int loggedinUserID = ServiceManager.getInstance().getClientToken().getUserID();
         newGroup.setGroupAdminID(loggedinUserID);
-        if(groupDesc.getText()!=null)
-            newGroup.setGroupDesc(groupDesc.getText().trim());
-        newGroup.setGroupName(groupName.getText().trim());
+ 
+        newGroup.setGroupName(groupNameInput);
+        newGroup.setGroupDesc(groupDescInput);
         newGroup.setPic(selectedImageBytes);
         
         int groupID = clientgroupservice.createGroup(newGroup);
         if(groupID > 0){
-            ClientAlerts.invokeInformationAlert("Create Group" , "Created Group Successfully");
+            ClientAlerts.invokeInformationAlert("Create Group" , 
+                    "Created Group Successfully");
             newGroup.setGroupID(groupID);
             DataCenter.getInstance().getGroupList().add(newGroup);
+            DataCenter.getInstance().getGroupInfoMap().put(
+                    groupID, newGroup);
+            DataCenter.getInstance().getGroupMembersMap().put(groupID, 
+                    FXCollections.observableArrayList(new ArrayList<>()));
+            DataCenter.getInstance().getGroupMessagesMap().put(groupID, 
+                    FXCollections.observableArrayList(new ArrayList<>()));
         } else {
             ClientAlerts.invokeErrorAlert("Create Group" , "Failed to create group");
         }
