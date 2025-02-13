@@ -61,10 +61,12 @@ public class PopUpNotification {
 
             // Create a label to display the notification message
             Label label = new Label(message);
-            label.setStyle("-fx-text-fill: white; -fx-font-size: 14px; -fx-font-weight: bold;");
+            label.setWrapText(true);
+            label.setStyle("-fx-text-fill: white; -fx-font-size: 11px; -fx-font-weight: bold;");
 
             // Create a layout for the logo and message
             HBox contentBox = new HBox(10, logoView, label); // 10 is the spacing between logo and text
+            HBox.setHgrow(label, javafx.scene.layout.Priority.ALWAYS);
             contentBox.setAlignment(Pos.CENTER_LEFT); // Align logo and text to the left
             contentBox.setPadding(new Insets(10)); // Add padding around the content
 

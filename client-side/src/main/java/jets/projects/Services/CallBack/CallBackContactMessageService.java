@@ -6,6 +6,7 @@ import javafx.beans.property.IntegerProperty;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import jets.projects.Controllers.ClientAlerts;
+import jets.projects.Controllers.HomeScreenController;
 import jets.projects.entities.ContactMessage;
 
 import java.util.Map;
@@ -15,6 +16,7 @@ public class CallBackContactMessageService {
     DataCenter dataCenter = DataCenter.getInstance();
 
     public void contactMessageReceived(ContactMessage message){
+        System.out.println("7 "+message);
         int myID = dataCenter.getMyProfile().getUserID();
         if(message.getReceiverID() != myID){
             Platform.runLater(()->{
@@ -32,6 +34,7 @@ public class CallBackContactMessageService {
         n.set(n.getValue()+1);
         String name = dataCenter.getContactInfoMap().get(message.getSenderID()).getName();
         Platform.runLater(()->{
+
             PopUpNotification.showNotification(name +" has sent you a message");
             DataCenter.getInstance().getContactMessagesMap().get(message.getSenderID()).add(message);
         });
