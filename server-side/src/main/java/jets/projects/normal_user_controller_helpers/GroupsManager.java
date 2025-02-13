@@ -80,7 +80,7 @@ public class GroupsManager {
         }
         
         var GroupAdminResult = groupDao.getGroupAdminID(groupID);
-        if (GroupAdminResult.getErrorMessage() == null) {
+        if (GroupAdminResult.getErrorMessage() != null) {
             return new RequestResult<>(null,
                     GroupAdminResult.getErrorMessage());
         }
@@ -194,7 +194,7 @@ public class GroupsManager {
         }
         
         var groupAdminResult = groupDao.getGroupAdminID(groupID);
-        if (groupAdminResult.getErrorMessage() == null) {
+        if (groupAdminResult.getErrorMessage() != null) {
             return new RequestResult<>(null,
                     groupAdminResult.getErrorMessage());
         }
@@ -284,7 +284,7 @@ public class GroupsManager {
         }
         
         var groupAdminResult = groupDao.getGroupAdminID(groupID);
-        if (groupAdminResult.getErrorMessage() == null) {
+        if (groupAdminResult.getErrorMessage() != null) {
             return new RequestResult<>(null,
                     groupAdminResult.getErrorMessage());
         }
@@ -409,7 +409,7 @@ public class GroupsManager {
         }
         
         var groupAdminResult = groupDao.getGroupAdminID(groupID);
-        if (groupAdminResult.getErrorMessage() == null) {
+        if (groupAdminResult.getErrorMessage() != null) {
             return new RequestResult<>(null,
                     groupAdminResult.getErrorMessage());
         }
@@ -507,7 +507,7 @@ public class GroupsManager {
         }
         
         var groupAdminResult = groupDao.getGroupAdminID(groupID);
-        if (groupAdminResult.getErrorMessage() == null) {
+        if (groupAdminResult.getErrorMessage() != null) {
             return new RequestResult<>(null,
                     groupAdminResult.getErrorMessage());
         }
@@ -581,7 +581,7 @@ public class GroupsManager {
         }
         
         var groupAdminResult = groupDao.getGroupAdminID(groupID);
-        if (groupAdminResult.getErrorMessage() == null) {
+        if (groupAdminResult.getErrorMessage() != null) {
             return new RequestResult<>(null,
                     groupAdminResult.getErrorMessage());
         }

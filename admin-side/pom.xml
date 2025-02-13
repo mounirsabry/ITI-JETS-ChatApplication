@@ -30,9 +30,30 @@
                 <groupId>org.openjfx</groupId>
                 <artifactId>javafx-maven-plugin</artifactId>
                 <configuration>
-                    <mainClass>jets.projects/jets.projects.App</mainClass>
+                    <mainClass>jets.projects/jets.projects.AdminStartApp</mainClass>
                 </configuration>
             </plugin>
+            
+            <plugin>
+			    <groupId>org.apache.maven.plugins</groupId>
+			    <artifactId>maven-shade-plugin</artifactId>
+                <executions>
+                    <execution>
+                        <goals>
+                            <goal>shade</goal>
+                        </goals>
+                        <configuration>
+                            <shadedArtifactAttached>true</shadedArtifactAttached>
+                            <transformers>
+                                <transformer implementation=
+                                        "org.apache.maven.plugins.shade.resource.ManifestResourceTransformer">
+                                    <mainClass>jets.projects.AdminStartApp</mainClass>
+                                </transformer>
+                            </transformers>
+                        </configuration>
+                    </execution>
+                </executions>
+			</plugin>
         </plugins>
     </build>
 </project>

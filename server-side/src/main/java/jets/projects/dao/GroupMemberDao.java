@@ -104,6 +104,8 @@ public class GroupMemberDao {
             if (rowsAffected != 1) {
                 return new RequestResult<>(null, null);
             }
+            
+            selectStmt.setInt(1, otherID);
             ResultSet resultSet = selectStmt.executeQuery();
             if(!resultSet.next()){
                 resultSet.close();

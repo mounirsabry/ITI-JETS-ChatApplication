@@ -207,12 +207,10 @@ public class GroupDao {
     public RequestResult<Boolean> setGroupPic(int groupID, byte[] pic) {
         String query = "UPDATE UsersGroup SET pic = ? WHERE group_ID = ?";
         try(Connection connection = ConnectionManager.getConnection();
-        PreparedStatement preparedStatement = connection.prepareStatement(query)){
-            Blob blob = connection.createBlob();
-            blob.setBytes(1, pic);
-            preparedStatement.setBlob(1, blob);
-            preparedStatement.setInt(2, groupID);
-            int rowsAffected = preparedStatement.executeUpdate();
+        PreparedStatement stmt = connection.prepareStatement(query)){
+            stmt.setBytes(1, pic);
+            stmt.setInt(2, groupID);
+            int rowsAffected = stmt.executeUpdate();
             return new RequestResult<>(rowsAffected > 0, null);
         } catch (SQLException ex) {
             return new RequestResult<>(null, "DB Error: " 

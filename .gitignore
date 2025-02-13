@@ -1,4 +1,8 @@
+# Ignore intellij files.
 .idea/
+
+# Ignore netbeans files.
+nbproject/
 
 target/
 pom.xml.tag
