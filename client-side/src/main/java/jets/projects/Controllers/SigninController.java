@@ -10,6 +10,8 @@ import javafx.scene.control.ToggleButton;
 import javafx.stage.Stage;
 import jets.projects.Director;
 import jets.projects.Services.Request.ClientAuthenticationService;
+import jets.projects.session_saving.NormalUserSavedSession;
+import jets.projects.session_saving.SessionSaver;
 
 public class SigninController {
 
@@ -37,6 +39,23 @@ public class SigninController {
 
     public void perform() {
         clientAuthenticationService = new ClientAuthenticationService();
+        
+        SessionSaver sessionSaver = new SessionSaver();
+        NormalUserSavedSession savedSession = sessionSaver.load();
+        if (savedSession != null) {
+            sessionSaver.deleteSessionFile();
+            
+            String phoneNumber = savedSession.getPhoneNumber();
+            String password = savedSession.getPassword();
+            
+            boolean isLogin = clientAuthenticationService.login(phoneNumber, password);
+            if (isLogin == false) {
+                ClientAlerts.invokeErrorAlert("Error", "Could not login from the saved session.");
+                return;
+            }
+            sessionSaver.save(savedSession);
+            myDirector.loading();
+        }
     }
 
     @FXML
@@ -48,7 +67,18 @@ public class SigninController {
             return;
         }
         //validate data and navigate to loading screen
-        if(clientAuthenticationService.login(phoneField.getText(), passwordField.getText())){
+        String phoneNumber = phoneField.getText();
+        String password = passwordField.getText();
+        
+        if (phoneNumber.isBlank() || password.isBlank()) {
+            ClientAlerts.invokeErrorAlert("Error", 
+                    "Not the phone number nor the password could be empty.");
+            return;
+        }
+        
+        if(clientAuthenticationService.login(phoneNumber, password)){
+            SessionSaver sessionSaver = new SessionSaver();
+            sessionSaver.save(new NormalUserSavedSession(phoneNumber, password));
             myDirector.loading();
         }
 
