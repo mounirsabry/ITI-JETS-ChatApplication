@@ -95,9 +95,11 @@ public class UsersDao {
             stmt.setString(i++, user.getPhoneNumber());
             stmt.setString(i++, user.getEmail());
             
-            Blob blob = connection.createBlob();
-            blob.setBytes(1, user.getPic());
-            
+//            Blob blob = connection.createBlob();
+//            blob.setBytes(1, user.getPic());
+            stmt.setBytes(i++, user.getPic());
+
+
             stmt.setString(i++, user.getPassword());
             stmt.setString(i++, user.getGender().toString());
             stmt.setString(i++, user.getCountry().toString());

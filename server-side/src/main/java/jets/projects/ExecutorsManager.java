@@ -10,6 +10,7 @@ class ExecutorsManager {
     private final GroupMessageCallback groupMessageCallback;
     private final NotificationCallback notificationCallback;
     private final AnnouncementCallback announcementCallback;
+    private final ContactCallback contactCallback;
     
     private boolean isRunning = false;
     
@@ -21,6 +22,7 @@ class ExecutorsManager {
         groupMessageCallback = new GroupMessageCallback();
         notificationCallback = new NotificationCallback();
         announcementCallback = new AnnouncementCallback();
+        contactCallback = new ContactCallback();
     }
     
     void startExecutors() {
@@ -35,6 +37,7 @@ class ExecutorsManager {
         groupMessageCallback.start();
         notificationCallback.start();
         announcementCallback.start();
+        contactCallback.start();
         
         isRunning = true;
     }
@@ -51,6 +54,7 @@ class ExecutorsManager {
         groupMessageCallback.shutDown();
         notificationCallback.shutDown();
         announcementCallback.shutDown();
+        contactCallback.shutDown();
         
         isRunning = false;
     }

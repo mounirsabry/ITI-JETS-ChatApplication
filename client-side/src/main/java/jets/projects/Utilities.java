@@ -145,7 +145,7 @@ public class Utilities {
             rootItem.getChildren().add(createContactItem(contact));
         }
     }
-    private static TreeItem<String> createContactItem(ContactInfo contact){
+    public static TreeItem<String> createContactItem(ContactInfo contact){
         Map<Integer , IntegerProperty> unreadMessagesMap = DataCenter.getInstance().getUnreadContactMessages();
 
         Circle profileImage = new Circle();

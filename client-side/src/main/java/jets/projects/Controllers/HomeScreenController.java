@@ -36,6 +36,8 @@ import jets.projects.entities.*;
 import jets.projects.entity_info.AnnouncementInfo;
 import jets.projects.entity_info.ContactInfo;
 
+import static jets.projects.Utilities.createContactItem;
+
 public class HomeScreenController {
     @FXML
     private GridPane mainContainer;
@@ -68,6 +70,8 @@ public class HomeScreenController {
     ClientContactService contactService = new ClientContactService();
     ClientContactMessageService contactMessageService = new ClientContactMessageService();
     ClientGroupMessageService groupMessageService = new ClientGroupMessageService();
+    ClientNotificationService notificationService = new ClientNotificationService();
+    ClientAnnouncementService announcementService = new ClientAnnouncementService();
 
     public void setDirector(Stage stage, Director myDirector) {
         this.stage = stage;
@@ -142,43 +146,123 @@ public class HomeScreenController {
         URL fxmlURL = getClass().getResource("/fxml/addGroup.fxml");
         Utilities.showPopup(owner, fxmlURL, 600, 400);
     }
-    @FXML
-    public void handleContactButton(ActionEvent event) {
-        TreeView<String> treeView = new TreeView<>();
-        treeView.getStylesheets().add(getClass().getResource("/styles/homeScreenStyles.css").toExternalForm());
-        treeView.getStyleClass().add("chatsList");
 
-        // creating contacts categories
-        TreeItem<String> rootItem = new TreeItem<>("Contacts");
-        TreeItem<String> familyItem = new TreeItem<>("Family");
-        TreeItem<String> friendsItem = new TreeItem<>("Friends");
-        TreeItem<String> workItem = new TreeItem<>("Work");
-        TreeItem<String> otherItem = new TreeItem<>("Others");
-        List<ContactInfo> familyContacts = new ArrayList<>();
-        List<ContactInfo> workContacts = new ArrayList<>();
-        List<ContactInfo> friendsContacts = new ArrayList<>();
-        List<ContactInfo> otherContacts = new ArrayList<>();
-        for (ContactInfo contact : DataCenter.getInstance().getContactList()) {
+public void handleContactButton() {
+    TreeView<String> treeView = createTreeView();
+
+    Node existingNode = Utilities.getExistingNode(mainContainer, 1, 2);
+    if (existingNode != null) {
+        mainContainer.getChildren().remove(existingNode);
+    }
+    mainContainer.add(treeView, 1, 2);
+    GridPane.setRowSpan(treeView, GridPane.REMAINING);
+    treeView.minWidth(200);
+
+    // Set up the listener for contactList changes
+    setupContactListListener();
+
+    // Handle contact selection
+    treeView.getSelectionModel().selectedItemProperty().addListener((obs, oldItem, newItem) -> {
+        if (newItem != null && newItem.getParent() != treeView.getRoot()) { // Ensure it's not a category
+            String contactId = newItem.getValue().split(" - ")[0]; // Extract the contact ID
+            int contactIdInt = Integer.parseInt(contactId); // Parse safely
+
+            ContactInfo contactInfo = DataCenter.getInstance().getContactInfoMap().get(contactIdInt);
+            if (contactInfo.getPic() != null) {
+                pic.setFill(new ImagePattern(new Image(new ByteArrayInputStream(contactInfo.getPic()))));
+            } else {
+                pic.setFill(new ImagePattern(new Image(getClass().getResource("/images/blank-profile.png").toExternalForm())));
+            }
+            name.setText(contactInfo.getName());
+            id.setText(contactId);
+            NormalUserStatus contactStatus = contactService.getContactOnlineStatus(contactIdInt);
+            if (contactStatus != null) {
+                status.setText(contactStatus.toString());
+            } else {
+                status.setText("UNKNOWN");
+                status.setStyle("-fx-text-fill: red;");
+            }
+
+            // Open chat
+            Platform.runLater(() -> {
+                contactMessagesListView.setVisible(true);
+                groupMessagesListView.setVisible(false);
+                contactMessagesListView.setItems(DataCenter.getInstance().getContactMessagesMap().getOrDefault(contactIdInt, FXCollections.observableArrayList()));
+
+                // Scroll to the last item
+                contactMessagesListView.getItems().addListener((ListChangeListener<ContactMessage>) change -> {
+                    while (change.next()) {
+                        if (change.wasAdded()) {
+                            contactMessagesListView.scrollTo(contactMessagesListView.getItems().size() - 1);
+                        }
+                    }
+                });
+
+                contactMessagesListView.setCellFactory(lv -> new MessageContactCard());
+                contactMessagesListView.scrollTo(contactMessagesListView.getItems().size() - 1);
+
+                if (!DataCenter.getInstance().getContactMessagesMap().get(contactIdInt).isEmpty()) {
+                    boolean read = contactMessageService.markContactMessagesAsRead(contactIdInt);
+                    if (!read) ClientAlerts.invokeErrorAlert("Error", "Failed to mark messages as read");
+                }
+            });
+        }
+    });
+}
+    private void setupContactListListener() {
+        DataCenter.getInstance().getContactList()
+                .addListener((ListChangeListener<ContactInfo>) change -> {
+                    handleContactButton();
+        });
+    }
+    private void populateTreeView(TreeItem<String> rootItem, TreeItem<String> familyItem, TreeItem<String> friendsItem, TreeItem<String> workItem, TreeItem<String> otherItem) {
+        // Clear existing items
+        familyItem.getChildren().clear();
+        friendsItem.getChildren().clear();
+        workItem.getChildren().clear();
+        otherItem.getChildren().clear();
+        ObservableList<ContactInfo> contactList = DataCenter.getInstance().getContactList();
+        // Populate with contacts
+
+        for (ContactInfo contact : contactList) {
             switch (contact.getContact().getContactGroup()) {
-                case FAMILY -> {familyContacts.add(contact);}
-                case WORK -> {workContacts.add(contact);}
-                case FRIENDS -> {friendsContacts.add(contact);}
-                case OTHER -> {otherContacts.add(contact);}
+                case FAMILY -> familyItem.getChildren().add(createContactItem(contact));
+                case WORK -> workItem.getChildren().add(createContactItem(contact));
+                case FRIENDS -> friendsItem.getChildren().add(createContactItem(contact));
+                case OTHER -> otherItem.getChildren().add(createContactItem(contact));
                 default -> {}
             }
         }
-        Utilities.populateTree(familyItem,familyContacts);
-        Utilities.populateTree(friendsItem,friendsContacts);
-        Utilities.populateTree(workItem,workContacts);
-        Utilities.populateTree(otherItem,otherContacts);
 
+        // Expand categories
         familyItem.setExpanded(true);
         friendsItem.setExpanded(true);
         workItem.setExpanded(true);
         otherItem.setExpanded(true);
+    }
+    private TreeView<String> createTreeView() {
+        TreeView<String> treeView = new TreeView<>();
+        treeView.getStylesheets().add(getClass().getResource("/styles/homeScreenStyles.css").toExternalForm());
+        treeView.getStyleClass().add("chatsList");
+
+        // Create the root item
+        TreeItem<String> rootItem = new TreeItem<>("Contacts");
         treeView.setRoot(rootItem);
         treeView.setShowRoot(false);
-        treeView.getRoot().getChildren().addAll(Arrays.asList(familyItem, friendsItem, workItem, otherItem));
+
+        // Create category items
+        TreeItem<String> familyItem = new TreeItem<>("Family");
+        TreeItem<String> friendsItem = new TreeItem<>("Friends");
+        TreeItem<String> workItem = new TreeItem<>("Work");
+        TreeItem<String> otherItem = new TreeItem<>("Others");
+
+        // Add categories to the root
+        rootItem.getChildren().addAll(familyItem, friendsItem, workItem, otherItem);
+
+        // Populate the tree with contacts
+        populateTreeView(rootItem, familyItem, friendsItem, workItem, otherItem);
+
+        // Set cell factory
         treeView.setCellFactory(param -> new TreeCell<>() {
             @Override
             protected void updateItem(String item, boolean empty) {
@@ -188,68 +272,20 @@ public class HomeScreenController {
                     setGraphic(null);
                 } else {
                     TreeItem<String> treeItem = getTreeItem();
-                    if(treeItem.getParent()==rootItem){
+                    if (treeItem.getParent() == rootItem) {
                         setText(treeItem.getValue());
-                    }
-                    else {
+                    } else {
                         setText(null);
                     }
                     setGraphic(treeItem.getGraphic());
                 }
-            }});
-        Node existingNode = Utilities.getExistingNode(mainContainer, 1, 2);
-        if (existingNode != null) {
-            mainContainer.getChildren().remove(existingNode);
-            mainContainer.add(treeView, 1, 2);
-            GridPane.setRowSpan(treeView , GridPane.REMAINING);
-            treeView.minWidth(200);
-        }
-        // view contact chat on selecting this contact from contact list
-        treeView.getSelectionModel().selectedItemProperty().addListener((obs, oldItem, newItem) -> {
-            if (newItem != null && newItem.getParent() != rootItem) { // Ensure it's not a category
-                String contactId = newItem.getValue();
-                int contactIdInt = Integer.parseInt(contactId); // Parse safely
-
-                ContactInfo contactInfo = DataCenter.getInstance().getContactInfoMap().get(contactIdInt);
-                if(contactInfo.getPic()!=null){
-                    pic.setFill(new ImagePattern(new Image(new ByteArrayInputStream(contactInfo.getPic()))));
-                }else{
-                    pic.setFill(new ImagePattern(new Image(getClass().getResource("/images/blank-profile.png").toExternalForm())));
-                }
-                name.setText(contactInfo.getName());
-                id.setText(contactId);
-                NormalUserStatus contactStatus = contactService.getContactOnlineStatus(Integer.parseInt(contactId));
-                if(contactStatus!=null){
-                    status.setText(contactStatus.toString());
-                }else{
-                    status.setText("UNKNOWN");
-                    status.setStyle("-fx-text-fill: red;");
-                }
-                int contact_ID = Integer.parseInt(contactId);
-                // open chat
-                Platform.runLater(() -> {
-                    contactMessagesListView.setVisible(true);
-                    groupMessagesListView.setVisible(false);
-                    contactMessagesListView.setItems(DataCenter.getInstance().getContactMessagesMap().getOrDefault(contact_ID , FXCollections.observableArrayList()));
-                    //scrollable
-                    (DataCenter.getInstance().getContactMessagesMap().getOrDefault(contact_ID , FXCollections.observableArrayList())).addListener((ListChangeListener<ContactMessage>) change -> {
-                        while (change.next()) {
-                            if (change.wasAdded()) {
-                                // Scroll to the last item
-                                contactMessagesListView.scrollTo(DataCenter.getInstance().getContactMessagesMap().get(contact_ID).size() - 1);
-                            }
-                        }
-                    });
-                    contactMessagesListView.setCellFactory(lv -> new MessageContactCard());
-                    contactMessagesListView.scrollTo(contactMessagesListView.getItems().size() -1);
-                    if(!DataCenter.getInstance().getContactMessagesMap().get(Integer.parseInt(contactId)).isEmpty()){
-                        boolean read = contactMessageService.markContactMessagesAsRead(Integer.parseInt(contactId));
-                        if(!read) ClientAlerts.invokeErrorAlert("Error" , "Failed to mark messages as read");
-                    }
-                });
             }
         });
+
+
+        return treeView;
     }
+
     @FXML
     void handleGroupButton(ActionEvent event) {
         ListView<HBox> groupsListView = new ListView<HBox>();
@@ -302,8 +338,16 @@ public class HomeScreenController {
         Node currentNode = (Node)event.getSource();
         Stage owner = (Stage)currentNode.getScene().getWindow();
         // load the popup content
+
         URL fxmlURL = getClass().getResource("/fxml/notifications.fxml");
         Utilities.showPopup(owner, fxmlURL, 620, 420);
+        notificationService.markNotificationsAsRead();
+        DataCenter.getInstance().getNotificationList().forEach((n)->{
+            n.setIsRead(true);
+        });
+        DataCenter.getInstance().unseenNotificationsCountProperty().set(0);
+
+
     }
     @FXML
     void handleFriendRequestsButton(ActionEvent event){

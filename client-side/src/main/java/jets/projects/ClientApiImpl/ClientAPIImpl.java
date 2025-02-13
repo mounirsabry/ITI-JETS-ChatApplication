@@ -104,7 +104,6 @@ public class ClientAPIImpl extends UnicastRemoteObject implements ClientAPI {
 
     @Override
     public void contactUpdateInfo(int contactID, String newDisplayName, byte[] newPic) throws RemoteException {
-        System.out.println("error");
         callBackUpdateService.contactUpdateInfo(contactID, newDisplayName, newPic);
     }
 

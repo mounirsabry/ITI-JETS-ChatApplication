@@ -19,7 +19,9 @@ public class CallBackInvitationService {
     }
 
     public void contactInvitationAccepted(ContactInfo newContactInfo){
+        String name = newContactInfo.getName();
         Platform.runLater(()->{
+            PopUpNotification.showNotification(name+" has accept your friend request");
             dataCenter.getContactList().add(newContactInfo);
             dataCenter.getContactInfoMap().put(newContactInfo.getContact().getSecondID(), newContactInfo);
             dataCenter.getContactMessagesMap().put(newContactInfo.getContact().getSecondID(),

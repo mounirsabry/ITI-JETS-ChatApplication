@@ -42,6 +42,7 @@ public class CallBackGroupService {
         Group group = dataCenter.getGroupList().stream().filter(g->g.getGroupID() == groupID).findFirst().get();
         Platform.runLater(()->{
             group.setGroupAdminID(dataCenter.getMyProfile().getUserID());
+            PopUpNotification.showNotification("you are the new Admin of group "+group.getGroupName());
         });
 
     }
@@ -54,7 +55,13 @@ public class CallBackGroupService {
 
     public void groupMessageReceived(GroupMessage message){
         ObservableList list = dataCenter.getGroupMessagesMap().get(message.getGroupID());
+        String group = dataCenter.getGroupInfoMap().get(message.getGroupID()).getGroupName();
+
+        GroupMemberInfo groupMemberInfo = dataCenter.getGroupMembersMap().get(message.getGroupID()).stream()
+                .filter(c->c.getMember().getMemberID() == message.getSenderID()).findAny().get();
+        String name = groupMemberInfo.getName();
         Platform.runLater(()->{
+            PopUpNotification.showNotification(name+" has sent a message to group "+group);
             list.add(message);
         });
     }
