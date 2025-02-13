@@ -48,24 +48,19 @@ public class ClientGroupService{
         }
     }
 
-    public boolean createGroup(Group newGroup) {
+    public int createGroup(Group newGroup) {
         if (!ServerConnectivityService.check()) {
             ClientAlerts.invokeWarningAlert("Create Group", "Can't connect to server");
-            return false;
+            return -1;
         }
         NormalUserAPI serverAPI = ServerConnectivityService.getServerAPI();
         ClientToken myToken = ServerConnectivityService.getMyToken();
         try {
-            boolean success = serverAPI.createGroup(myToken, newGroup);
-            if (success) {
-                ClientAlerts.invokeInformationAlert("Create Group", "Group created successfully");
-            } else {
-                ClientAlerts.invokeErrorAlert("Create Group", "Failed to create group");
-            }
-            return success;
+            int groupID = serverAPI.createGroup(myToken, newGroup);
+            return groupID;
         } catch (RemoteException e) {
             ClientAlerts.invokeErrorAlert("Create Group Error", e.getMessage());
-            return false;
+            return -1;
         }
     }
     

@@ -4,6 +4,8 @@
 # Ignore netbeans files.
 nbproject/
 
+session.xml
+
 target/
 pom.xml.tag
 pom.xml.releaseBackup
