@@ -159,7 +159,7 @@ public class ContactMessagesDao{
             stmt.setInt(1, userID);
             stmt.setInt(2, contactID);
             int rowsAffected = stmt.executeUpdate();
-            return new RequestResult<>(rowsAffected > 0, null);
+            return new RequestResult<>(true, null);
         } catch (SQLException e) {
             return new RequestResult<>(null, "DB ERROR: " + e.getMessage());
         }

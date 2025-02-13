@@ -129,6 +129,9 @@ public class MessageContactCard extends ListCell<ContactMessage> {
                 content.getChildren().addAll(profilePic, messageBox);
             }
             setGraphic(content);
+            this.setOnMouseClicked(event -> {
+                setStyle("-fx-background-color: white; -fx-padding: 10px; -fx-border-radius: 5px;");
+            });
         }
     }
 

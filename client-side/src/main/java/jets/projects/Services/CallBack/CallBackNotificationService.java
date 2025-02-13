@@ -24,6 +24,7 @@ public class CallBackNotificationService {
     }*/
     public void newNotification(Notification notification){
         Platform.runLater(()->{
+            PopUpNotification.showNotification(notification.getContent());
             dataCenter.getNotificationList().add(notification);
         });
     }
@@ -34,6 +35,7 @@ public class CallBackNotificationService {
         announcementInfo.setUserID(dataCenter.getMyProfile().getUserID());
         announcementInfo.setIsRead(false);
         Platform.runLater(()->{
+            PopUpNotification.showNotification(announcement.getContent());
             dataCenter.getAnnouncementList().add(announcementInfo);
         });
     }

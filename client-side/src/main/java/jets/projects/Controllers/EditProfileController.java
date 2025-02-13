@@ -33,6 +33,7 @@ import java.util.Locale;
 
 public class EditProfileController {
     private static HomeScreenController homeScreenController;
+
     public static void setHome(HomeScreenController home){
         homeScreenController = home;
     }
@@ -115,10 +116,14 @@ public class EditProfileController {
           if(imageBytes == null){
               imageBytes = DataCenter.getInstance().getMyProfile().getPic();
           }
-          boolean success = profileService.editProfile(username.getText(), birthDate, bio, imageBytes);
+          String name =   username.getText();
+          boolean success = profileService.editProfile(name, birthDate, bio, imageBytes);
 
           if (success) {
-              //DataCenter.getInstance().getMyProfile().setPic();
+              DataCenter.getInstance().getMyProfile().setPic(imageBytes);
+              DataCenter.getInstance().getMyProfile().setDisplayName(name);
+              DataCenter.getInstance().getMyProfile().setBio(bio);
+              DataCenter.getInstance().getMyProfile().setBirthDate(birthDate);
                   ClientAlerts.invokeInformationAlert("Saved","Edit Successfully");
                   homeScreenController.updateProfile();
           }
