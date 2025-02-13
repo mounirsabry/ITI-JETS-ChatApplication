@@ -4,6 +4,9 @@ src/main/resources/db_info.properties
 # Ignore Intellij Generated folder.
 .idea/
 
+# Ignore netbeans files.
+nbproject/
+
 # Github generated lines.
 target/
 pom.xml.tag

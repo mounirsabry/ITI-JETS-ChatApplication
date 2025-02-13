@@ -97,9 +97,10 @@ public class NormalUserAPIImpl extends UnicastRemoteObject
         ||  user.getPassword() == null || user.getPassword().isBlank()
         ||  user.getGender() == null
         ||  user.getCountry() == null
-        ||  user.getBirthDate().compareTo(Date.from(Instant.MIN)) <= 0
-        ||  user.getIsAdminCreated() == false
-        ||  user.getIsPasswordValid() == true) {
+        ||  user.getBirthDate().compareTo(Date.from(Instant.now())) > 0
+        ||  user.getIsAdminCreated() == true
+        ||  user.getIsPasswordValid() == false) {
+            System.out.println(user);
             throw new RemoteException(ExceptionMessages.INVALID_INPUT_DATA);
         }
         
@@ -161,10 +162,9 @@ public class NormalUserAPIImpl extends UnicastRemoteObject
         if (!validToken(token)) {
             throw new RemoteException(ExceptionMessages.INVALID_TOKEN);
         }
-        
         if (displayName == null || displayName.isBlank()
         ||  (birthDate != null 
-        &&  birthDate.compareTo(Date.from(Instant.MIN)) <= 0)) {
+        &&  birthDate.compareTo(Date.from(Instant.now())) > 0)) {
             throw new RemoteException(ExceptionMessages.INVALID_INPUT_DATA);
         }
         
@@ -332,7 +332,7 @@ public class NormalUserAPIImpl extends UnicastRemoteObject
     }
 
     @Override
-    public boolean sendContactMessage(ClientToken token,
+    public int sendContactMessage(ClientToken token,
             ContactMessage message) throws RemoteException {
         if (!validToken(token)) {
             throw new RemoteException(ExceptionMessages.INVALID_TOKEN);
@@ -408,7 +408,7 @@ public class NormalUserAPIImpl extends UnicastRemoteObject
     }
 
     @Override
-    public boolean createGroup(ClientToken token, Group newGroup)
+    public int createGroup(ClientToken token, Group newGroup)
             throws RemoteException {
         if (!validToken(token)) {
             throw new RemoteException(ExceptionMessages.INVALID_TOKEN);
@@ -595,7 +595,7 @@ public class NormalUserAPIImpl extends UnicastRemoteObject
     }
 
     @Override
-    public boolean sendGroupMessage(ClientToken token,
+    public int sendGroupMessage(ClientToken token,
             GroupMessage message) throws RemoteException {
         if (!validToken(token)) {
             throw new RemoteException(ExceptionMessages.INVALID_TOKEN);

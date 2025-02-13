@@ -96,8 +96,18 @@ public class UsersQueryDao {
             user.setPhoneNumber(resultSet.getString("phone_number"));
             user.setEmail(resultSet.getString("email"));
             
+            Blob blob = resultSet.getBlob("pic");
+            if (blob == null) {
+                user.setPic(null);
+            } else {
+                user.setPic(blob.getBytes(1, (int) blob.length()));
+            }
+            /*
             Blob picBlob = resultSet.getBlob("pic");
-            user.setPic(picBlob.getBytes(1, (int) picBlob.length()));
+            if (picBlob != null) {
+                user.setPic(picBlob.getBytes(1, (int) picBlob.length()));
+            }
+            */
             
             //user.setPassword(resultSet.getString("password"));
             String genderString = resultSet.getString("gender");

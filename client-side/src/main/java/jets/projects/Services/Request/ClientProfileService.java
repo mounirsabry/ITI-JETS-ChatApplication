@@ -32,7 +32,7 @@ public class ClientProfileService {
             }
             return myProfile;
         } catch (RemoteException e) {
-            ClientAlerts.invokeErrorAlert("Profile Loading Error", e.getMessage());
+            ClientAlerts.invokeErrorAlert("Profile Loading Error: from get my profile", e.getMessage());
             return null;
         }
     }

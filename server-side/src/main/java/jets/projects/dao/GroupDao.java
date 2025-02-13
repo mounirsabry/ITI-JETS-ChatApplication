@@ -6,9 +6,7 @@ import java.util.ArrayList;
 import java.util.List;
 import jets.projects.classes.RequestResult;
 import jets.projects.db_connections.ConnectionManager;
-import jets.projects.entities.Gender;
 import jets.projects.entities.Group;
-import jets.projects.entities.NormalUser;
 
 public class GroupDao {
 
@@ -209,46 +207,55 @@ public class GroupDao {
     public RequestResult<Boolean> setGroupPic(int groupID, byte[] pic) {
         String query = "UPDATE UsersGroup SET pic = ? WHERE group_ID = ?";
         try(Connection connection = ConnectionManager.getConnection();
-        PreparedStatement preparedStatement = connection.prepareStatement(query)){
-            Blob blob = connection.createBlob();
-            blob.setBytes(1, pic);
-            preparedStatement.setBlob(1, blob);
-            preparedStatement.setInt(2, groupID);
-            int rowsAffected = preparedStatement.executeUpdate();
+        PreparedStatement stmt = connection.prepareStatement(query)){
+            stmt.setBytes(1, pic);
+            stmt.setInt(2, groupID);
+            int rowsAffected = stmt.executeUpdate();
             return new RequestResult<>(rowsAffected > 0, null);
-        }catch (SQLException e) {
-            return new RequestResult<>(null, "DB ERROR"+e.getMessage());
+        } catch (SQLException ex) {
+            return new RequestResult<>(null, "DB Error: " 
+                    + ex.getMessage());
         }
     }
 
-    public RequestResult<Boolean> createGroup(Group newGroup) {
+    public RequestResult<Integer> createGroup(Group newGroup) {
         String query1 = "INSERT INTO UsersGroup (group_name, group_desc, group_admin_ID, pic) VALUES (?, ?, ?, ?)";
         String query2 = "INSERT INTO UsersGroupMember (group_ID, member_ID) VALUES (?, ?)";
         try (Connection connection = ConnectionManager.getConnection();
-        PreparedStatement preparedStatement1 = connection.prepareStatement(query1);
-        PreparedStatement preparedStatement2 = connection.prepareStatement(query2)) {
-            preparedStatement1.setString(1, newGroup.getGroupName());
-            preparedStatement1.setString(2, newGroup.getGroupDesc());
-            preparedStatement1.setInt(3, newGroup.getGroupAdminID());
+        PreparedStatement stmt1 = connection.prepareStatement(
+                query1, Statement.RETURN_GENERATED_KEYS);
+        PreparedStatement stmt2 = connection.prepareStatement(query2)) {
+            stmt1.setString(1, newGroup.getGroupName());
+            stmt1.setString(2, newGroup.getGroupDesc());
+            stmt1.setInt(3, newGroup.getGroupAdminID());
             if (newGroup.getPic() != null) {
                 Blob blob = connection.createBlob();
                 blob.setBytes(1, newGroup.getPic());
-                preparedStatement1.setBlob(4, blob);
+                stmt1.setBlob(4, blob);
             } else {
-                preparedStatement1.setNull(4, Types.BLOB);
+                stmt1.setNull(4, Types.BLOB);
             }
-            if(preparedStatement1.executeUpdate() != 1){
-                return new RequestResult<>(false, null);
+            if(stmt1.executeUpdate() != 1){
+                return new RequestResult<>(-1, null);
+            }
+            
+            int groupID;
+            try (ResultSet keysSet = stmt1.getGeneratedKeys()) {
+                if (!keysSet.next()) {
+                    return new RequestResult<>(-1, null);
+                }
+                groupID = keysSet.getInt(1);
             }
 
-            preparedStatement2.setInt(1, newGroup.getGroupID());
-            preparedStatement2.setInt(2, newGroup.getGroupAdminID());
-            if(preparedStatement2.executeUpdate() == 0){
-                return new RequestResult<>(false, null);
+            stmt2.setInt(1, groupID);
+            stmt2.setInt(2, newGroup.getGroupAdminID());
+            if(stmt2.executeUpdate() == 0){
+                return new RequestResult<>(-1, null);
             }
-            return new RequestResult<>(true, null);
-        } catch (SQLException e) {
-            return new RequestResult<>(null,"DB ERROR"+ e.getMessage());
+            return new RequestResult<>(groupID, null);
+        } catch (SQLException ex) {
+            return new RequestResult<>(null, "DB Error: "
+                    + ex.getMessage());
         }
     }
 

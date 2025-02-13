@@ -22,26 +22,19 @@ public class NotificationCardController {
     private Button deleteButton;
 
     private Notification currentItem;
-    private ListView<Notification> parentListView;
-
-    
 
     public  void setData(Notification notification , ListView<Notification> listView){
         content.setText(notification.getContent());
         this.currentItem = notification;
-        parentListView = listView;    
     }
     @FXML
     void handleDeleteButton(ActionEvent event) {
-        
        ClientNotificationService notificationService = new ClientNotificationService();
        boolean markedAsRead = notificationService.deleteNotification(currentItem.getNotificationID());
        DataCenter.getInstance().getNotificationList().remove(currentItem);
 
        if (!markedAsRead) {
         ClientAlerts.invokeErrorAlert("Error", "Failed To Delete Notification");
-          
-         
        } 
 
     }

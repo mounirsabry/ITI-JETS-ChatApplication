@@ -3,6 +3,8 @@ import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.stage.Stage;
 import jets.projects.Controllers.*;
+import jets.projects.Services.Request.ClientAuthenticationService;
+import jets.projects.Services.ServerConnectivityService;
 
 public class Director {
     private final Parent signInParent;
@@ -49,6 +51,12 @@ public class Director {
        // set launch scene
        signinController.perform();
        stage.setScene(signInScene);
+       /////set on close////
+        stage.setOnCloseRequest((event)->{
+            ClientAuthenticationService clientAuthenticationService = new ClientAuthenticationService();
+            clientAuthenticationService.logout();
+            System.exit(0);
+        });
        stage.show();
     }
 
@@ -68,4 +76,7 @@ public class Director {
         loadingController.perform();
         stage.setScene(loadingScene);
     }
+
+    /// ////////////////////
+
 }

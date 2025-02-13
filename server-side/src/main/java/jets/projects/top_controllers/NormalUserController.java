@@ -133,7 +133,7 @@ public class NormalUserController {
                 contactID);
     }
 
-    public RequestResult<Boolean> sendContactMessage(ClientToken token,
+    public RequestResult<Integer> sendContactMessage(ClientToken token,
             ContactMessage message) {
         return contactMessagesManager.sendContactMessage(token, message);
     }
@@ -152,7 +152,7 @@ public class NormalUserController {
         return groupsManager.setGroupPic(token, groupID, pic);
     }
     
-    public RequestResult<Boolean> createGroup(ClientToken token, Group newGroup) {
+    public RequestResult<Integer> createGroup(ClientToken token, Group newGroup) {
         return groupsManager.createGroup(token, newGroup);
     }
     
@@ -202,7 +202,7 @@ public class NormalUserController {
                 groupID, messageID);
     }
     
-    public RequestResult<Boolean> sendGroupMessage(ClientToken token, GroupMessage message) {
+    public RequestResult<Integer> sendGroupMessage(ClientToken token, GroupMessage message) {
         return groupMessagesManager.sendGroupMessage(token, message);
     }
     

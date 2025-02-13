@@ -65,7 +65,7 @@ public interface NormalUserAPI extends Remote {
             ClientToken token, int otherID) throws RemoteException;
     
     // File included.
-    public boolean sendContactMessage(ClientToken token,
+    public int sendContactMessage(ClientToken token,
             ContactMessage message) throws RemoteException;
     
     public boolean markContactMessagesAsRead(ClientToken token, 
@@ -115,7 +115,7 @@ public interface NormalUserAPI extends Remote {
             int groupID, int messageID) throws RemoteException;
     
     // File included.
-    public boolean sendGroupMessage(ClientToken token,
+    public int sendGroupMessage(ClientToken token,
             GroupMessage message) throws RemoteException;
     
     public List<AnnouncementInfo> getAllAnnouncements(

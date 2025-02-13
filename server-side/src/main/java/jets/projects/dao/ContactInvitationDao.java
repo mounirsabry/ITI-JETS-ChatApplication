@@ -117,7 +117,6 @@ public class ContactInvitationDao{
         }
     }
 
-
     public RequestResult<Integer> sendContactInvitation(int senderID
             , int receiverID, ContactGroup contactGroup) {
         String checkQuery = "SELECT COUNT(*) FROM ContactInvitation WHERE sender_ID = ? AND receiver_ID = ?";

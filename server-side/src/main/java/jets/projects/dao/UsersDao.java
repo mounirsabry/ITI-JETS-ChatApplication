@@ -1,10 +1,12 @@
 package jets.projects.dao;
 
+import java.sql.Blob;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Timestamp;
+import java.sql.Types;
 import java.util.Date;
 import jets.projects.classes.RequestResult;
 import jets.projects.db_connections.ConnectionManager;
@@ -85,7 +87,7 @@ public class UsersDao {
                 + ", password, gender, country, birth_date"
                 + ", bio)"
                 + " VALUES"
-                + "(?, ?, ?, ?, ?, ?, ?, ?, ?, ?);";
+                + "(?, ?, ?, ?, ?, ?, ?, ?, ?);";
         
         try (Connection connection = ConnectionManager.getConnection();
             PreparedStatement stmt = connection.prepareStatement(query);) {
@@ -93,12 +95,20 @@ public class UsersDao {
             stmt.setString(i++, user.getDisplayName());
             stmt.setString(i++, user.getPhoneNumber());
             stmt.setString(i++, user.getEmail());
+           
             stmt.setBytes(i++, user.getPic());
+            
             stmt.setString(i++, user.getPassword());
             stmt.setString(i++, user.getGender().toString());
             stmt.setString(i++, user.getCountry().toString());
-            stmt.setDate(i++, new java.sql.Date(
-                    user.getBirthDate().getTime()));
+            
+            if (user.getBirthDate() != null) {
+                stmt.setDate(i++, new java.sql.Date(
+                        user.getBirthDate().getTime()));
+            } else {
+                stmt.setDate(i++, null);
+            }
+            
             stmt.setString(i++, user.getBio());
             int rowsInserted = stmt.executeUpdate();
             return new RequestResult<>(rowsInserted > 0, null);
@@ -128,15 +138,26 @@ public class UsersDao {
                     resultSet.getString("phone_number"));
             user.setEmail(
                     resultSet.getString("email"));
-            user.setPic(
-                    resultSet.getBytes("pic"));
+            Blob blob = resultSet.getBlob("pic");
+            if (blob == null) {
+                user.setPic(null);
+            } else {
+                user.setPic(blob.getBytes(1, (int) blob.length()));
+            }
+            
             String genderString = resultSet.getString("gender");
             user.setGender(
                     Gender.valueOf(genderString));
             String countryString = resultSet.getString("country");
             user.setCountry(Country.valueOf(countryString));
-            user.setBirthDate(
-                    resultSet.getDate("birth_date"));
+
+            java.sql.Date sqlDate = resultSet.getDate("birth_date");
+            if (sqlDate != null) {
+                user.setBirthDate(new java.util.Date(sqlDate.getTime()));
+            } else {
+                user.setBirthDate(null); // or handle it appropriately
+            }
+            
             Timestamp createdAtStamp 
                     = resultSet.getTimestamp("created_at");
             user.setCreatedAt(createdAtStamp.toLocalDateTime());
@@ -170,8 +191,14 @@ public class UsersDao {
             PreparedStatement stmt = connection.prepareStatement(query);) {
             int i = 1;
             stmt.setString(i++, username);
-            var sqlDate = new java.sql.Date(birthDate.getTime());
-            stmt.setDate(i++, sqlDate);
+
+            if (birthDate != null) {
+                var sqlDate = new java.sql.Date(birthDate.getTime());
+                stmt.setDate(i++, sqlDate);
+            } else {
+                stmt.setDate(i++, null);
+            }
+
             stmt.setString(i++, bio);
             stmt.setBytes(i++, pic);
             stmt.setInt(i++, userID);
@@ -195,7 +222,13 @@ public class UsersDao {
             if (!resultSet.next()) {
                 return new RequestResult<>(null, null);
             }
-            byte[] pic = resultSet.getBytes("pic");
+            Blob blob = resultSet.getBlob("pic");
+            byte[] pic;
+            if (blob == null) {
+                pic = null;
+            } else {
+                pic = blob.getBytes(1, (int) blob.length());
+            }
             return new RequestResult<>(pic, null);
         } catch (SQLException ex) {
             return new RequestResult<>(null, "DB Error: " 

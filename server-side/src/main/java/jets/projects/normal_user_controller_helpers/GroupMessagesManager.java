@@ -115,7 +115,7 @@ public class GroupMessagesManager {
         return groupMessagesDao.getGroupMessageFile(groupID, messageID);
     }
 
-    public RequestResult<Boolean> sendGroupMessage(ClientToken token,
+    public RequestResult<Integer> sendGroupMessage(ClientToken token,
             GroupMessage message) {
         var validationResult = tokenValidator.checkClientToken(token);
         if (validationResult.getErrorMessage() != null) {
@@ -158,14 +158,14 @@ public class GroupMessagesManager {
                     ExceptionMessages.NOT_MEMBER);
         }
         
-        // Work around, fix later, I should return the generated ID.
         var result = groupMessagesDao.sendGroupMessage(message);
         if (result.getErrorMessage() != null) {
             return result;
         }
+        int messageID = result.getResponseData();
         
+        message.setMessageID(messageID);
         message.setFile(null);
-        
         // Work around, fix later.
         message.setSentAt(LocalDateTime.now());
         

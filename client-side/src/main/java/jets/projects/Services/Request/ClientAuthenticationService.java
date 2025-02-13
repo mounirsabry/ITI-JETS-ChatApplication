@@ -11,7 +11,6 @@ import jets.projects.session.ClientSessionData;
 import jets.projects.session.ClientToken;
 import java.rmi.RemoteException;
 import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
 
 
 /**
@@ -24,7 +23,7 @@ public class ClientAuthenticationService {
     public boolean login(String phoneNumber, String password) {
          ServiceManager serviceManager = ServiceManager.getInstance();
          if(serviceManager == null){
-             ClientAlerts.invokeWarningAlert("Server Warning", "Can't connect to server server manager = null");
+             ClientAlerts.invokeWarningAlert("Server Warning", "Can't connect to server manager = null");
              return false;
          }
          NormalUserAPI normalUserAPI = serviceManager.getNormalUserAPI();
@@ -42,32 +41,36 @@ public class ClientAuthenticationService {
                  return false;
              }
              serviceManager.setClientSessionData(mySession);
-             ServerConnectivityService.getExecutorService().submit(() -> {
+             ServerConnectivityService.startWorking(); // Ensure executor is initialized
+             ExecutorService executor = ServerConnectivityService.getExecutorService();
+
+             if (executor == null) {
+                 ClientAlerts.invokeWarningAlert("Server Warning", "Executor Service is not initialized.");
+                 return false;
+             }
+
+             executor.submit(() -> {
                  System.out.println("thread");
                  while (!Thread.currentThread().isInterrupted()) {
                      try {
                          ServerConnectivityService.getServerAPI().registerPulse(serviceManager.getClientToken());
                          Thread.sleep(1000);
                      } catch (InterruptedException e) {
-                         Platform.runLater(()->{
-                             ClientAlerts.invokeWarningAlert("Server Warning from heart beat interrupted", e.getMessage());
-                         });
+                         Platform.runLater(() -> ClientAlerts.invokeWarningAlert("Server Warning", "Heartbeat interrupted: " + e.getMessage()));
                          Thread.currentThread().interrupt();
                      } catch (RemoteException e) {
-                         Platform.runLater(()->{
-                             ClientAlerts.invokeWarningAlert("Server Warning from heart beat remote", e.getMessage());
-                         });
+                         Platform.runLater(() -> ClientAlerts.invokeWarningAlert("Server Warning", "Remote exception: " + e.getMessage()));
                          Thread.currentThread().interrupt();
                      }
                  }
              });
+
 
              return true;
          } catch (RemoteException e) {
              if(e.getMessage().equals((ExceptionMessages.USER_MUST_CHANGE_PASSWORD_FOR_FIRST_LOGIN))){
                  ClientAlerts.invokeWarningAlert("Password Change Required", "You must change your password before logging in for the first time.");
              }
-             System.out.println(e.getMessage());
              ClientAlerts.invokeWarningAlert("Server Warning", e.getMessage());
              return false;
          }

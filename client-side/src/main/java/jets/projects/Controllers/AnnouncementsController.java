@@ -14,7 +14,6 @@ public class AnnouncementsController {
 
     @FXML
     private ListView<AnnouncementInfo> announcementsList;
-    private ObservableList<AnnouncementInfo> announcementObservableList = DataCenter.getInstance().getAnnouncementList();
 
     private Stage stage;
     private Director director;
@@ -26,7 +25,7 @@ public class AnnouncementsController {
     @FXML
     private void initialize() {
         // Bind the ListView to the observable list
-        announcementsList.setItems(announcementObservableList);
+        announcementsList.setItems(DataCenter.getInstance().getAnnouncementList());
 
         URL fxmlURL = getClass().getResource("/fxml/announcementCard.fxml");
         if (fxmlURL == null) {

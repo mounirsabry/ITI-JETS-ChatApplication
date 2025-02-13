@@ -25,47 +25,40 @@ import java.io.ByteArrayOutputStream;
 import java.io.DataOutputStream;
 import java.io.File;
 import java.io.IOException;
+import java.nio.file.Files;
+import java.time.LocalDate;
+import java.time.ZoneId;
 import java.util.Date;
 import java.util.Locale;
 
 public class EditProfileController {
-    
+    private static HomeScreenController homeScreenController;
+    public static void setHome(HomeScreenController home){
+        homeScreenController = home;
+    }
+        byte[] imageBytes = null;
         @FXML
         private Circle profilePicture;
-    
         @FXML
         private Button addprofilePictureButton;
-    
         @FXML
         private TextField username;
-    
         @FXML
         private TextField emailField;
-    
         @FXML
         private TextField phoneField;
-    
         @FXML
         private TextField bioField;
-    
         @FXML
         private ComboBox<String> genderComboBox;
-    
         @FXML
         private DatePicker dobField;
-    
         @FXML
         private ComboBox<String> countryComboBox;
-    
-        @FXML
-        private Button saveButton;
-
-        private Stage owner;
-        private Stage popupStage;
-
         @FXML
         void initialize(){
             // read logged-in user info and initialize the text fields with it
+
             NormalUser myprofileInfo = DataCenter.getInstance().getMyProfile();
             if(myprofileInfo.getPic()!=null){
                 profilePicture.setFill(new ImagePattern(new Image(new ByteArrayInputStream(myprofileInfo.getPic()))));
@@ -78,10 +71,16 @@ public class EditProfileController {
             bioField.setText(myprofileInfo.getBio());
             genderComboBox.getItems().addAll("Female", "Male");
             genderComboBox.setValue(myprofileInfo.getGender().toString());
-            initCountry();
-            if (myprofileInfo.getCountry() != null && countryComboBox.getItems().contains(myprofileInfo.getCountry())) {
-                countryComboBox.setValue(myprofileInfo.getCountry().toString());
+            if(myprofileInfo.getBirthDate() != null){
+                LocalDate localDate = myprofileInfo.getBirthDate().toInstant() // Convert Date to Instant
+                        .atZone(ZoneId.systemDefault()) // Convert Instant to ZonedDateTime
+                        .toLocalDate();
+                dobField.setValue(localDate);
             }
+            if(myprofileInfo.getCountry() != null){
+                countryComboBox.setValue(myprofileInfo.getCountry().name());
+            }
+
         }
     
         @FXML
@@ -92,8 +91,10 @@ public class EditProfileController {
 
                 if (selectedFile != null) {
                     try {
-                        Image image = new Image(selectedFile.toURI().toString());
-                        profilePicture.setFill(new ImagePattern(image));
+                        imageBytes = Files.readAllBytes(selectedFile.toPath());
+                        //Image image = new Image(selectedFile.toURI().toString());
+
+                        profilePicture.setFill(new ImagePattern(new Image(new ByteArrayInputStream(imageBytes))));
                     } catch (Exception e) {
                         System.out.println("Could not load the image: " + e.getMessage());
                     }
@@ -108,21 +109,18 @@ public class EditProfileController {
             String bio = bioField.getText().trim();
             java.time.LocalDate dob = dobField.getValue();
             Date birthDate = (dob != null) ? java.util.Date.from(dob.atStartOfDay(java.time.ZoneId.systemDefault()).toInstant()) : null;
-            
-            
-            byte[] profilePic = null;
-          if (profilePicture.getFill() instanceof ImagePattern) {
-              ImagePattern pattern = (ImagePattern) profilePicture.getFill();
-              Image image = pattern.getImage();
-              profilePic = convertImageToByteArray(image);  
-          }
+
 
           ClientProfileService profileService = new ClientProfileService();
-          boolean success = profileService.editProfile(username.getText(), birthDate, bio, profilePic);
+          if(imageBytes == null){
+              imageBytes = DataCenter.getInstance().getMyProfile().getPic();
+          }
+          boolean success = profileService.editProfile(username.getText(), birthDate, bio, imageBytes);
 
           if (success) {
+              //DataCenter.getInstance().getMyProfile().setPic();
                   ClientAlerts.invokeInformationAlert("Saved","Edit Successfully");
-
+                  homeScreenController.updateProfile();
           }
           else{
 
@@ -130,7 +128,6 @@ public class EditProfileController {
           }
 
           }
-
           private byte[] convertImageToByteArray(Image image) {
             int width = (int) image.getWidth();
             int height = (int) image.getHeight();
@@ -164,12 +161,6 @@ public class EditProfileController {
 
             return byteArrayOutputStream.toByteArray();
         }
-
-        @FXML
-        void handleStatusComboBox(ActionEvent event) {
-            //update status and notify contacts
-        }
-
         void initCountry(){
             // Get all country names
             String[] countryCodes = Locale.getISOCountries();
@@ -177,7 +168,7 @@ public class EditProfileController {
 
             for (String countryCode : countryCodes) {
                 Locale locale = new Locale("", countryCode);
-                countryList.add(locale.getDisplayCountry());
+                countryList.add(locale.getDisplayCountry().toString().toUpperCase());
             }
             FXCollections.sort(countryList);
             countryComboBox.setItems(countryList);
