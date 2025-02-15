@@ -1,10 +1,10 @@
-/* Colors */
+/* Updated Colors - Purple Theme */
 /* {
-    --light-gray: #ccdbdc;
-    --greenish-blue: #9ad1d4;
-    --baby-blue: #80ced7;
-    --petroleum: #007ea7;
-    --navy: #003249;
+    --light-purple: #d6b3ff;
+    --soft-lavender: #b088f9;
+    --deep-purple: #7d5ba6;
+    --dark-purple: #593196;
+    --night-purple: #3a1f5d;
     --white: #f9f9f9;
     --grayish-white: #f1f2f6;
 } */
@@ -16,157 +16,107 @@
 }
 
 .sideBar {
-    -fx-background-color: linear-gradient(to top, #9ad1d4, #ccdbdc, #007ea7);
+    -fx-background-color: linear-gradient(to top, #b088f9, #d6b3ff, #593196);
     -fx-border-radius: 15;
     -fx-background-radius: 0 10 10 0;
     -fx-padding: 10;
 }
+
 .sideBarButtons{
     -fx-background-color: transparent;
-    -fx-min-width: 25px; 
-    -fx-min-height: 25px; 
-    -fx-max-width: 25px; 
-    -fx-max-height: 25px; 
+    -fx-min-width: 25px;
+    -fx-min-height: 25px;
+    -fx-max-width: 25px;
+    -fx-max-height: 25px;
     -fx-alignment: center;
     -fx-cursor: hand;
 }
-.iconsButtons  {
-    -fx-background-color: #ccdbdc; 
-    -fx-background-radius: 40%; 
-    -fx-min-width: 50px; 
-    -fx-min-height: 50px; 
-    -fx-max-width: 50px; 
-    -fx-max-height: 50px;
-    -fx-border-color: #003249; 
+
+.iconsButtons {
+    -fx-background-color: #d6b3ff;
+    -fx-background-radius: 40%;
+    -fx-border-color: #3a1f5d;
     -fx-border-width: 1;
-    -fx-border-radius: 40%; 
-    -fx-alignment: center;
-    -fx-cursor: hand;
+    -fx-border-radius: 40%;
     -fx-effect: dropshadow(gaussian, rgba(0, 0, 0, 0.2), 5, 0.5, 0, 1);
 }
 .iconsButtons:hover {
-    -fx-background-color: #80ced7;
-    -fx-border-color: #007ea7;
+    -fx-background-color: #b088f9;
+    -fx-border-color: #7d5ba6;
 }
-.popup{
-    -fx-font-family: "Arial", sans-serif;
+
+.popup {
     -fx-background-color: white;
-    -fx-padding: 10;
-    -fx-background-radius: 5%; 
-    -fx-border-color: #003249; 
-    -fx-border-width: 1;
-    -fx-border-radius: 5%; 
-    -fx-alignment: center;
-    -fx-cursor: hand;
-    -fx-effect: dropshadow(gaussian, rgba(0, 0, 0, 0.2), 5, 0.5, 0, 1);
+    -fx-border-color: #3a1f5d;
 }
-.comboBox{
-    -fx-font-family: "Arial", sans-serif;
-    -fx-background-color: f1f2f6;
-    -fx-padding: 10;
-    -fx-background-radius: 10%; 
-}
+
 .title {
-    -fx-font-size: 18px;
-    -fx-text-fill: #007ea7;
-    -fx-font-weight: bold;
+    -fx-text-fill: #7d5ba6;
 }
 
-.subtitle {
-    -fx-font-size: 16px;
-    -fx-text-fill: #003249;
-}
-
-.bodyText {
-    -fx-font-size: 14px;
-    -fx-text-fill: #003249;
-}
-
-.smallText {
-    -fx-font-size: 12px;
-    -fx-text-fill: #003249;
+.subtitle, .bodyText, .smallText {
+    -fx-text-fill: #3a1f5d;
 }
 
 .primaryButton {
-    -fx-background-color: #007ea7;
+    -fx-background-color: #593196;
     -fx-text-fill: #f9f9f9;
-    -fx-padding: 10 20;
-    -fx-font-size: 14px;
-    -fx-font-weight: bold;
-    -fx-background-radius: 25;
-    -fx-border-radius: 25;
-    -fx-cursor: hand;
-    -fx-effect: dropshadow(gaussian, rgba(0, 0, 0, 0.15), 4, 0.5, 0, 2);
 }
 .primaryButton:hover {
-    -fx-background-color: #003249;
+    -fx-background-color: #3a1f5d;
 }
+
 .secondaryButton {
-    -fx-background-color: #ccdbdc;
-    -fx-text-fill: #007ea7;
-    -fx-padding: 10 20;
-    -fx-font-size: 14px;
-    -fx-font-weight: bold;
-    -fx-background-radius: 25;
-    -fx-border-color: #003249;
-    -fx-border-width: 1;
-    -fx-border-radius: 25;
-    -fx-cursor: hand;
+    -fx-background-color: #d6b3ff;
+    -fx-text-fill: #593196;
+    -fx-border-color: #3a1f5d;
 }
 .secondaryButton:hover {
-    -fx-background-color: #80ced7;
+    -fx-background-color: #b088f9;
     -fx-text-fill: #f9f9f9;
 }
 
 .card {
     -fx-background-color: #f9f9f9;
-    -fx-border-radius: 10;
-    -fx-background-radius: 10;
-    -fx-padding: 10;
-    -fx-effect: dropshadow(gaussian, rgba(0, 0, 0, 0.1), 6, 0.3, 0, 2);
-}
-.card:hover {
-    -fx-effect: dropshadow(gaussian, rgba(0, 0, 0, 0.2), 10, 0.5, 0, 3);
-}
-
-.listView {
-    -fx-background-color: transparent;
-    -fx-control-inner-background: transparent;
-    -fx-border-color: transparent;
+    -fx-border-color: #7d5ba6;
 }
 
 .textField {
     -fx-background-color: #f1f2f6;
-    -fx-border-color: #003249;
-    -fx-border-width: 1;
-    -fx-background-radius: 5;
-    -fx-border-radius: 5;
-    -fx-padding: 5;
-    -fx-font-size: 14px;
+    -fx-border-color: #593196;
 }
 
 .textField:focused {
-    -fx-border-color: #007ea7;
+    -fx-border-color: #7d5ba6;
 }
 
-.hidden {
-    -fx-opacity: 0;
+
+
+.contactMessagesListView {
+    -fx-background-color: transparent;
+    -fx-border-color: transparent;
+    -fx-padding: 5px;
 }
 
-.visible {
-    -fx-opacity: 1;
+.contactMessagesListView .list-cell {
+    -fx-background-color: transparent;
+    -fx-padding: 8px;
+    -fx-border-color: transparent;
+    -fx-effect: none;
 }
 
-.flex {
-    -fx-alignment: center;
-    -fx-spacing: 10;
+/* Remove selection, hover, and focus effects completely */
+.contactMessagesListView .list-cell:selected,
+.contactMessagesListView .list-cell:focused,
+.contactMessagesListView .list-cell:hover {
+    -fx-background-color: transparent !important;
+    -fx-border-color: transparent !important;
+    -fx-effect: none !important;
 }
 
-.center {
-    -fx-alignment: center;
+/* Hide the scrollbar completely */
+.contactMessagesListView .scroll-bar {
+    -fx-max-width: 5;
 }
 
-.spaced {
-    -fx-spacing: 15;
-}
-
+/////

@@ -7,9 +7,9 @@
 <?import javafx.scene.layout.HBox?>
 <?import javafx.scene.layout.VBox?>
 
-<HBox alignment="CENTER" maxHeight="400.0" maxWidth="600.0" minHeight="-Infinity" minWidth="-Infinity" prefHeight="400.0" prefWidth="600.0" styleClass="popup" stylesheets="@../styles/mainStyles.css" xmlns="http://javafx.com/javafx/9.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="jets.projects.Controllers.SettingsController">
+<HBox alignment="CENTER" maxHeight="400.0" maxWidth="600.0" minHeight="-Infinity" minWidth="-Infinity" prefHeight="400.0" prefWidth="600.0" styleClass="sideBar" stylesheets="@../styles/mainStyles.css" xmlns="http://javafx.com/javafx/9.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="jets.projects.Controllers.SettingsController">
    <children>
-      <VBox alignment="CENTER" maxHeight="400.0" maxWidth="600.0" prefHeight="400.0" prefWidth="600.0" spacing="15.0" style="-fx-background-color: white;" stylesheets="@../styles/mainStyles.css">
+      <VBox alignment="CENTER" maxHeight="400.0" maxWidth="600.0" prefHeight="400.0" prefWidth="600.0" spacing="15.0" stylesheets="@../styles/mainStyles.css">
          <children>
             <Label styleClass="title" stylesheets="@../styles/mainStyles.css" text="Settings" />
             <PasswordField fx:id="oldpasswordField" maxWidth="250.0" prefWidth="250.0" promptText="Old Password" />

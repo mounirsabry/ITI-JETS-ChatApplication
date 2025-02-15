@@ -35,7 +35,6 @@ public class ClientAuthenticationService {
          try{
              System.out.println(serviceManager.getMyClientAPIImpl());
              ClientSessionData mySession = normalUserAPI.login(phoneNumber, password, serviceManager.getMyClientAPIImpl());
-             System.out.println(mySession);
              if(mySession == null){
                  ClientAlerts.invokeWarningAlert("Server Warning", "User not found");
                  return false;
@@ -59,7 +58,7 @@ public class ClientAuthenticationService {
                          //Platform.runLater(() -> ClientAlerts.invokeWarningAlert("Server Warning", "Heartbeat interrupted: " + e.getMessage()));
                          Thread.currentThread().interrupt();
                      } catch (RemoteException e) {
-                         Platform.runLater(() -> ClientAlerts.invokeWarningAlert("Server Warning", "Remote exception: " + e.getMessage()));
+                         //Platform.runLater(() -> ClientAlerts.invokeWarningAlert("Server Warning", "Remote exception: " + e.getMessage()));
                          Thread.currentThread().interrupt();
                      }
                  }
@@ -69,9 +68,9 @@ public class ClientAuthenticationService {
              return true;
          } catch (RemoteException e) {
              if(e.getMessage().equals((ExceptionMessages.USER_MUST_CHANGE_PASSWORD_FOR_FIRST_LOGIN))){
-                 ClientAlerts.invokeWarningAlert("Password Change Required", "You must change your password before logging in for the first time.");
+                 //ClientAlerts.invokeWarningAlert("Password Change Required", "You must change your password before logging in for the first time.");
              }
-             ClientAlerts.invokeWarningAlert("Server Warning", "data is invalid try again");
+             //ClientAlerts.invokeWarningAlert("Server Warning", "data is invalid try again");
              return false;
          }
     }

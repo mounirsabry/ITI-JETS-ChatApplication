@@ -6,8 +6,7 @@
 <?import javafx.scene.layout.HBox?>
 <?import javafx.scene.shape.Circle?>
 
-<HBox fx:id="requestHbox" alignment="CENTER_LEFT" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="80.0" prefWidth="600.0" xmlns="http://javafx.com/javafx/9.0.1" 
-xmlns:fx="http://javafx.com/fxml/1" fx:controller="jets.projects.Controllers.InvitationCardController">
+<HBox fx:id="requestHbox" alignment="CENTER_LEFT" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="80.0" prefWidth="571.0" styleClass="card" stylesheets="@../styles/mainStyles.css" xmlns="http://javafx.com/javafx/9.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="jets.projects.Controllers.InvitationCardController">
    <children>
       <HBox fx:id="userInfoHbox" alignment="CENTER_LEFT" HBox.hgrow="ALWAYS">
          <children>
@@ -18,6 +17,9 @@ xmlns:fx="http://javafx.com/fxml/1" fx:controller="jets.projects.Controllers.Inv
                </padding>
             </Label>
          </children>
+         <padding>
+            <Insets left="20.0" />
+         </padding>
       </HBox>
       <Button fx:id="acceptButton" mnemonicParsing="false" onAction="#handleAcceptButton" styleClass="primaryButton" stylesheets="@../styles/mainStyles.css" text="Accept">
          <HBox.margin>
@@ -29,7 +31,7 @@ xmlns:fx="http://javafx.com/fxml/1" fx:controller="jets.projects.Controllers.Inv
             <Insets left="60.0" />
          </opaqueInsets>
          <HBox.margin>
-            <Insets left="20.0" />
+            <Insets left="20.0" right="20.0" />
          </HBox.margin>
       </Button>
    </children>

@@ -93,6 +93,8 @@ public class Utilities {
 
             // Remove blur effect when popup closes
             popupStage.setOnCloseRequest(ev -> owner.getScene().getRoot().setEffect(null));
+            popupStage.getIcons().add(new Image(Utilities.class.getResource("/images/small-logo.png").toExternalForm()));
+
             popupStage.showAndWait(); 
         } catch (IOException e) {
             e.printStackTrace();

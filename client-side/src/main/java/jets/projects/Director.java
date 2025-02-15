@@ -1,6 +1,7 @@
 package jets.projects;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
+import javafx.scene.image.Image;
 import javafx.stage.Stage;
 import jets.projects.Controllers.*;
 import jets.projects.Services.Request.ClientAuthenticationService;
@@ -57,7 +58,9 @@ public class Director {
             clientAuthenticationService.logout();
             System.exit(0);
         });
-       stage.show();
+        stage.getIcons().add(new Image(getClass().getResource("/images/small-logo.png").toExternalForm()));
+        stage.setTitle("Wasla");
+        stage.show();
     }
 
     public void signin(){

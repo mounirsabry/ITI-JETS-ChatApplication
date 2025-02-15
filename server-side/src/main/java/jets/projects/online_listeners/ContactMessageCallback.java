@@ -64,6 +64,7 @@ public class ContactMessageCallback {
             try {
                 userInfo.getImpl().contactMessageReceived(message); 
             } catch (RemoteException e) {
+                System.out.println("exception in callback");
                 System.err.println("Callback Error: " 
                         + e.getMessage());
             }

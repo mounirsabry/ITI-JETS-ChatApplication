@@ -51,7 +51,7 @@ INSERT INTO ContactMessage VALUES
 (0, 4, 3, DEFAULT, 'Hello Salma', FALSE, FALSE, NULL);
 
 INSERT INTO UsersGroup VALUES
-(0, 'Chat-Zone-Dev-Team', 'Some basic description for the dev group.',
+(0, 'ITI-JETS', 'Some basic description for the dev group.',
 1, NULL, DEFAULT);
 
 INSERT INTO UsersGroupMember VALUES

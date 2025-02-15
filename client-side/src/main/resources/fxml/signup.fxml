@@ -7,16 +7,17 @@
 <?import javafx.scene.control.PasswordField?>
 <?import javafx.scene.control.TextField?>
 <?import javafx.scene.control.ToggleButton?>
+<?import javafx.scene.image.Image?>
+<?import javafx.scene.image.ImageView?>
 <?import javafx.scene.layout.HBox?>
-<?import javafx.scene.layout.Pane?>
 <?import javafx.scene.layout.Region?>
 <?import javafx.scene.layout.VBox?>
 <?import javafx.scene.shape.Circle?>
+<?import javafx.scene.text.Font?>
 
 <HBox alignment="CENTER" prefHeight="600.0" prefWidth="800.0" xmlns="http://javafx.com/javafx/9.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="jets.projects.Controllers.SignUpController">
    <children>
-      <Pane prefHeight="600.0" prefWidth="200.0" style="-fx-background-color: linear-gradient(to top, #9ad1d4, #80ced7, #007ea7);" HBox.hgrow="ALWAYS" />
-      <VBox alignment="CENTER" prefHeight="600.0" prefWidth="400.0" spacing="20.0" style="-fx-background-color: white; -fx-padding: 10;" stylesheets="@../styles/mainStyles.css" HBox.hgrow="ALWAYS">
+      <VBox alignment="CENTER" prefHeight="600.0" prefWidth="400.0" spacing="20.0" styleClass="sideBar" stylesheets="@../styles/mainStyles.css" HBox.hgrow="ALWAYS">
          <padding>
             <Insets bottom="20.0" left="20.0" right="20.0" top="20.0" />
          </padding>
@@ -27,8 +28,16 @@
                   <ToggleButton fx:id="signUpToggleButton" onAction="#handleSignUpToggle" prefWidth="120.0" style="-fx-background-radius: 0 15 15 0; -fx-padding: 10; -fx-background-color: white; -fx-text-fill: black; -fx-effect: dropshadow(gaussian, rgba(0, 0, 0, 0.4), 8, 0.5, 0, 0);" text="Sign Up" />
                </children>
             </HBox>
-            <Circle fx:id="profilepicture" fill="#1f93ff04" radius="100.0" stroke="BLACK" strokeType="INSIDE" />
-            <Button fx:id="addprofilePictureButton" mnemonicParsing="false" onAction="#addProfilePictureButton" style="-fx-background-color: transparent;" text="Add Profile Picture" textFill="#9e9d9d" />
+            <ImageView fitHeight="139.0" fitWidth="247.0" pickOnBounds="true" preserveRatio="true">
+               <image>
+                  <Image url="@../images/Welcome%20to%20Wasla%20and%20happy%20emoji%20purple%20theme.jpg" />
+               </image>
+            </ImageView>
+            <Circle fx:id="profilepicture" fill="#1f93ff04" radius="22.0" stroke="BLACK" strokeType="INSIDE" />
+            <Button fx:id="addprofilePictureButton" mnemonicParsing="false" onAction="#addProfilePictureButton" prefHeight="31.0" prefWidth="158.0" style="-fx-background-color: transparent;" text="Add Profile Picture" textFill="#774444">
+               <font>
+                  <Font size="15.0" />
+               </font></Button>
             <HBox alignment="CENTER" spacing="20.0">
                <children>
                   <VBox alignment="CENTER_LEFT" prefHeight="193.0" prefWidth="246.0" spacing="15.0">

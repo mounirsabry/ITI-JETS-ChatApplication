@@ -15,7 +15,10 @@ import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.scene.Node;
 import javafx.scene.control.*;
+import javafx.scene.image.ImageView;
 import javafx.scene.layout.*;
+import javafx.scene.text.Font;
+import javafx.scene.text.FontWeight;
 import javafx.stage.FileChooser;
 import jets.projects.ServiceManager;
 import jets.projects.Services.Request.*;
@@ -61,7 +64,15 @@ public class HomeScreenController {
     @FXML
     private ListView<GroupMessage> groupMessagesListView;
     @FXML
+    private HBox contactInfoBox;
+    @FXML
+    private HBox messageBox;
+    @FXML
     private ListView<ContactInfo> contactListView;
+    @FXML
+    private ListView<Group> groupListView;
+    @FXML
+    private StackPane stackPane;
 
     private Stage stage;
     private Director myDirector;
@@ -76,6 +87,13 @@ public class HomeScreenController {
         this.myDirector = myDirector;
     }
     public void perform() {
+        Image image = new Image(getClass().getResource("/images/bg3.png").toExternalForm());
+        BackgroundImage bgImage = new BackgroundImage(
+                image, BackgroundRepeat.NO_REPEAT, BackgroundRepeat.NO_REPEAT,
+                BackgroundPosition.CENTER, new BackgroundSize(150, 150, true, true, true, false)
+        );
+        stackPane.setVisible(false);
+        stackPane.setBackground(new Background(bgImage));
         NormalUser myprofile = DataCenter.getInstance().getMyProfile();
         if(myprofile.getPic() != null){
             myprofilepicture.setFill(new ImagePattern(new Image(new ByteArrayInputStream(myprofile.getPic()))));
@@ -145,171 +163,19 @@ public class HomeScreenController {
         URL fxmlURL = getClass().getResource("/fxml/addGroup.fxml");
         Utilities.showPopup(owner, fxmlURL, 600, 400);
     }
-//@FXML
-//public void handleContactButton() {
-//    TreeView<String> treeView = createTreeView();
-//
-//    Node existingNode = Utilities.getExistingNode(mainContainer, 1, 2);
-//    if (existingNode != null) {
-//        mainContainer.getChildren().remove(existingNode);
-//    }
-//    mainContainer.add(treeView, 1, 2);
-//    GridPane.setRowSpan(treeView, GridPane.REMAINING);
-//    treeView.minWidth(200);
-//
-//    // Set up the listener for contactList changes
-//    setupContactListListener();
-//
-//    // Handle contact selection
-//    treeView.getSelectionModel().selectedItemProperty().addListener((obs, oldItem, newItem) -> {
-//        if (newItem != null && newItem.getParent() != treeView.getRoot()) { // Ensure it's not a category
-//            String contactId = newItem.getValue().split(" - ")[0]; // Extract the contact ID
-//            int contactIdInt = Integer.parseInt(contactId); // Parse safely
-//
-//            ContactInfo contactInfo = DataCenter.getInstance().getContactInfoMap().get(contactIdInt);
-//            if (contactInfo.getPic() != null) {
-//                pic.setFill(new ImagePattern(new Image(new ByteArrayInputStream(contactInfo.getPic()))));
-//            } else {
-//                pic.setFill(new ImagePattern(new Image(getClass().getResource("/images/blank-profile.png").toExternalForm())));
-//            }
-//            name.setText(contactInfo.getName());
-//            id.setText(contactId);
-//            NormalUserStatus contactStatus = contactService.getContactOnlineStatus(contactIdInt);
-//            if (contactStatus != null) {
-//                status.setText(contactStatus.toString());
-//            } else {
-//                status.setText("UNKNOWN");
-//                status.setStyle("-fx-text-fill: red;");
-//            }
-//
-//            // Open chat
-//            Platform.runLater(() -> {
-//                contactMessagesListView.setVisible(true);
-//                groupMessagesListView.setVisible(false);
-//                contactMessagesListView.setItems(DataCenter.getInstance().getContactMessagesMap().get(contactIdInt));
-//
-//                // Scroll to the last item
-//                contactMessagesListView.getItems().addListener((ListChangeListener<ContactMessage>) change -> {
-//                    while (change.next()) {
-//                        if (change.wasAdded()) {
-//                            contactMessagesListView.scrollTo(contactMessagesListView.getItems().size() - 1);
-//                        }
-//                    }
-//                });
-//
-//                contactMessagesListView.setCellFactory(lv -> new MessageContactCard());
-//                contactMessagesListView.scrollTo(contactMessagesListView.getItems().size() - 1);
-//
-//                if (!DataCenter.getInstance().getContactMessagesMap().get(contactIdInt).isEmpty()) {
-//                    boolean read = contactMessageService.markContactMessagesAsRead(contactIdInt);
-//
-//                    if (!read) ClientAlerts.invokeErrorAlert("Error", "Failed to mark messages as read");
-//                    else{
-//                        DataCenter.getInstance().getContactMessagesMap().get(contactIdInt).forEach(e->{
-//                            e.setIsRead(true);
-//                        });
-//                        DataCenter.getInstance().getUnreadContactMessages().get(contactIdInt).set(0);
-//                    }
-//                }
-//            });
-//        }
-//    });
-//}
-//    private void setupContactListListener() {
-//        DataCenter.getInstance().getContactList()
-//                .addListener((ListChangeListener<ContactInfo>) change -> {
-//                    handleContactButton();
-//        });
-//    }
-//    private void populateTreeView(TreeItem<String> rootItem, TreeItem<String> familyItem, TreeItem<String> friendsItem, TreeItem<String> workItem, TreeItem<String> otherItem) {
-//        // Clear existing items
-//        familyItem.getChildren().clear();
-//        friendsItem.getChildren().clear();
-//        workItem.getChildren().clear();
-//        otherItem.getChildren().clear();
-//        ObservableList<ContactInfo> contactList = DataCenter.getInstance().getContactList();
-//        // Populate with contacts
-//
-//        for (ContactInfo contact : contactList) {
-//            switch (contact.getContact().getContactGroup()) {
-//                case FAMILY -> familyItem.getChildren().add(createContactItem(contact));
-//                case WORK -> workItem.getChildren().add(createContactItem(contact));
-//                case FRIENDS -> friendsItem.getChildren().add(createContactItem(contact));
-//                case OTHER -> otherItem.getChildren().add(createContactItem(contact));
-//                default -> {}
-//            }
-//        }
-//
-//        // Expand categories
-//        familyItem.setExpanded(true);
-//        friendsItem.setExpanded(true);
-//        workItem.setExpanded(true);
-//        otherItem.setExpanded(true);
-//    }
-//    private TreeView<String> createTreeView() {
-//        TreeView<String> treeView = new TreeView<>();
-//        treeView.getStylesheets().add(getClass().getResource("/styles/homeScreenStyles.css").toExternalForm());
-//        treeView.getStyleClass().add("chatsList");
-//
-//        // Create the root item
-//        TreeItem<String> rootItem = new TreeItem<>("Contacts");
-//        treeView.setRoot(rootItem);
-//        treeView.setShowRoot(false);
-//
-//        // Create category items
-//        TreeItem<String> familyItem = new TreeItem<>("Family");
-//        TreeItem<String> friendsItem = new TreeItem<>("Friends");
-//        TreeItem<String> workItem = new TreeItem<>("Work");
-//        TreeItem<String> otherItem = new TreeItem<>("Others");
-//
-//        // Add categories to the root
-//        rootItem.getChildren().addAll(familyItem, friendsItem, workItem, otherItem);
-//
-//        // Populate the tree with contacts
-//        populateTreeView(rootItem, familyItem, friendsItem, workItem, otherItem);
-//
-//        // Set cell factory
-//        treeView.setCellFactory(param -> new TreeCell<>() {
-//            @Override
-//            protected void updateItem(String item, boolean empty) {
-//                super.updateItem(item, empty);
-//                if (empty || item == null) {
-//                    setText(null);
-//                    setGraphic(null);
-//                } else {
-//                    TreeItem<String> treeItem = getTreeItem();
-//                    if (treeItem.getParent() == rootItem) {
-//                        setText(treeItem.getValue());
-//                    } else {
-//                        setText(null);
-//                    }
-//                    setGraphic(treeItem.getGraphic());
-//                }
-//            }
-//        });
-//
-//
-//        return treeView;
-//    }
+
     @FXML
     void handleContactButton(){
-        ListView<ContactInfo> contactsListView = new ListView<>();
-        contactsListView.getStylesheets().add(getClass().getResource("/styles/homeScreenStyles.css").toExternalForm());
-        contactsListView.getStyleClass().add("chatsList");
-        // set custom list items
-        contactsListView.setCellFactory(lv->new ContactCard());
-        contactsListView.setItems(DataCenter.getInstance().getContactList());
-        Node existingNode = Utilities.getExistingNode(mainContainer, 1, 2);
-        if (existingNode != null) {
-            mainContainer.getChildren().remove(existingNode);
-            mainContainer.add(contactsListView, 1, 2);
-            GridPane.setRowSpan(contactsListView , GridPane.REMAINING);
-            contactsListView.setMinWidth(200);
-        }
-        //Utilities.populateGroupsList(groupsListView,DataCenter.getInstance().getGroupList());
-        contactsListView.getSelectionModel().selectedItemProperty().addListener((obs, oldSelection, selectedContact) -> {
+        contactListView.getSelectionModel().clearSelection(); // Clear previous selection
+
+        contactListView.setVisible(true);
+        groupListView.setVisible(false);
+
+        contactListView.setCellFactory(lv->new ContactCard());
+        contactListView.setItems(DataCenter.getInstance().getContactList());
+
+        contactListView.getSelectionModel().selectedItemProperty().addListener((obs, oldSelection, selectedContact) -> {
             if (selectedContact != null) {
-                System.out.println("1 "+selectedContact);
                 int contactID =  selectedContact.getContact().getSecondID(); // extract group id
                 id.setText(""+contactID);
                 // open group chat
@@ -317,16 +183,57 @@ public class HomeScreenController {
                 if(contactInfo.getPic()!=null){
                     pic.setFill(new ImagePattern(new Image(new ByteArrayInputStream(contactInfo.getPic()))));
                 }else{
-                    pic.setFill(new ImagePattern(new Image(getClass().getResource("/images/blank-group-picture.png").toExternalForm())));
+                    pic.setFill(new ImagePattern(new Image(getClass().getResource("/images/blank-profile.png").toExternalForm())));
                 }
                 name.setText(contactInfo.getName());
+                NormalUserStatus s = contactService.getContactOnlineStatus(contactID);
+                status.setText(s.name());
+                status.setFont(Font.font("Arial", FontWeight.BOLD, 10));
+                if(s == NormalUserStatus.AVAILABLE) {
+                    Image image = new Image(getClass().getResource("/images/available.png").toExternalForm());
+                    ImageView imageView = new ImageView(image);
+                    imageView.setFitWidth(10);  // Adjust width
+                    imageView.setFitHeight(10); // Adjust height
+                    status.setGraphic(imageView);
+                }
+                if(s == NormalUserStatus.BUSY){
+                    Image image = new Image(getClass().getResource("/images/busy.png").toExternalForm());
+                    ImageView imageView = new ImageView(image);
+                    imageView.setFitWidth(10);  // Adjust width
+                    imageView.setFitHeight(10); // Adjust height
+                    status.setGraphic(imageView);
+                }
+                if(s == NormalUserStatus.AWAY){
+                    Image image = new Image(getClass().getResource("/images/away.png").toExternalForm());
+                    ImageView imageView = new ImageView(image);
+                    imageView.setFitWidth(10);  // Adjust width
+                    imageView.setFitHeight(10); // Adjust height
+                    status.setGraphic(imageView);
+                }
+                if(s == NormalUserStatus.OFFLINE){
+                    Image image = new Image(getClass().getResource("/images/offline.png").toExternalForm());
+                    ImageView imageView = new ImageView(image);
+                    imageView.setFitWidth(10);  // Adjust width
+                    imageView.setFitHeight(10); // Adjust height
+                    status.setGraphic(imageView);
+                }
+                contactInfoBox.setVisible(true);
+                messageBox.setVisible(true);
+                status.setVisible(true);
 
                 Platform.runLater(() -> {
+                    stackPane.setVisible(true);
                     groupMessagesListView.setVisible(false);
+                    groupMessagesListView.setManaged(false);
+
                     contactMessagesListView.setVisible(true);
+                    contactMessagesListView.setManaged(true);
+
+                    contactMessagesListView.toFront();
+                    contactMessagesListView.getParent().requestLayout();
+
                     contactMessagesListView.setItems(DataCenter.getInstance().getContactMessagesMap().getOrDefault(contactID
                     ,FXCollections.synchronizedObservableList(FXCollections.observableArrayList())));
-                    System.out.println("2 "+DataCenter.getInstance().getContactMessagesMap().get(contactID));
                     DataCenter.getInstance().getContactMessagesMap().get(contactID)
                             .addListener((ListChangeListener<ContactMessage>) change -> {
                                 while (change.next()) {
@@ -339,43 +246,27 @@ public class HomeScreenController {
                             });
 
                     contactMessagesListView.setCellFactory(lv -> new MessageContactCard());
-                    //contactMessagesListView.scrollTo(groupMessagesListView.getItems().size() -1);
+                    contactMessagesListView.scrollTo(contactMessagesListView.getItems().size() -1);
                 });
             }
         });
     }
     @FXML
     void handleGroupButton(ActionEvent event) {
-        ListView<HBox> groupsListView = new ListView<HBox>();
-        groupsListView.getStylesheets().add(getClass().getResource("/styles/homeScreenStyles.css").toExternalForm());
-        groupsListView.getStyleClass().add("chatsList");
-        // set custom list items
-        groupsListView.setCellFactory(lv->Utilities.createCustomCell());
+        groupListView.getSelectionModel().clearSelection(); // Clear previous selection
+        contactListView.setVisible(false);
+        groupListView.setVisible(true);
 
-        Node existingNode = Utilities.getExistingNode(mainContainer, 1, 2);
-        if (existingNode != null) {
-            mainContainer.getChildren().remove(existingNode);
-            mainContainer.add(groupsListView, 1, 2);
-            GridPane.setRowSpan(groupsListView , GridPane.REMAINING);
-            groupsListView.minWidth(200);
-        }
-        Utilities.populateGroupsList(groupsListView,DataCenter.getInstance().getGroupList());
-        DataCenter.getInstance().getGroupList().addListener((ListChangeListener<Group>) change -> {
-            while (change.next()) {
-                if (change.wasAdded() || change.wasRemoved()) {
-                    Platform.runLater(() -> {
-                        groupsListView.getItems().clear();
-                        Utilities.populateGroupsList(groupsListView, DataCenter.getInstance().getGroupList()); //recreate
-                    });
-                }
-            }
-        });
-        groupsListView.getSelectionModel().selectedItemProperty().addListener((obs, oldSelection, selectedGroup) -> {
+        groupListView.setCellFactory(lv->new GroupCard());
+        groupListView.setItems(DataCenter.getInstance().getGroupList());
+
+
+        groupListView.getSelectionModel().selectedItemProperty().addListener((obs, oldSelection, selectedGroup) -> {
             if (selectedGroup != null) {
-                Text groupID =  (Text) selectedGroup.getChildren().get(2); // extract group id
-                id.setText(groupID.getText());
+                int groupID =  selectedGroup.getGroupID(); // extract group id
+                id.setText(""+groupID);
                 // open group chat
-                Group groupInfo = DataCenter.getInstance().getGroupInfoMap().get(Integer.parseInt(groupID.getText()));
+                Group groupInfo = DataCenter.getInstance().getGroupInfoMap().get(groupID);
                 if(groupInfo.getPic()!=null){
                     pic.setFill(new ImagePattern(new Image(new ByteArrayInputStream(groupInfo.getPic()))));
                 }else{
@@ -383,15 +274,28 @@ public class HomeScreenController {
                 }
                 name.setText(groupInfo.getGroupName());
 
+                status.setVisible(false);
+                contactInfoBox.setVisible(true);
+                messageBox.setVisible(true);
+
                 Platform.runLater(() -> {
-                    groupMessagesListView.setVisible(true);
+
+                    stackPane.setVisible(true);
                     contactMessagesListView.setVisible(false);
-                    groupMessagesListView.setItems(DataCenter.getInstance().getGroupMessagesMap().get(Integer.parseInt(groupID.getText())));
-                    (DataCenter.getInstance().getGroupMessagesMap().getOrDefault(Integer.parseInt(groupID.getText()),FXCollections.observableArrayList(new ArrayList<>()))).addListener((ListChangeListener<GroupMessage>) change -> {
+                    contactMessagesListView.setManaged(false);
+
+                    groupMessagesListView.setVisible(true);
+                    groupMessagesListView.setManaged(true);
+
+                    groupMessagesListView.toFront();
+                    groupMessagesListView.getParent().requestLayout();
+
+                    groupMessagesListView.setItems(DataCenter.getInstance().getGroupMessagesMap().get(groupID));
+                    (DataCenter.getInstance().getGroupMessagesMap().getOrDefault(groupID,FXCollections.observableArrayList(new ArrayList<>()))).addListener((ListChangeListener<GroupMessage>) change -> {
                         while (change.next()) {
                             if (change.wasAdded()) {
                                 // Scroll to the last item
-                                groupMessagesListView.scrollTo(DataCenter.getInstance().getGroupMessagesMap().get(Integer.parseInt(groupID.getText())).size() - 1);
+                                groupMessagesListView.scrollTo(DataCenter.getInstance().getGroupMessagesMap().get(groupID).size() - 1);
                             }
                         }
                     });
@@ -450,6 +354,13 @@ public class HomeScreenController {
         boolean loggedOut = authenticationService.logout();
         if(!loggedOut) ClientAlerts.invokeErrorAlert("Error" , "Failed to logout");
         else{
+            stackPane.setVisible(false);
+            contactMessagesListView.setVisible(false);
+            groupMessagesListView.setVisible(false);
+            contactListView.setVisible(false);
+            groupListView.setVisible(false);
+            contactInfoBox.setVisible(false);
+            messageBox.setVisible(false);
             DataCenter.getInstance().getContactList().clear();
             DataCenter.getInstance().getAnnouncementList().clear();
             DataCenter.getInstance().getNotificationList().clear();
@@ -466,10 +377,7 @@ public class HomeScreenController {
             DataCenter.getInstance().getGroupInfoMap().clear();
             ServerConnectivityService.shutDown();
             ServiceManager.stopService();
-            contactMessagesListView.getItems().clear();
-            contactMessagesListView.setVisible(false);
-            groupMessagesListView.getItems().clear();
-            groupMessagesListView.setVisible(false);
+
             
             SessionSaver sessionSaver = new SessionSaver();
             sessionSaver.deleteSessionFile();
@@ -478,25 +386,25 @@ public class HomeScreenController {
     }
     @FXML
     void handleSendButton(ActionEvent event) {
+        if(messageTextArea.getText().trim().isEmpty())
+            return;
         if(contactMessagesListView.isVisible()){
             ContactMessage message = new ContactMessage();
             message.setSenderID(DataCenter.getInstance().getMyProfile().getUserID());
             Integer contact_id = Integer.parseInt(id.getText());
             message.setReceiverID(contact_id);
             message.setSentAt(LocalDateTime.now());
+
             message.setContent(messageTextArea.getText());
             messageTextArea.clear();
-            System.out.println("3 "+message);
             int message_ID = contactMessageService.sendContactMessage(message);
             if(message_ID == 0){
                 return;
             }
             message.setID(message_ID);
-            System.out.println("4 "+message);
 
             Platform.runLater(() -> {
                 DataCenter.getInstance().getContactMessagesMap().get(contact_id).add(message);
-                System.out.println("5 "+DataCenter.getInstance().getContactMessagesMap().get(contact_id));
                 //contactMessagesListView.refresh();
             });
 

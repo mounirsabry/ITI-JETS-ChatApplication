@@ -11,17 +11,17 @@ import javafx.scene.paint.Color;
 import javafx.scene.shape.Circle;
 import javafx.scene.text.Font;
 import javafx.scene.text.FontWeight;
-import jets.projects.entity_info.ContactInfo;
+import jets.projects.entities.Group;
 
 import java.io.ByteArrayInputStream;
 
-public class ContactCard extends ListCell<ContactInfo> {
+public class GroupCard extends ListCell<Group> {
     private final HBox content;
     private final ImageView profilePic;
     private final Label name;
     private final Circle clip;
 
-    public ContactCard() {
+    public GroupCard() {
         // Create circular clip for profile picture
         clip = new Circle(25, 25, 25);
         clip.setStroke(Color.WHITE);
@@ -55,25 +55,25 @@ public class ContactCard extends ListCell<ContactInfo> {
     }
 
     @Override
-    protected void updateItem(ContactInfo contact, boolean empty) {
-        super.updateItem(contact, empty);
+    protected void updateItem(Group group, boolean empty) {
+        super.updateItem(group, empty);
 
-        if (empty || contact == null) {
+        if (empty || group == null) {
             setGraphic(null);
             setText(null);
         } else {
-            name.setText(contact.getName());
+            name.setText(group.getGroupName());
             name.setMaxWidth(180);
             name.setWrapText(true);
 
             try {
-                if (contact.getPic() != null) {
-                    profilePic.setImage(new Image(new ByteArrayInputStream(contact.getPic())));
+                if (group.getPic() != null) {
+                    profilePic.setImage(new Image(new ByteArrayInputStream(group.getPic())));
                 } else {
-                    profilePic.setImage(new Image(getClass().getResource("/images/blank-profile.png").toExternalForm()));
+                    profilePic.setImage(new Image(getClass().getResource("/images/blank-group-picture.png").toExternalForm()));
                 }
             } catch (Exception e) {
-                profilePic.setImage(new Image(getClass().getResource("/images/blank-profile.png").toExternalForm()));
+                profilePic.setImage(new Image(getClass().getResource("/images/blank-group-picture.png").toExternalForm()));
             }
 
             setGraphic(content);
