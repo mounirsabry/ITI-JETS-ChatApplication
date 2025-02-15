@@ -15,18 +15,18 @@ import jets.projects.entity_info.GroupMemberInfo;
 public interface ClientAPI extends Remote {
     public void contactInvitationReceived(
             ContactInvitationInfo invitationInfo) throws RemoteException;
-
-    // The action should be removing the contact invitation from the list.
+    
+    // This will be called on the sender of the contact invitation.
     public void contactInvitationAccepted(
-            ContactInfo newContact) throws RemoteException;
+            ContactInfo receiverContactInfo) throws RemoteException;
     
     // The message will be either normal message or file message,
-    // If it is a file mess age, then I will NOT contain the file data.
+    // If it is a file message, then I will NOT contain the file data.
     public void contactMessageReceived(ContactMessage message) throws RemoteException;
     
     public void contactUpdateInfo(int contactID,
             String newDisplayName, byte[] newPic) throws RemoteException;
-
+    
     // The whole group info will be sent (including the pic) to be added
     // to the list.
     public void addedToGroup(Group group) throws RemoteException;
@@ -39,9 +39,8 @@ public interface ClientAPI extends Remote {
     // Should not called on the admin nor the member affected.
     public void newGroupMemberAdded(GroupMemberInfo newMember) throws RemoteException;
     public void groupMemberRemoved(int groupID, int memberID) throws RemoteException;
-
     public void adminChanged(int groupID, int newAdminID) throws RemoteException;
-
+    
     public void groupPicChanged(int groupID,
             byte[] newPic) throws RemoteException;
     // Same as removed from group.
@@ -55,6 +54,4 @@ public interface ClientAPI extends Remote {
     
     public void newAnnouncementAdded(
             Announcement announcement) throws RemoteException;
-
-
 }

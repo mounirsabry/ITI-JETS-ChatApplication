@@ -56,7 +56,7 @@ public class ClientAuthenticationService {
                          ServerConnectivityService.getServerAPI().registerPulse(serviceManager.getClientToken());
                          Thread.sleep(1000);
                      } catch (InterruptedException e) {
-                         Platform.runLater(() -> ClientAlerts.invokeWarningAlert("Server Warning", "Heartbeat interrupted: " + e.getMessage()));
+                         //Platform.runLater(() -> ClientAlerts.invokeWarningAlert("Server Warning", "Heartbeat interrupted: " + e.getMessage()));
                          Thread.currentThread().interrupt();
                      } catch (RemoteException e) {
                          Platform.runLater(() -> ClientAlerts.invokeWarningAlert("Server Warning", "Remote exception: " + e.getMessage()));
@@ -71,7 +71,7 @@ public class ClientAuthenticationService {
              if(e.getMessage().equals((ExceptionMessages.USER_MUST_CHANGE_PASSWORD_FOR_FIRST_LOGIN))){
                  ClientAlerts.invokeWarningAlert("Password Change Required", "You must change your password before logging in for the first time.");
              }
-             ClientAlerts.invokeWarningAlert("Server Warning", e.getMessage());
+             ClientAlerts.invokeWarningAlert("Server Warning", "data is invalid try again");
              return false;
          }
     }

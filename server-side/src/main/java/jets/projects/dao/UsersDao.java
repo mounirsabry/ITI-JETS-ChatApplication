@@ -97,7 +97,7 @@ public class UsersDao {
             stmt.setString(i++, user.getEmail());
            
             stmt.setBytes(i++, user.getPic());
-            
+
             stmt.setString(i++, user.getPassword());
             stmt.setString(i++, user.getGender().toString());
             stmt.setString(i++, user.getCountry().toString());

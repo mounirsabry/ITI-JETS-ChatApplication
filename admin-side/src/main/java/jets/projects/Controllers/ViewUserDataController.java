@@ -54,7 +54,10 @@ public class ViewUserDataController {
         passwordField.setText(normalUser.getPassword());
         countryField.setText(normalUser.getCountry().toString());
         genderField.setText(normalUser.getGender().toString());
-        birthdayField.setText(normalUser.getBirthDate().toString());
+        if(normalUser.getBirthDate() != null){
+            birthdayField.setText(normalUser.getBirthDate().toString());
+        }
+
         if(normalUser.getPic() != null){
             ByteArrayInputStream inputStream = new ByteArrayInputStream(normalUser.getPic());
             Image image = new Image(inputStream);

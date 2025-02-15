@@ -415,8 +415,7 @@ public class NormalUserAPIImpl extends UnicastRemoteObject
         }
         
         if (newGroup == null
-        ||  newGroup.getGroupName() == null || newGroup.getGroupName().isBlank()
-        ||  newGroup.getGroupID() <= 0) {
+        ||  newGroup.getGroupName() == null || newGroup.getGroupName().isBlank()) {
             throw new RemoteException(ExceptionMessages.INVALID_INPUT_DATA);
         }
         

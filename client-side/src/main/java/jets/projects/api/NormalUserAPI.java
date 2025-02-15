@@ -1,17 +1,23 @@
 package jets.projects.api;
 
-import jets.projects.entities.*;
-import jets.projects.entity_info.AnnouncementInfo;
-import jets.projects.entity_info.ContactInfo;
-import jets.projects.entity_info.ContactInvitationInfo;
-import jets.projects.entity_info.GroupMemberInfo;
-import jets.projects.session.ClientSessionData;
-import jets.projects.session.ClientToken;
-
 import java.rmi.Remote;
 import java.rmi.RemoteException;
 import java.util.Date;
 import java.util.List;
+import jets.projects.session.ClientSessionData;
+import jets.projects.session.ClientToken;
+import jets.projects.entities.Announcement;
+import jets.projects.entities.ContactGroup;
+import jets.projects.entity_info.ContactInfo;
+import jets.projects.entities.ContactMessage;
+import jets.projects.entities.Group;
+import jets.projects.entity_info.GroupMemberInfo;
+import jets.projects.entities.GroupMessage;
+import jets.projects.entities.NormalUser;
+import jets.projects.entities.NormalUserStatus;
+import jets.projects.entities.Notification;
+import jets.projects.entity_info.AnnouncementInfo;
+import jets.projects.entity_info.ContactInvitationInfo;
 
 public interface NormalUserAPI extends Remote {
 
@@ -26,7 +32,7 @@ public interface NormalUserAPI extends Remote {
             NormalUser normalUser) throws RemoteException;
     
     public boolean logout(ClientToken token) throws RemoteException;
-
+    
     public void registerPulse(ClientToken token) throws RemoteException;
     
     // Including the pic.
@@ -52,7 +58,7 @@ public interface NormalUserAPI extends Remote {
     
     public NormalUserStatus getContactOnlineStatus(ClientToken token,
             int contactID) throws RemoteException;
-
+    
     // Files not included.
     public List<ContactMessage> getAllContactMessages(ClientToken token,
             int contactID) throws RemoteException;
@@ -79,7 +85,7 @@ public interface NormalUserAPI extends Remote {
             int groupID, byte[] pic) throws RemoteException;
     
     // Pic included (Optional).
-    public boolean createGroup(ClientToken token,
+    public int createGroup(ClientToken token,
             Group newGroup) throws RemoteException;
 
     // Pic included.
@@ -128,9 +134,10 @@ public interface NormalUserAPI extends Remote {
             ClientToken token) throws RemoteException;
     
     public boolean sendContactInvitation(ClientToken token,
-            String userPhoneNumber, ContactGroup contactGroup) throws RemoteException;
+            String userPhoneNumber,
+            ContactGroup contactGroup) throws RemoteException;
     
-    // The return type contains the contact who sent
+    // The return type contains the contact who sent 
     // the contact invitation.
     public ContactInfo acceptContactInvitation( ClientToken token,
             int invitationID) throws RemoteException;

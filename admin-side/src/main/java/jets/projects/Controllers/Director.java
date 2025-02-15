@@ -411,14 +411,14 @@ public class Director{
             AdminAlerts.invokeErrorAlert("Start user service", e.getMessage());
             userServiceStatus = false;
         }
-        if(userServiceStatus == false && adminOverViewController.getStopServiceButton().isSelected() == false){
+        if(userServiceStatus == false){
             adminOverViewController.getStopServiceButton().setSelected(true);
             adminOverViewController.getStartServiceButton().setSelected(false);
             adminOverViewController.getStopServiceButton().setDisable(true);
             adminOverViewController.getStartServiceButton().setDisable(false);
             adminOverViewController.getStatusServiceText().setText("User service is not running");
             adminOverViewController.getStatusServiceIcon().setImage(new Image(getClass().getResource("/Assets/Dots/red_dot.png").toExternalForm()));
-        }else if(userServiceStatus == true && adminOverViewController.getStartServiceButton().isSelected() == false){
+        }else if(userServiceStatus == true){
             adminOverViewController.getStopServiceButton().setDisable(false);
             adminOverViewController.getStopServiceButton().setSelected(false);
             adminOverViewController.getStartServiceButton().setDisable(true);
@@ -445,14 +445,14 @@ public class Director{
             AdminAlerts.invokeErrorAlert("stop user service", e.getMessage());
             userServiceStatus = false;
         }
-        if(userServiceStatus == false && adminOverViewController.getStopServiceButton().isSelected() == false){
+        if(userServiceStatus == false){
             adminOverViewController.getStopServiceButton().setSelected(true);
             adminOverViewController.getStartServiceButton().setSelected(false);
             adminOverViewController.getStopServiceButton().setDisable(true);
             adminOverViewController.getStartServiceButton().setDisable(false);
             adminOverViewController.getStatusServiceText().setText("User service is not running");
             adminOverViewController.getStatusServiceIcon().setImage(new Image(getClass().getResource("/Assets/Dots/red_dot.png").toExternalForm()));
-        }else if(userServiceStatus == true && adminOverViewController.getStartServiceButton().isSelected() == false){
+        }else if(userServiceStatus == true){
             adminOverViewController.getStopServiceButton().setDisable(false);
             adminOverViewController.getStopServiceButton().setSelected(false);
             adminOverViewController.getStartServiceButton().setDisable(true);

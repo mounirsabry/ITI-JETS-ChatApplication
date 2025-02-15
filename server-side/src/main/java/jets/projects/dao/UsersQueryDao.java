@@ -46,7 +46,7 @@ public class UsersQueryDao {
                 if (!resultSet.next()) {
                     return new RequestResult<>(null, null);
                 }
-                int ID = resultSet.getInt(1);
+                int ID = resultSet.getInt("user_ID");
                 return new RequestResult<>(ID, null);
             }
         } catch (SQLException ex) {

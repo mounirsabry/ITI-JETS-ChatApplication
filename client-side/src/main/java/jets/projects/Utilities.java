@@ -145,8 +145,8 @@ public class Utilities {
             rootItem.getChildren().add(createContactItem(contact));
         }
     }
-    private static TreeItem<String> createContactItem(ContactInfo contact){
-        Map<Integer , IntegerProperty> unreadMessagesMap = DataCenter.getInstance().getUnreadContactMessages();
+    public static TreeItem<String> createContactItem(ContactInfo contact){
+        //Map<Integer , IntegerProperty> unreadMessagesMap = DataCenter.getInstance().getUnreadContactMessages();
 
         Circle profileImage = new Circle();
         if (contact.getPic() != null){
@@ -154,19 +154,26 @@ public class Utilities {
         } else {
             profileImage.setFill(new ImagePattern(new Image(Utilities.class.getResource("/images/blank-profile.png").toExternalForm())));
         }
-        profileImage.setRadius(25);
+        profileImage.setRadius(20);
         Label nameLabel = new Label(contact.getName());
         nameLabel.setFont(Font.font("Arial", FontWeight.BOLD, 14));
 
         // Unread messages icon
-        int unread = unreadMessagesMap.getOrDefault(contact.getContact().getSecondID(),new SimpleIntegerProperty(0)).get();
-        Label unreadLabel = new Label(String.valueOf(unread));
+//        int unread = unreadMessagesMap.getOrDefault(contact.getContact().getSecondID(),new SimpleIntegerProperty(0)).get();
+//        Label unreadLabel = new Label(String.valueOf(unread));
+        Label unreadLabel = new Label();
+        unreadLabel.textProperty().bind(
+                DataCenter.getInstance().getUnreadContactMessages().getOrDefault(contact.getContact().getSecondID()
+                        ,new SimpleIntegerProperty(0)).asString());
+
+        DataCenter.getInstance().getUnreadContactMessages().get(contact.getContact().getSecondID())
+                .addListener((obs, oldVal, newVal) -> {
+                    unreadLabel.setVisible(newVal.intValue() != 0);
+        });
         unreadLabel.setStyle("-fx-text-fill: white; -fx-background-color: #80ced7;" +
                 "-fx-min-width: 20px; -fx-min-height: 20px;" +
                 "-fx-background-radius: 50%; -fx-border-radius: 50%; " +
                 "-fx-alignment: center");
-        if(unread==0) unreadLabel.setVisible(false);
-
         HBox contactBox = new HBox(5, profileImage, nameLabel, unreadLabel);
 
         // Create TreeItem with HBox as its display node

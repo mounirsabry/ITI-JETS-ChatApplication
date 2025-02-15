@@ -19,11 +19,14 @@ public class CallBackInvitationService {
     }
 
     public void contactInvitationAccepted(ContactInfo newContactInfo){
+        System.out.println("6 "+newContactInfo);
+        String name = newContactInfo.getName();
         Platform.runLater(()->{
-            dataCenter.getContactList().add(newContactInfo);
-            dataCenter.getContactInfoMap().put(newContactInfo.getContact().getSecondID(), newContactInfo);
+            PopUpNotification.showNotification(name+" has accept your friend request");
             dataCenter.getContactMessagesMap().put(newContactInfo.getContact().getSecondID(),
                     FXCollections.synchronizedObservableList(FXCollections.observableArrayList(new ArrayList<>())));
+            dataCenter.getContactList().add(newContactInfo);
+            dataCenter.getContactInfoMap().put(newContactInfo.getContact().getSecondID(), newContactInfo);
         });
 
     }

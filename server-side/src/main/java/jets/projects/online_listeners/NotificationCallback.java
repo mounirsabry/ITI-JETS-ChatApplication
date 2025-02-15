@@ -109,7 +109,7 @@ public class NotificationCallback {
     }
     
     public static void receivedContactInvitationReceiver(
-            int receiverID, int senderID) {
+            int senderID, int receiverID) {
         executor.submit(() -> {
             var table = OnlineNormalUserTable.table;
             

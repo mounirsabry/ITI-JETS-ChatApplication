@@ -53,7 +53,10 @@ public class LoadingController {
                 DataCenter.getInstance().getContactList().addAll(contactList);
                 for (ContactInfo contact : contactList) {
                     List<ContactMessage> messages = messageService.getAllContactMessages(contact.getContact().getSecondID());
-                    int unreadCount = (int) messages.stream().filter(msg -> !msg.getIsRead()).count();
+                    int unreadCount = (int) messages.stream()
+                            .filter(msg ->
+                                !msg.getIsRead() && msg.getSenderID()!=myProfile.getUserID()
+                            ).count();
 
                     DataCenter.getInstance().getContactInfoMap().put(contact.getContact().getSecondID(), contact);
                     DataCenter.getInstance().getUnreadContactMessages().put(contact.getContact().getSecondID(), new SimpleIntegerProperty(unreadCount));
