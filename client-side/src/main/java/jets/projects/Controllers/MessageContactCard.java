@@ -103,6 +103,8 @@ public class MessageContactCard extends ListCell<ContactMessage> {
     private void downloadFile(ContactMessage message) {
         int contactID = message.getSenderID();
         int messageID = message.getID();
+        contactMessageService = new ClientContactMessageService();
+        System.out.println("Trying to download file for ContactID: " + contactID + ", MessageID: " + messageID);
 
         Task<byte[]> downloadTask = new Task<>() {
             @Override
@@ -113,7 +115,7 @@ public class MessageContactCard extends ListCell<ContactMessage> {
 
         downloadTask.setOnSucceeded(event -> {
             byte[] fileData = downloadTask.getValue();
-            if (fileData == null) {
+            if (fileData == null || fileData.length == 0) {
                 System.out.println("File download failed: No data received.");
                 return;
             }
@@ -136,7 +138,7 @@ public class MessageContactCard extends ListCell<ContactMessage> {
         });
 
         downloadTask.setOnFailed(event -> {
-            System.out.println("File download failed.");
+            System.out.println("File download failed. Exception: " + downloadTask.getException());
         });
 
         new Thread(downloadTask).start();

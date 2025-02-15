@@ -738,6 +738,18 @@ public class NormalUserAPIImpl extends UnicastRemoteObject
         }
         return result.getResponseData();
     }
+    @Override
+    public boolean markAnnouncementsAsRead(ClientToken token)
+            throws RemoteException {
+        if (!validToken(token)) {
+            throw new RemoteException(ExceptionMessages.INVALID_TOKEN);
+        }
+        var result = controller.markAnnouncementsAsRead(token);
+        if (result.getErrorMessage() != null) {
+            throw new RemoteException(result.getErrorMessage());
+        }
+        return result.getResponseData();
+    }
 
     @Override
     public boolean deleteNotification(ClientToken token, int notificationID)
@@ -751,4 +763,6 @@ public class NormalUserAPIImpl extends UnicastRemoteObject
         }
         return result.getResponseData();
     }
+
+
 }

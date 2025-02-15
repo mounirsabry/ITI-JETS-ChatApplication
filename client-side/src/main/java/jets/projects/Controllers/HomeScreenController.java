@@ -81,6 +81,7 @@ public class HomeScreenController {
     ClientContactMessageService contactMessageService = new ClientContactMessageService();
     ClientGroupMessageService groupMessageService = new ClientGroupMessageService();
     ClientNotificationService notificationService = new ClientNotificationService();
+    ClientAnnouncementService announcementService = new ClientAnnouncementService();
 
     public void setDirector(Stage stage, Director myDirector) {
         this.stage = stage;
@@ -318,8 +319,19 @@ public class HomeScreenController {
             n.setIsRead(true);
         });
         DataCenter.getInstance().unseenNotificationsCountProperty().set(0);
-
-
+    }
+    @FXML
+    void handleAnnouncementButton(ActionEvent event){
+        Node currentNode = (Node)event.getSource();
+        Stage owner = (Stage)currentNode.getScene().getWindow();
+        // load the popup content
+        URL fxmlURL = getClass().getResource("/fxml/announcements.fxml");
+        Utilities.showPopup(owner, fxmlURL, 620, 420);
+        announcementService.markAnnouncementsAsRead();
+        DataCenter.getInstance().getAnnouncementList().forEach((n)->{
+            n.setIsRead(true);
+        });
+        DataCenter.getInstance().unseenAnnouncementsCountProperty().set(0);
     }
     @FXML
     void handleFriendRequestsButton(ActionEvent event){
@@ -329,14 +341,7 @@ public class HomeScreenController {
         URL fxmlURL = getClass().getResource("/fxml/friendRequests.fxml");
         Utilities.showPopup(owner, fxmlURL, 620, 420);
     }
-    @FXML
-    void handleAnnouncementButton(ActionEvent event){
-        Node currentNode = (Node)event.getSource();
-        Stage owner = (Stage)currentNode.getScene().getWindow();
-        // load the popup content
-        URL fxmlURL = getClass().getResource("/fxml/announcements.fxml");
-        Utilities.showPopup(owner, fxmlURL, 620, 420);
-    }
+
     @FXML
     void handleSettingsButton(ActionEvent event) throws IOException {
         Node currentNode = (Node)event.getSource();
@@ -344,6 +349,16 @@ public class HomeScreenController {
         // load the popup content
         URL fxmlURL = getClass().getResource("/fxml/settings.fxml");
         Utilities.showPopup(owner, fxmlURL, 600, 400);
+        NormalUserStatus s = DataCenter.getInstance().getMyStatus();
+        if(s == NormalUserStatus.AVAILABLE){
+            mystatus.setFill(new ImagePattern(new Image(getClass().getResource("/images/available.png").toExternalForm())));
+        }
+        if(s == NormalUserStatus.BUSY){
+            mystatus.setFill(new ImagePattern(new Image(getClass().getResource("/images/busy.png").toExternalForm())));
+        }
+        if(s == NormalUserStatus.AWAY){
+            mystatus.setFill(new ImagePattern(new Image(getClass().getResource("/images/away.png").toExternalForm())));
+        }
     }
     @FXML
     void handleLogOutButton(ActionEvent event) throws IOException {
@@ -479,4 +494,58 @@ public class HomeScreenController {
             }
         }
     }
-} 
+    public void updateStatus(){
+        if(!contactMessagesListView.isVisible())
+            return;
+        int i = Integer.parseInt(id.getText());
+        NormalUserStatus s = contactService.getContactOnlineStatus(i);
+        status.setText(s.name());
+        status.setFont(Font.font("Arial", FontWeight.BOLD, 10));
+        if(s == NormalUserStatus.AVAILABLE) {
+            Image image = new Image(getClass().getResource("/images/available.png").toExternalForm());
+            ImageView imageView = new ImageView(image);
+            imageView.setFitWidth(10);  // Adjust width
+            imageView.setFitHeight(10); // Adjust height
+            status.setGraphic(imageView);
+        }
+        if(s == NormalUserStatus.BUSY){
+            Image image = new Image(getClass().getResource("/images/busy.png").toExternalForm());
+            ImageView imageView = new ImageView(image);
+            imageView.setFitWidth(10);  // Adjust width
+            imageView.setFitHeight(10); // Adjust height
+            status.setGraphic(imageView);
+        }
+        if(s == NormalUserStatus.AWAY){
+            Image image = new Image(getClass().getResource("/images/away.png").toExternalForm());
+            ImageView imageView = new ImageView(image);
+            imageView.setFitWidth(10);  // Adjust width
+            imageView.setFitHeight(10); // Adjust height
+            status.setGraphic(imageView);
+        }
+        if(s == NormalUserStatus.OFFLINE){
+            Image image = new Image(getClass().getResource("/images/offline.png").toExternalForm());
+            ImageView imageView = new ImageView(image);
+            imageView.setFitWidth(10);  // Adjust width
+            imageView.setFitHeight(10); // Adjust height
+            status.setGraphic(imageView);
+        }
+    }
+
+    public void updateContactProfile() {
+        if(!contactListView.isVisible())
+            return;
+        //contactListView.refresh();
+        //handleContactButton();
+        if(!contactMessagesListView.isVisible())
+            return;
+        int i = Integer.parseInt(id.getText());
+        ContactInfo contactInfo = DataCenter.getInstance().getContactList().stream()
+                .filter(c->c.getContact().getSecondID()==i).findAny().get();
+        if(contactInfo.getPic()!=null){
+            pic.setFill(new ImagePattern(new Image(new ByteArrayInputStream(contactInfo.getPic()))));
+        }else{
+            pic.setFill(new ImagePattern(new Image(getClass().getResource("/images/blank-profile.png").toExternalForm())));
+        }
+        name.setText(contactInfo.getName());
+    }
+}

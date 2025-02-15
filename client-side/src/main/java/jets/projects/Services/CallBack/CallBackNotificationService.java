@@ -2,14 +2,16 @@ package jets.projects.Services.CallBack;
 
 import datastore.DataCenter;
 import javafx.application.Platform;
+import jets.projects.Controllers.HomeScreenController;
 import jets.projects.entities.Announcement;
 import jets.projects.entities.Notification;
+import jets.projects.entities.NotificationType;
 import jets.projects.entity_info.AnnouncementInfo;
 
 public class CallBackNotificationService {
 
     DataCenter dataCenter = DataCenter.getInstance();
-
+    public static HomeScreenController homeScreenController;
     /*
     public void userStatusChangedNotification(Notification notification){
         Platform.runLater(()->{
@@ -25,7 +27,10 @@ public class CallBackNotificationService {
     public void newNotification(Notification notification){
         Platform.runLater(()->{
             PopUpNotification.showNotification(notification.getContent());
-            dataCenter.getNotificationList().add(notification);
+            dataCenter.getNotificationList().addFirst(notification);
+            if(notification.getType() == NotificationType.USER_STATUS){
+                homeScreenController.updateStatus();
+            }
         });
     }
 
@@ -36,7 +41,7 @@ public class CallBackNotificationService {
         announcementInfo.setIsRead(false);
         Platform.runLater(()->{
             PopUpNotification.showNotification(announcement.getContent());
-            dataCenter.getAnnouncementList().add(announcementInfo);
+            dataCenter.getAnnouncementList().addFirst(announcementInfo);
         });
     }
 }

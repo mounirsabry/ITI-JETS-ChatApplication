@@ -36,11 +36,10 @@ public class ContactCard extends ListCell<ContactInfo> {
         // Name label styling
         name = new Label();
         name.setFont(Font.font("System", FontWeight.BOLD, 13));
-        name.setTextFill(Color.CYAN);
+        name.setTextFill(Color.BLACK);
         name.setMaxWidth(180);
-        name.setStyle("-fx-padding: 5 12 5 12;"
-                + "-fx-background-radius: 12;"
-                + "-fx-background-color: linear-gradient(to right, #2c3e50, #3498db);");
+        name.setStyle("-fx-padding: 5 12 5 5;");
+
 
         // Content container styling
         content = new HBox(15);
