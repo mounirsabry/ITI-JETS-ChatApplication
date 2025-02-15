@@ -245,9 +245,14 @@ public class NormalUserController {
     public RequestResult<Boolean> markNotificationsAsRead(ClientToken token) {
         return notificationsManager.markNotificationsAsRead(token);
     }
+    public RequestResult<Boolean> markAnnouncementsAsRead(ClientToken token) {
+        return announcementsManager.markAnnouncementsAsRead(token);
+    }
     
     public RequestResult<Boolean> deleteNotification(ClientToken token,
             int notificationID) {
         return notificationsManager.deleteNotification(token, notificationID);
     }
+
+
 }

@@ -28,8 +28,14 @@ public class NotificationCardController {
     private Notification currentItem;
 
     public  void setData(Notification notification , ListView<Notification> listView){
-        sent_at.setStyle("-fx-font-size: 10px; -fx-text-fill: #A0A0A0;");
-        sent_at.setText(notification.getSentAt().format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm")));
+
+        if(notification.getSentAt() != null){
+            sent_at.setStyle("-fx-font-size: 10px; -fx-text-fill: #A0A0A0;");
+            sent_at.setText(notification.getSentAt().format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm")));
+        }else{
+            sent_at.setText("");
+        }
+
         content.setText(notification.getContent());
         this.currentItem = notification;
     }

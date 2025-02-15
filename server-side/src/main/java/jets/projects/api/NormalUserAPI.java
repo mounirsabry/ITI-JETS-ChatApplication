@@ -156,4 +156,7 @@ public interface NormalUserAPI extends Remote {
     
     public boolean deleteNotification(ClientToken token,
             int notificationID) throws RemoteException;
+
+    boolean markAnnouncementsAsRead(ClientToken myToken)
+            throws RemoteException;
 }

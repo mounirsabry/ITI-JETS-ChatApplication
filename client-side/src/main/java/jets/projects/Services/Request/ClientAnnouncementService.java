@@ -25,6 +25,23 @@ public class ClientAnnouncementService{
             return null;
         }
     }
+    public boolean markAnnouncementsAsRead() {
+        if (!ServerConnectivityService.check()) {
+            ClientAlerts.invokeWarningAlert("Mark Announcements As Read", "Can't connect to server");
+            return false;
+        }
+        ClientToken myToken = ServerConnectivityService.getMyToken();
+        try {
+            if(ServerConnectivityService.getServerAPI().markAnnouncementsAsRead(myToken)){
+                return true;
+            }
+            ClientAlerts.invokeErrorAlert("Mark Announcements As Read Error", "Failed to mark Announcements as read");
+            return false;
+        } catch (RemoteException e) {
+            ClientAlerts.invokeErrorAlert("Mark Announcements As Read Error", e.getMessage());
+            return false;
+        }
+    }
 
     public List<Announcement> getUnReadAnnouncements(){
         if(!ServerConnectivityService.check()){
