@@ -8,6 +8,7 @@ import java.time.LocalDateTime;
 import datastore.DataCenter;
 import java.util.ArrayList;
 import javafx.application.Platform;
+import javafx.beans.binding.Bindings;
 import javafx.collections.FXCollections;
 import javafx.collections.ListChangeListener;
 import javafx.collections.ObservableList;
@@ -36,6 +37,8 @@ import jets.projects.entity_info.AnnouncementInfo;
 import jets.projects.entity_info.ContactInfo;
 
 import static jets.projects.Utilities.createContactItem;
+
+import jets.projects.entity_info.ContactInvitationInfo;
 import jets.projects.session_saving.SessionSaver;
 
 public class HomeScreenController {
@@ -73,6 +76,10 @@ public class HomeScreenController {
     private ListView<Group> groupListView;
     @FXML
     private StackPane stackPane;
+    @FXML
+    private Label unseenMessages;
+    @FXML
+    private Label unseenInvitations;
 
     private Stage stage;
     private Director myDirector;
@@ -96,9 +103,9 @@ public class HomeScreenController {
         stackPane.setVisible(false);
         stackPane.setBackground(new Background(bgImage));
         NormalUser myprofile = DataCenter.getInstance().getMyProfile();
-        if(myprofile.getPic() != null){
+        if (myprofile.getPic() != null) {
             myprofilepicture.setFill(new ImagePattern(new Image(new ByteArrayInputStream(myprofile.getPic()))));
-        }else{
+        } else {
             myprofilepicture.setFill(new ImagePattern(new Image(getClass().getResource("/images/blank-profile.png").toExternalForm())));
         }
         String statusType = myprofile.getStatus().toString().toLowerCase();
@@ -113,7 +120,29 @@ public class HomeScreenController {
             DataCenter.getInstance().unseenNotificationsCountProperty().set((int) DataCenter.getInstance().getNotificationList().stream().filter(n -> !n.isIsRead()).count());
         });
         unseenAnnouncements.textProperty().bind(DataCenter.getInstance().unseenAnnouncementsCountProperty().asString());
+        unseenAnnouncements.visibleProperty().bind(DataCenter.getInstance().unseenAnnouncementsCountProperty().greaterThan(0));
+
         unseenNotifications.textProperty().bind(DataCenter.getInstance().unseenNotificationsCountProperty().asString());
+        unseenNotifications.visibleProperty().bind(DataCenter.getInstance().unseenNotificationsCountProperty().greaterThan(0));
+
+        unseenMessages.textProperty().bind(Bindings.createStringBinding(
+                () -> {
+                    int total = DataCenter.getInstance().getTotalUnreadMessages().get();
+                    return total > 0 ? String.valueOf(total) : "";
+                },
+                DataCenter.getInstance().getTotalUnreadMessages()
+        ));
+        unseenMessages.visibleProperty().bind(DataCenter.getInstance().getTotalUnreadMessages().greaterThan(0));
+        int total = DataCenter.getInstance().getUnreadContactMessages().values()
+                .stream().mapToInt(prop -> prop.get()).sum();
+        DataCenter.getInstance().getTotalUnreadMessages().set(total);
+
+        DataCenter.getInstance().getContactInvitationList().addListener((ListChangeListener<ContactInvitationInfo>) change -> {
+            DataCenter.getInstance().getInvitationsCount().set((int) DataCenter.getInstance().getContactInvitationList().size());
+        });
+        unseenInvitations.textProperty().bind(DataCenter.getInstance().getInvitationsCount().asString());
+        unseenInvitations.visibleProperty().bind(DataCenter.getInstance().getInvitationsCount().greaterThan(0));
+        DataCenter.getInstance().getInvitationsCount().set(DataCenter.getInstance().getContactInvitationList().size());
     }
     public void updateProfile(){
         NormalUser myprofile = DataCenter.getInstance().getMyProfile();
@@ -177,6 +206,15 @@ public class HomeScreenController {
 
         contactListView.getSelectionModel().selectedItemProperty().addListener((obs, oldSelection, selectedContact) -> {
             if (selectedContact != null) {
+                contactMessageService.markContactMessagesAsRead(selectedContact.getContact().getSecondID());
+                DataCenter.getInstance().getContactMessagesMap().get(selectedContact.getContact().getSecondID())
+                        .forEach(m->{
+                            if(m.getSenderID() == selectedContact.getContact().getSecondID()){
+                                m.setIsRead(true);
+                            }
+                        });
+                DataCenter.getInstance().getUnreadContactMessages().get(selectedContact.getContact().getSecondID())
+                        .set(0);
                 int contactID =  selectedContact.getContact().getSecondID(); // extract group id
                 id.setText(""+contactID);
                 // open group chat
@@ -242,8 +280,22 @@ public class HomeScreenController {
                                         contactMessagesListView.scrollTo(
                                                 DataCenter.getInstance().getContactMessagesMap()
                                                         .get(contactInfo.getContact().getSecondID()).size() - 1);
+                                        if(contactMessagesListView.isVisible()){
+                                            if(contactID == Integer.parseInt(id.getText())){
+                                                contactMessageService.markContactMessagesAsRead(selectedContact.getContact().getSecondID());
+                                                DataCenter.getInstance().getContactMessagesMap().get(selectedContact.getContact().getSecondID())
+                                                        .forEach(m->{
+                                                            if(m.getSenderID() == selectedContact.getContact().getSecondID()){
+                                                                m.setIsRead(true);
+                                                            }
+                                                        });
+                                                DataCenter.getInstance().getUnreadContactMessages().get(selectedContact.getContact().getSecondID())
+                                                        .set(0);
+                                            }
+                                        }
                                     }
                                 }
+
                             });
 
                     contactMessagesListView.setCellFactory(lv -> new MessageContactCard());
