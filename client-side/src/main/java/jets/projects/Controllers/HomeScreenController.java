@@ -22,6 +22,7 @@ import javafx.scene.text.Font;
 import javafx.scene.text.FontWeight;
 import javafx.stage.FileChooser;
 import jets.projects.ServiceManager;
+import jets.projects.Services.CallBack.CallBackGroupService;
 import jets.projects.Services.Request.*;
 import jets.projects.Services.ServerConnectivityService;
 import jets.projects.Utilities;
@@ -143,6 +144,8 @@ public class HomeScreenController {
         unseenInvitations.textProperty().bind(DataCenter.getInstance().getInvitationsCount().asString());
         unseenInvitations.visibleProperty().bind(DataCenter.getInstance().getInvitationsCount().greaterThan(0));
         DataCenter.getInstance().getInvitationsCount().set(DataCenter.getInstance().getContactInvitationList().size());
+        GroupInfoController.homeScreenController = this;
+        CallBackGroupService.homeScreenController = this;
     }
     public void updateProfile(){
         NormalUser myprofile = DataCenter.getInstance().getMyProfile();
@@ -273,6 +276,7 @@ public class HomeScreenController {
 
                     contactMessagesListView.setItems(DataCenter.getInstance().getContactMessagesMap().getOrDefault(contactID
                     ,FXCollections.synchronizedObservableList(FXCollections.observableArrayList())));
+
                     DataCenter.getInstance().getContactMessagesMap().get(contactID)
                             .addListener((ListChangeListener<ContactMessage>) change -> {
                                 while (change.next()) {
@@ -599,5 +603,14 @@ public class HomeScreenController {
             pic.setFill(new ImagePattern(new Image(getClass().getResource("/images/blank-profile.png").toExternalForm())));
         }
         name.setText(contactInfo.getName());
+    }
+    public void hideChatBox(){
+        if(groupListView.getItems().size()>0)
+            return;
+        stackPane.setVisible(false);
+        groupMessagesListView.setVisible(false);
+        contactInfoBox.setVisible(false);
+        messageBox.setVisible(false);
+
     }
 }

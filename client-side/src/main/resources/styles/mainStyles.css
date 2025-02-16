@@ -51,12 +51,15 @@
 }
 
 .title {
-    -fx-text-fill: #7d5ba6;
+    -fx-text-fill: white;
+    -fx-font-size: 20px;
 }
 
 .subtitle, .bodyText, .smallText {
-    -fx-text-fill: #3a1f5d;
+    -fx-text-fill: white;
+    -fx-font-size: 16px;
 }
+
 
 .primaryButton {
     -fx-background-color: #593196;

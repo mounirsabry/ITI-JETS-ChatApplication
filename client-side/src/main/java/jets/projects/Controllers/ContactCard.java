@@ -117,7 +117,6 @@ public class ContactCard extends ListCell<ContactInfo> {
                                 .stream().mapToInt(prop -> prop.get()).sum();
                         DataCenter.getInstance().getTotalUnreadMessages().set(total);
                     });
-            System.out.println(DataCenter.getInstance().getContactMessagesMap().get(contact.getContact().getSecondID()));
             DataCenter.getInstance().getContactMessagesMap().get(contact.getContact().getSecondID())
                     .addListener((ListChangeListener<ContactMessage>) change -> {
                         DataCenter.getInstance().getUnreadContactMessages().get(contact.getContact().getSecondID())

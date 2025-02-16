@@ -15,12 +15,18 @@ import javafx.scene.shape.Circle;
 import javafx.scene.text.Text;
 import jets.projects.Services.Request.ClientGroupService;
 import jets.projects.entities.Group;
+import jets.projects.entities.GroupMember;
+import jets.projects.entity_info.ContactInfo;
 import jets.projects.entity_info.GroupMemberInfo;
 
 import java.io.ByteArrayInputStream;
 import java.util.*;
 
 public class GroupInfoController {
+        @FXML
+        private Button addmember;
+        @FXML
+        private Button deleteGroup;
         @FXML
         private Circle groupIcon;
         @FXML
@@ -40,13 +46,14 @@ public class GroupInfoController {
         int groupAdminID;
         int loggedInUserID;
         private ClientGroupService groupService = null;
+        public static HomeScreenController homeScreenController;
 
     @FXML
     void initialize(){
         membersList.setItems(memberInfoObservableList);
         groupService = new ClientGroupService();
         contactsCombobox.setItems(contactInfoObservableList);
-        contactsCombobox.setEditable(true);
+        //contactsCombobox.setEditable(true);
         loadContacts();
         addSearchFeature();
     }
@@ -63,7 +70,10 @@ public class GroupInfoController {
         }
         groupName.setText(group.getGroupName());
         description.setText(group.getGroupDesc());
-        memberInfoObservableList.addAll(members.stream().map(member -> {
+        memberInfoObservableList.addAll(members.stream().filter(member->
+            member.getMember().getMemberID() != DataCenter.getInstance().getMyProfile().getUserID()
+        ).map(member -> {
+
             HBox card = new HBox(10);
             Circle profile = new Circle(20);
             if(member.getPic()!= null){
@@ -77,14 +87,25 @@ public class GroupInfoController {
             removeButton.getStyleClass().add("primaryButton");
             removeButton.setOnAction(e -> {
                 boolean removed = groupService.removeMemberFromGroup(groupId, member.getMember().getMemberID());
-                if(!removed)  ClientAlerts.invokeErrorAlert("Error", "Failed to remove member from group");
+                if(!removed)  {
+                    //ClientAlerts.invokeErrorAlert("Error", "Failed to remove member from group");
+                }
+                else{
+                    DataCenter.getInstance().getGroupMembersMap().get(groupId)
+                            .removeIf(c->c.getMember().getMemberID()==member.getMember().getMemberID());
+                }
                 membersList.getItems().remove(card);
                 memberInfoObservableList.remove(card);
                 if (memberInfoObservableList.isEmpty()) {
                     contactsCombobox.setVisible(false);
                 }
             });
-            if(groupAdminID != loggedInUserID)     removeButton.setVisible(false);
+            if(groupAdminID != loggedInUserID){
+                removeButton.setVisible(false);
+                addmember.setDisable(true);
+                deleteGroup.setDisable(true);
+
+            }
             card.getChildren().addAll(profile, name , removeButton);
             return card;
         }).toList());
@@ -101,7 +122,15 @@ public class GroupInfoController {
                 Text contactIdText = (Text)selected.getChildren().get(2);   // extract contactId
                 int contactId = Integer.parseInt(contactIdText.getText());
                 boolean added = groupService.addMemberToGroup(groupId, contactId);
+
                 if(!added)  ClientAlerts.invokeErrorAlert("Error", "Failed to add member to group");
+                else{
+                    ContactInfo contactInfo = DataCenter.getInstance().getContactInfoMap().get(contactId);
+                    GroupMember groupMember = new GroupMember(groupId, contactId);
+                    DataCenter.getInstance().getGroupMembersMap().get(groupId).add(new GroupMemberInfo(
+                            groupMember, contactInfo.getName(), contactInfo.getPic()
+                    ));
+                }
                 contactsCombobox.getSelectionModel().clearSelection();
                 contactsCombobox.getEditor().clear();
             }
@@ -111,13 +140,17 @@ public class GroupInfoController {
     void handleDeleteGroup(ActionEvent event) {
         boolean deleted = groupService.deleteGroup(groupId);
         if(!deleted)  ClientAlerts.invokeErrorAlert("Error", "Failed to delete group");
+        else{
+            DataCenter.getInstance().getGroupList().removeIf(g->g.getGroupID()==groupId);
+            homeScreenController.hideChatBox();
+        }
     }
     @FXML
     void handleLeaveGroup(ActionEvent event) {
         boolean leftGroup = false;
         if (loggedInUserID != groupAdminID) {
             leftGroup = groupService.leaveGroupAsMember(groupId);
-            DataCenter.getInstance().getGroupMembersMap().get(groupId).removeIf(member -> member.getMember().getMemberID() == loggedInUserID);
+            DataCenter.getInstance().getGroupList().removeIf(g->g.getGroupID()==groupId);
         } else {
             // Pick a random new admin from group members
             if (members != null && members.size() > 1) {
@@ -127,14 +160,19 @@ public class GroupInfoController {
                 } while (members.get(randomIndex).getMember().getMemberID() == loggedInUserID); // Ensure new admin is not the current admin
                 int newAdminID = members.get(randomIndex).getMember().getMemberID();
                 leftGroup = groupService.leaveGroupAsAdmin(groupId, newAdminID);
+                DataCenter.getInstance().getGroupList().removeIf(g->g.getGroupID()==groupId);
 
             } else {
-                ClientAlerts.invokeWarningAlert("Error", "No other members available to assign as admin");
-                groupService.deleteGroup(groupId);
+                if(groupService.deleteGroup(groupId)){
+                    DataCenter.getInstance().getGroupList().removeIf(g->g.getGroupID()==groupId);
+                    leftGroup = true;
+                }
             }
         }
         if (!leftGroup) {
             ClientAlerts.invokeErrorAlert("Error", "Failed to assign a new group admin");
+        }else{
+            homeScreenController.hideChatBox();
         }
     }
     private void loadContacts() {

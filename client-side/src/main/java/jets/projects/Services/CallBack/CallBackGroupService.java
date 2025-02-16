@@ -4,6 +4,8 @@ import datastore.DataCenter;
 import javafx.application.Platform;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
+import jets.projects.Controllers.ClientAlerts;
+import jets.projects.Controllers.HomeScreenController;
 import jets.projects.Services.ServerConnectivityService;
 import jets.projects.entities.Group;
 import jets.projects.entities.GroupMessage;
@@ -14,27 +16,31 @@ import java.rmi.RemoteException;
 
 public class CallBackGroupService {
     DataCenter dataCenter = DataCenter.getInstance();
+    public static HomeScreenController homeScreenController;
 
     public void addedToGroup(Group group) {
-        Platform.runLater(() -> {
-            dataCenter.getGroupList().add(group);
-
-        });
         try{
             dataCenter.getGroupMessagesMap().put(
                     group.getGroupID(), FXCollections.synchronizedObservableList(FXCollections.observableArrayList()));
+            dataCenter.getGroupMessagesMap().get(group.getGroupID()).addAll(
+                    ServerConnectivityService.getServerAPI().getGroupMessages(
+                            ServerConnectivityService.getMyToken(), group.getGroupID()));
             dataCenter.getGroupMembersMap().get(group.getGroupID()).addAll(
                     ServerConnectivityService.getServerAPI().getGroupMembers(ServerConnectivityService.getMyToken(), group.getGroupID())
             );
         } catch (RemoteException e) {
             System.out.println(e.getMessage());
         }
+        Platform.runLater(() -> {
+            dataCenter.getGroupList().add(group);
+        });
     }
 
     public void removedFromGroup(int groupID) {
         Platform.runLater(() -> {
             dataCenter.getGroupList().removeIf(group -> group.getGroupID() == groupID);
-            dataCenter.getGroupMessagesMap().remove(groupID);
+            //dataCenter.getGroupMessagesMap().remove(groupID);
+            homeScreenController.hideChatBox();
         });
     }
 
@@ -50,6 +56,7 @@ public class CallBackGroupService {
     public void groupDeleted(int groupID){
         Platform.runLater(()->{
             dataCenter.getGroupList().removeIf(group -> group.getGroupID() == groupID);
+            homeScreenController.hideChatBox();
         });
     }
 
@@ -80,6 +87,13 @@ public class CallBackGroupService {
     public void adminChanged(int groupID, int newAdminID){
         Platform.runLater(()->{
             dataCenter.getGroupList().stream().filter(group -> group.getGroupID() == groupID).findFirst().get().setGroupAdminID(newAdminID);
+        });
+    }
+
+    public void groupMemberLeft(int groupID, int memberID) {
+        Platform.runLater(()->{
+            dataCenter.getGroupMembersMap().get(groupID).removeIf(groupMemberInfo->
+                    groupMemberInfo.getMember().getMemberID() == memberID);
         });
     }
 }
