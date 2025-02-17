@@ -7,6 +7,8 @@ import java.nio.file.Files;
 import java.time.LocalDateTime;
 import datastore.DataCenter;
 import java.util.ArrayList;
+import java.util.List;
+
 import javafx.application.Platform;
 import javafx.beans.binding.Bindings;
 import javafx.collections.FXCollections;
@@ -14,6 +16,8 @@ import javafx.collections.ListChangeListener;
 import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
+import javafx.geometry.Insets;
+import javafx.geometry.Pos;
 import javafx.scene.Node;
 import javafx.scene.control.*;
 import javafx.scene.image.ImageView;
@@ -21,6 +25,7 @@ import javafx.scene.layout.*;
 import javafx.scene.text.Font;
 import javafx.scene.text.FontWeight;
 import javafx.stage.FileChooser;
+import javafx.stage.Popup;
 import jets.projects.ServiceManager;
 import jets.projects.Services.CallBack.CallBackGroupService;
 import jets.projects.Services.Request.*;
@@ -81,6 +86,8 @@ public class HomeScreenController {
     private Label unseenMessages;
     @FXML
     private Label unseenInvitations;
+    @FXML
+    private Label welcomeMessage;
 
     private Stage stage;
     private Director myDirector;
@@ -101,6 +108,7 @@ public class HomeScreenController {
                 image, BackgroundRepeat.NO_REPEAT, BackgroundRepeat.NO_REPEAT,
                 BackgroundPosition.CENTER, new BackgroundSize(150, 150, true, true, true, false)
         );
+        welcomeMessage.setVisible(true);
         stackPane.setVisible(false);
         stackPane.setBackground(new Background(bgImage));
         NormalUser myprofile = DataCenter.getInstance().getMyProfile();
@@ -259,6 +267,7 @@ public class HomeScreenController {
                     imageView.setFitHeight(10); // Adjust height
                     status.setGraphic(imageView);
                 }
+                welcomeMessage.setVisible(false);
                 contactInfoBox.setVisible(true);
                 messageBox.setVisible(true);
                 status.setVisible(true);
@@ -330,7 +339,7 @@ public class HomeScreenController {
                     pic.setFill(new ImagePattern(new Image(getClass().getResource("/images/blank-group-picture.png").toExternalForm())));
                 }
                 name.setText(groupInfo.getGroupName());
-
+                welcomeMessage.setVisible(false);
                 status.setVisible(false);
                 contactInfoBox.setVisible(true);
                 messageBox.setVisible(true);
@@ -613,4 +622,42 @@ public class HomeScreenController {
         messageBox.setVisible(false);
 
     }
+    @FXML
+    private void openEmojiPicker() {
+        Popup emojiPopup = new Popup();
+
+        // List of sample emojis (you can expand this)
+        List<String> emojis = List.of("😀", "😂", "😍", "🤔", "😭", "😎", "👍", "🔥", "🎉", "❤️");
+
+        // Container for emojis
+        HBox emojiBox = new HBox(5);
+        emojiBox.setAlignment(Pos.CENTER);
+        emojiBox.setPadding(new Insets(10));
+
+        // Create emoji buttons
+        for (String emoji : emojis) {
+            Text emojiText = new Text(emoji);
+            emojiText.setStyle("-fx-font-size: 24px; -fx-cursor: hand;");
+
+            // Add click event to each emoji
+            emojiText.setOnMouseClicked((MouseEvent event) -> {
+                messageTextArea.setText(messageTextArea.getText() + emoji); // Append emoji to text field
+                emojiPopup.hide(); // Close the popup after selection
+            });
+
+            emojiBox.getChildren().add(emojiText);
+        }
+
+        // Wrap in StackPane
+        StackPane popupPane = new StackPane(emojiBox);
+        popupPane.setStyle("-fx-background-color: white; -fx-border-color: gray; -fx-padding: 10px;");
+
+        // Add to popup
+        emojiPopup.getContent().add(popupPane);
+
+        // Show near the emoji button
+        emojiPopup.show(emojiButton, emojiButton.localToScreen(0, 0).getX(), emojiButton.localToScreen(0, 0).getY() + 30);
+    }
+    @FXML
+    private Button emojiButton;
 }

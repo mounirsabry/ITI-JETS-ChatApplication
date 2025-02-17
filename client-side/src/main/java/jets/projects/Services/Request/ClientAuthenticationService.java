@@ -23,7 +23,7 @@ public class ClientAuthenticationService {
     public boolean login(String phoneNumber, String password) {
          ServiceManager serviceManager = ServiceManager.getInstance();
          if(serviceManager == null){
-             ClientAlerts.invokeWarningAlert("Server Warning", "Can't connect to server manager = null");
+             ClientAlerts.invokeWarningAlert("Wasla", "Can't connect to server");
              return false;
          }
          NormalUserAPI normalUserAPI = serviceManager.getNormalUserAPI();

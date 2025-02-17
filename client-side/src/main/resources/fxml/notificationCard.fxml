@@ -8,21 +8,27 @@
 <?import javafx.scene.text.Font?>
 <?import javafx.scene.text.Text?>
 
-<HBox alignment="CENTER" prefHeight="88.0" prefWidth="547.0" xmlns="http://javafx.com/javafx/9.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="jets.projects.Controllers.NotificationCardController">
+<HBox alignment="CENTER" prefHeight="88.0" prefWidth="547.0" style="-fx-background-radius: 10;" xmlns="http://javafx.com/javafx/9.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="jets.projects.Controllers.NotificationCardController">
    <children>
-      <HBox fx:id="notificationHbox" alignment="CENTER" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="80.0" prefWidth="534.0" styleClass="card" stylesheets="@../styles/mainStyles.css" HBox.hgrow="ALWAYS">
+      <HBox fx:id="notificationHbox" alignment="CENTER" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="80.0" prefWidth="534.0" style="-fx-background-radius: 10;" styleClass="card" stylesheets="@../styles/mainStyles.css" HBox.hgrow="ALWAYS">
          <children>
             <VBox alignment="CENTER_LEFT" prefHeight="78.0" prefWidth="446.0" HBox.hgrow="ALWAYS">
                <HBox.margin>
                   <Insets left="10.0" />
                </HBox.margin>
                <children>
-                  <Text fx:id="content" fill="#003249" strokeType="OUTSIDE" strokeWidth="0.0" text="Content" wrappingWidth="469.40162658691406">
+                  <Text fx:id="content" fill="#003249" strokeType="OUTSIDE" strokeWidth="0.0" text="Content" wrappingWidth="446.20167541503906">
                      <font>
                         <Font size="16.0" />
                      </font>
+                     <VBox.margin>
+                        <Insets left="10.0" />
+                     </VBox.margin>
                   </Text>
-                  <Label fx:id="sent_at" text="Label" />
+                  <Label fx:id="sent_at" text="Label">
+                     <VBox.margin>
+                        <Insets left="10.0" />
+                     </VBox.margin></Label>
                </children>
             </VBox>
             <Button fx:id="deleteButton" minWidth="50.0" mnemonicParsing="false" onAction="#handleDeleteButton" prefHeight="26.0" prefWidth="58.0" styleClass="primaryButton" stylesheets="@../styles/mainStyles.css" text="Delete">
@@ -30,7 +36,7 @@
                   <Insets left="60.0" />
                </opaqueInsets>
                <HBox.margin>
-                  <Insets right="20.0" />
+                  <Insets left="10.0" right="20.0" />
                </HBox.margin>
             </Button>
          </children>

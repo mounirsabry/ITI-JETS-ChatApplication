@@ -12,6 +12,7 @@ import jets.projects.entities.GroupMessage;
 import jets.projects.entity_info.GroupMemberInfo;
 
 import java.rmi.RemoteException;
+import java.util.ArrayList;
 
 
 public class CallBackGroupService {
@@ -19,19 +20,25 @@ public class CallBackGroupService {
     public static HomeScreenController homeScreenController;
 
     public void addedToGroup(Group group) {
-        try{
-            dataCenter.getGroupMessagesMap().put(
-                    group.getGroupID(), FXCollections.synchronizedObservableList(FXCollections.observableArrayList()));
-            dataCenter.getGroupMessagesMap().get(group.getGroupID()).addAll(
-                    ServerConnectivityService.getServerAPI().getGroupMessages(
-                            ServerConnectivityService.getMyToken(), group.getGroupID()));
-            dataCenter.getGroupMembersMap().get(group.getGroupID()).addAll(
-                    ServerConnectivityService.getServerAPI().getGroupMembers(ServerConnectivityService.getMyToken(), group.getGroupID())
-            );
-        } catch (RemoteException e) {
-            System.out.println(e.getMessage());
-        }
+        System.out.println("added to group");
+
         Platform.runLater(() -> {
+            try{
+                dataCenter.getGroupMessagesMap().put(
+                        group.getGroupID(), FXCollections.synchronizedObservableList(FXCollections.observableArrayList(new ArrayList<>())));
+                dataCenter.getGroupMessagesMap().get(group.getGroupID()).addAll(
+                        ServerConnectivityService.getServerAPI().getGroupMessages(
+                                ServerConnectivityService.getMyToken(), group.getGroupID()));
+                dataCenter.getGroupMembersMap().put(
+                  group.getGroupID(), FXCollections.synchronizedObservableList(FXCollections.observableArrayList(new ArrayList<>()))
+                );
+                dataCenter.getGroupMembersMap().get(group.getGroupID()).addAll(
+                        ServerConnectivityService.getServerAPI().getGroupMembers(ServerConnectivityService.getMyToken(), group.getGroupID())
+                );
+            } catch (RemoteException e) {
+                System.out.println(e.getMessage());
+            }
+            dataCenter.getGroupInfoMap().put(group.getGroupID(), group);
             dataCenter.getGroupList().add(group);
         });
     }

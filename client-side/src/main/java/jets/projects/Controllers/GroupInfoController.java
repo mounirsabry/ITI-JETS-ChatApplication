@@ -23,30 +23,31 @@ import java.io.ByteArrayInputStream;
 import java.util.*;
 
 public class GroupInfoController {
-        @FXML
-        private Button addmember;
-        @FXML
-        private Button deleteGroup;
-        @FXML
-        private Circle groupIcon;
-        @FXML
-        private Label groupName;
-        @FXML
-        private ComboBox<HBox> contactsCombobox;
-        @FXML
-        private Label description;
-        @FXML
-        private ListView<HBox> membersList;
-        private final ObservableList<HBox> memberInfoObservableList = FXCollections.observableArrayList();
-        private final ObservableList<HBox> contactInfoObservableList = FXCollections.observableArrayList();
-        private final Map<String, HBox> contactMap = new HashMap<>();
-        private int groupId;
-        List<GroupMemberInfo> members = new ArrayList<>();
-        Group group = null;
-        int groupAdminID;
-        int loggedInUserID;
-        private ClientGroupService groupService = null;
-        public static HomeScreenController homeScreenController;
+    @FXML
+    private Button addmember;
+    @FXML
+    private Button deleteGroup;
+    @FXML
+    private Circle groupIcon;
+    @FXML
+    private Label groupName;
+    @FXML
+    private ComboBox<HBox> contactsCombobox;
+    @FXML
+    private Label description;
+    @FXML
+    private ListView<HBox> membersList;
+
+    private final ObservableList<HBox> memberInfoObservableList = FXCollections.observableArrayList();
+    private final ObservableList<HBox> contactInfoObservableList = FXCollections.observableArrayList();
+    private final Map<String, HBox> contactMap = new HashMap<>();
+    private int groupId;
+    List<GroupMemberInfo> members = new ArrayList<>();
+    Group group = null;
+    int groupAdminID;
+    int loggedInUserID;
+    private ClientGroupService groupService = null;
+    public static HomeScreenController homeScreenController;
 
     @FXML
     void initialize(){
@@ -71,7 +72,7 @@ public class GroupInfoController {
         groupName.setText(group.getGroupName());
         description.setText(group.getGroupDesc());
         memberInfoObservableList.addAll(members.stream().filter(member->
-            member.getMember().getMemberID() != DataCenter.getInstance().getMyProfile().getUserID()
+                member.getMember().getMemberID() != DataCenter.getInstance().getMyProfile().getUserID()
         ).map(member -> {
 
             HBox card = new HBox(10);
@@ -111,7 +112,7 @@ public class GroupInfoController {
         }).toList());
     }
     @FXML
-    // add member to an existing group
+        // add member to an existing group
     void handleAddMember(ActionEvent event) {
         contactsCombobox.setVisible(true);
         // Handle member selection
@@ -168,6 +169,7 @@ public class GroupInfoController {
                     leftGroup = true;
                 }
             }
+
         }
         if (!leftGroup) {
             ClientAlerts.invokeErrorAlert("Error", "Failed to assign a new group admin");

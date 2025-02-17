@@ -88,7 +88,7 @@ public class SettingsController {
             Boolean result =profileService.setOnlineStatusABoolean(newStatus);
             if(result){
                 DataCenter.getInstance().setMyStatus(newStatus);
-                ClientAlerts.invokeInformationAlert("Update", "Successfully");
+                //ClientAlerts.invokeInformationAlert("Update", "Successfully");
             }
         
 

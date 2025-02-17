@@ -10,10 +10,7 @@ import javafx.scene.control.Label;
 import javafx.scene.control.ListCell;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
-import javafx.scene.layout.HBox;
-import javafx.scene.layout.Priority;
-import javafx.scene.layout.Region;
-import javafx.scene.layout.StackPane;
+import javafx.scene.layout.*;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Circle;
 import javafx.scene.text.Font;
@@ -27,6 +24,7 @@ public class ContactCard extends ListCell<ContactInfo> {
     private final HBox content;
     private final ImageView profilePic;
     private final Label name;
+    private final Label lastMessageLabel;
     private final Label unreadCountBadge;
     private final Circle clip;
     private final StackPane unreadContainer;
@@ -39,27 +37,33 @@ public class ContactCard extends ListCell<ContactInfo> {
         clip.setStrokeWidth(1);
 
         profilePic = new ImageView();
-        profilePic.setFitWidth(44); // Reduced width
-        profilePic.setFitHeight(44); // Reduced height
+        profilePic.setFitWidth(44);
+        profilePic.setFitHeight(44);
         profilePic.setPreserveRatio(true);
         profilePic.setClip(clip);
 
-        // Name Label Styling
+        // Name Label
         name = new Label();
-        name.setFont(Font.font("System", FontWeight.BOLD, 12)); // Slightly smaller font
+        name.setFont(Font.font("System", FontWeight.BOLD, 12));
         name.setTextFill(Color.BLACK);
-        name.setMaxWidth(170); // Reduced width
+        name.setMaxWidth(170);
         name.setWrapText(true);
-        name.setStyle("-fx-padding: 3 10 3 3;"); // Adjusted padding
+
+        // Last Message Label
+        lastMessageLabel = new Label();
+        lastMessageLabel.setFont(Font.font("System", FontWeight.NORMAL, 11));
+        lastMessageLabel.setTextFill(Color.GRAY);
+        lastMessageLabel.setMaxWidth(170);
+        lastMessageLabel.setWrapText(true);
 
         // Unread Messages Badge
         unreadCountBadge = new Label();
-        unreadCountBadge.setFont(Font.font("System", FontWeight.BOLD, 11)); // Smaller font
-        unreadCountBadge.setTextFill(Color.web("#0077C8")); // Blue color
+        unreadCountBadge.setFont(Font.font("System", FontWeight.BOLD, 11));
+        unreadCountBadge.setTextFill(Color.web("#0077C8"));
         unreadCountBadge.setAlignment(Pos.CENTER);
 
         // Circular Badge
-        Circle badgeCircle = new Circle(9, Color.WHITE); // Smaller badge
+        Circle badgeCircle = new Circle(9, Color.WHITE);
         badgeCircle.setStroke(Color.web("#0077C8"));
         badgeCircle.setStrokeWidth(1.8);
 
@@ -68,24 +72,22 @@ public class ContactCard extends ListCell<ContactInfo> {
         unreadContainer.setMinSize(18, 18);
         unreadContainer.setMaxSize(18, 18);
         unreadContainer.setAlignment(Pos.CENTER);
-        unreadContainer.setPadding(new Insets(0, 8, 0, 0)); // Smaller padding
+        unreadContainer.setPadding(new Insets(0, 8, 0, 0));
 
-        // Spacer
+        // Spacer to push unread badge to right
         spacer = new Region();
         HBox.setHgrow(spacer, Priority.ALWAYS);
 
-        // Container Styling
-        content = new HBox(8); // Reduced spacing
-        content.setAlignment(Pos.CENTER_LEFT);
-        content.setPadding(new Insets(5, 5, 5, 5)); // Reduced padding
-        content.setStyle("-fx-background-color: #f8f9fa;"
-                + "-fx-background-radius: 6;" // Smaller radius
-                + "-fx-border-radius: 6;"
-                + "-fx-border-color: #e0e0e0;"
-                + "-fx-border-width: 0.5;");
+        // VBox for Name & Last Message
+        VBox contactInfoBox = new VBox(name, lastMessageLabel);
+        contactInfoBox.setSpacing(2);
 
-        // Adding Elements
-        content.getChildren().addAll(profilePic, name, spacer, unreadContainer);
+        // Main HBox Layout
+        content = new HBox(8);
+        content.setAlignment(Pos.CENTER_LEFT);
+        content.setPadding(new Insets(5));
+        content.setStyle("-fx-background-color: #f8f9fa; -fx-border-color: #e0e0e0;");
+        content.getChildren().addAll(profilePic, contactInfoBox, spacer, unreadContainer);
     }
 
     @Override
@@ -98,6 +100,7 @@ public class ContactCard extends ListCell<ContactInfo> {
         } else {
             name.setText(contact.getName());
 
+            // Profile Picture Setup
             try {
                 if (contact.getPic() != null) {
                     profilePic.setImage(new Image(new ByteArrayInputStream(contact.getPic())));
@@ -108,6 +111,7 @@ public class ContactCard extends ListCell<ContactInfo> {
                 profilePic.setImage(new Image(getClass().getResource("/images/blank-profile.png").toExternalForm()));
             }
 
+            // Bind Unread Messages
             DataCenter.getInstance().getUnreadContactMessages()
                     .putIfAbsent(contact.getContact().getSecondID(), new SimpleIntegerProperty());
 
@@ -117,6 +121,7 @@ public class ContactCard extends ListCell<ContactInfo> {
                                 .stream().mapToInt(prop -> prop.get()).sum();
                         DataCenter.getInstance().getTotalUnreadMessages().set(total);
                     });
+
             DataCenter.getInstance().getContactMessagesMap().get(contact.getContact().getSecondID())
                     .addListener((ListChangeListener<ContactMessage>) change -> {
                         DataCenter.getInstance().getUnreadContactMessages().get(contact.getContact().getSecondID())
@@ -124,10 +129,8 @@ public class ContactCard extends ListCell<ContactInfo> {
                                         .stream()
                                         .filter(m -> m.getSenderID() == contact.getContact().getSecondID() && !m.getIsRead())
                                         .count());
-
                     });
 
-            // Bind unread messages count
             unreadCountBadge.textProperty().bind(Bindings.createStringBinding(
                     () -> {
                         int count = DataCenter.getInstance().getUnreadContactMessages()
@@ -138,12 +141,28 @@ public class ContactCard extends ListCell<ContactInfo> {
                             .get(contact.getContact().getSecondID())
             ));
 
-            // Hide the badge if no unread messages
             unreadContainer.visibleProperty().bind(
                     DataCenter.getInstance().getUnreadContactMessages()
                             .get(contact.getContact().getSecondID())
                             .greaterThan(0)
             );
+
+            // Bind Last Message Dynamically
+            DataCenter.getInstance().getContactMessagesMap().get(contact.getContact().getSecondID())
+                    .addListener((ListChangeListener<ContactMessage>) change -> {
+                        var messages = DataCenter.getInstance().getContactMessagesMap().get(contact.getContact().getSecondID());
+                        if (!messages.isEmpty()) {
+                            lastMessageLabel.setText(messages.get(messages.size() - 1).getContent());
+                        }
+                    });
+
+            // Show last message immediately if available
+            var messages = DataCenter.getInstance().getContactMessagesMap().get(contact.getContact().getSecondID());
+            if (!messages.isEmpty()) {
+                lastMessageLabel.setText(messages.get(messages.size() - 1).getContent());
+            } else {
+                lastMessageLabel.setText(""); // No messages yet
+            }
 
             setGraphic(content);
             setText(null);
