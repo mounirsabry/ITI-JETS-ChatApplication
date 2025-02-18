@@ -1,3 +1,6 @@
+# Ignoring session.xml file.
+session.xml
+
 # Ignore Intellij Generated folder.
 .idea/
 
