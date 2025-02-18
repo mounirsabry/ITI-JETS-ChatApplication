@@ -1,80 +1,57 @@
+
+#mainContainer {
+    -fx-background-color: #5A3D6B; /* Dark modern purple */
+    -fx-padding: 15px;
+    -fx-border-radius: 10px;
+    -fx-border-color: #3F2A4F; /* Even darker purple border */
+    -fx-border-width: 2px;
+}
+
 .sideBar{
-    -fx-background-color: linear-gradient(to top, #9ad1d4, #80ced7, #007ea7);
+    -fx-background-color: linear-gradient(to top, #b388eb, #9575cd, #673ab7);
     -fx-border-radius: 15;
     -fx-background-radius: 0 10 10 0;
-    -fx-padding:  10
+    -fx-padding:  10;
 }
 .chatsList{
-    -fx-background-color: white; 
-    -fx-background-radius: 15; 
-    -fx-border-radius: 15; 
-    -fx-padding: 10; 
-}
-
-.list-cell {
-    -fx-effect: dropshadow(gaussian, rgba(0, 0, 0, 0.5), 10, 0, 0, 0);
     -fx-background-color: white;
-    -fx-padding: 10px;
-    -fx-border-radius: 5px;
-    -fx-background-radius: 5px;
+    -fx-background-radius: 15;
+    -fx-border-radius: 15;
+    -fx-padding: 10;
 }
 
-/* Remove shadow when an item is selected */
-.list-cell:filled:selected {
-    -fx-effect: none;
-    -fx-background-color: #E0E0E0; /* Light gray when selected */
-}
 
-/* Ensure consistent background */
-.list-view {
-    -fx-background-image: url("/images/chat_background.jpg");
-    -fx-background-size: cover;
-    -fx-background-position: center;
-    -fx-background-repeat: no-repeat;
-    -fx-background-color: transparent;
-}
-
-/* Make individual list cells transparent initially */
-.list-cell {
-    -fx-background-color: transparent;
-    -fx-border-width: 0px;
-}
-
-/* Ensure selected messages have a background */
-.list-cell:filled:selected {
-    -fx-background-color: rgba(224, 224, 224, 0.7);
-}
 
 .openChatList{
-    -fx-background-color: #f1f2f6;
+    -fx-background-color: #ede7f6;
     -fx-border-radius: 25px;
     -fx-border-color: transparent #d0d1d4 transparent transparent;
     -fx-border-width:  0 2 0 0;
 }
 #searchField{
-    -fx-border-color: #003249;
-    -fx-border-radius:12;  
+    -fx-border-color: #512da8;
+    -fx-border-radius:12;
 }
 .iconsButtons{
-    -fx-background-color: #ccdbdc; 
-    -fx-background-radius: 40%; 
-    -fx-min-width: 50px; 
-    -fx-min-height: 30px; 
-    -fx-max-width: 30px; 
+    -fx-background-color: #b39ddb;
+    -fx-background-radius: 40%;
+    -fx-min-width: 50px;
+    -fx-min-height: 30px;
+    -fx-max-width: 30px;
     -fx-max-height: 30px;
-    -fx-border-color: #003249; 
+    -fx-border-color: #512da8;
     -fx-border-width: 1;
-    -fx-border-radius:40%; 
-    -fx-alignment: center; 
+    -fx-border-radius:40%;
+    -fx-alignment: center;
 }
 
 .iconsButtons:hover {
-    -fx-background-color: #80ced7;
-    -fx-border-color: #007ea7;
+    -fx-background-color: #9575cd;
+    -fx-border-color: #673ab7;
 }
 #profilePicture{
     -fx-shape: "M 50, 50 m -50, 0 a 50,50 0 1,1 100,0 a 50,50 0 1,1 -100,0"; /* Makes it circular */
-    -fx-min-width: 30px; 
+    -fx-min-width: 30px;
     -fx-min-height: 30px;
     -fx-max-width: 30px;
     -fx-max-height: 30px;
@@ -82,13 +59,224 @@
     -fx-background-image: url("images/profile.jpg");
     -fx-background-size: cover;
     -fx-background-position: center;
-    -fx-background-radius: 50%; 
+    -fx-background-radius: 50%;
 }
 .title{
-    -fx-font-size: 20px;        
-    -fx-text-fill: #007ea7;     
+    -fx-font-size: 20px;
+    -fx-text-fill: #512da8;
 }
 .subtitle{
-    -fx-font-size: 16px;        
-    -fx-text-fill: #003249;     
+    -fx-font-size: 16px;
+    -fx-text-fill: #311b92;
 }
+
+
+/* Styling for Contact Info Box */
+#contactInfoBox {
+    -fx-background-color: #7E57C2; /* Elegant purple */
+    -fx-text-fill: #FFFFFF; /* White text for contrast */
+    -fx-padding: 10px; /* Balanced padding */
+    -fx-background-radius: 10px; /* Smooth rounded corners */
+    -fx-border-radius: 10px;
+    -fx-border-color: #5E35B1; /* Darker purple border */
+    -fx-border-width: 2px;
+    -fx-effect: dropshadow(gaussian, rgba(94, 53, 177, 0.3), 6, 0, 3, 3); /* Softer shadow */
+}
+
+/* Styling for Message Box */
+#messageBox {
+    -fx-background-color: #9575CD; /* Soft lavender */
+    -fx-text-fill: #FFFFFF; /* White text */
+    -fx-padding: 8px; /* Comfortable padding */
+    -fx-background-radius: 8px; /* Smooth rounded corners */
+    -fx-border-radius: 8px;
+    -fx-border-color: #7E57C2; /* Deep purple border */
+    -fx-border-width: 2px;
+    -fx-effect: dropshadow(gaussian, rgba(126, 87, 194, 0.3), 5, 0, 3, 3); /* Gentle glow */
+}
+
+
+
+
+#contactMessagesListView {
+    -fx-background-color: transparent;
+    -fx-border-color: transparent;
+    -fx-padding: 5px;
+}
+
+#contactMessagesListView .list-cell {
+    -fx-background-color: transparent;
+    -fx-padding: 8px;
+    -fx-border-color: transparent;
+    -fx-effect: none;
+}
+
+/* Remove selection, hover, and focus effects completely */
+#contactMessagesListView .list-cell:selected,
+#contactMessagesListView .list-cell:focused,
+#contactMessagesListView .list-cell:hover {
+    -fx-background-color: transparent !important;
+    -fx-border-color: transparent !important;
+    -fx-effect: none !important;
+}
+
+/* Hide the scrollbar completely */
+#contactMessagesListView .scroll-bar {
+    -fx-opacity: 0;
+    -fx-pref-width: 0;
+    -fx-max-width: 0;
+    -fx-min-width: 0;
+}
+
+/////
+
+#groupMessagesListView {
+    -fx-background-color: transparent;
+    -fx-border-color: transparent;
+    -fx-padding: 5px;
+}
+
+#groupMessagesListView .list-cell {
+    -fx-background-color: transparent;
+    -fx-padding: 8px;
+    -fx-border-color: transparent;
+    -fx-effect: none;
+}
+
+/* Remove selection, hover, and focus effects completely */
+#groupMessagesListView .list-cell:selected,
+#groupMessagesListView .list-cell:focused,
+#groupMessagesListView .list-cell:hover {
+    -fx-background-color: transparent !important;
+    -fx-border-color: transparent !important;
+    -fx-effect: none !important;
+}
+
+/* Hide the scrollbar completely */
+#groupMessagesListView .scroll-bar {
+    -fx-opacity: 0;
+    -fx-pref-width: 0;
+    -fx-max-width: 0;
+    -fx-min-width: 0;
+}
+
+
+#contactListView {
+    -fx-background-color: transparent;
+    -fx-border-color: #cccccc; /* Soft gray border */
+    -fx-border-width: 1px;
+    -fx-border-radius: 10px;
+    -fx-padding: 5px;
+}
+
+#contactListView .list-cell {
+    -fx-background-color: transparent;
+    -fx-padding: 8px;
+    -fx-border-color: transparent;
+    -fx-transition: all 0.2s ease-in-out;
+}
+
+/* Subtle hover effect */
+#contactListView .list-cell:hover {
+    -fx-background-color: rgba(255, 255, 255, 0.1); /* Light transparent highlight */
+    -fx-border-color: rgba(255, 255, 255, 0.2); /* Soft border */
+}
+
+/* Subtle selection effect */
+#contactListView .list-cell:selected {
+    -fx-background-color: rgba(100, 100, 255, 0.2); /* Light blue highlight */
+    -fx-border-color: rgba(100, 100, 255, 0.5); /* Slightly stronger border */
+    -fx-border-radius: 8px;
+    -fx-font-weight: bold;
+}
+
+////
+#groupListView {
+    -fx-background-color: transparent;
+    -fx-border-color: #cccccc; /* Soft gray border */
+    -fx-border-width: 1px;
+    -fx-border-radius: 10px;
+    -fx-padding: 5px;
+}
+
+#groupListView .list-cell {
+    -fx-background-color: transparent;
+    -fx-padding: 8px;
+    -fx-border-color: transparent;
+    -fx-transition: all 0.2s ease-in-out;
+}
+
+/* Subtle hover effect */
+#groupListView .list-cell:hover {
+    -fx-background-color: rgba(255, 255, 255, 0.1); /* Light transparent highlight */
+    -fx-border-color: rgba(255, 255, 255, 0.2); /* Soft border */
+}
+
+/* Subtle selection effect */
+#groupListView .list-cell:selected {
+    -fx-background-color: rgba(100, 100, 255, 0.2); /* Light blue highlight */
+    -fx-border-color: rgba(100, 100, 255, 0.5); /* Slightly stronger border */
+    -fx-border-radius: 8px;
+    -fx-font-weight: bold;
+}
+
+
+/* Hide vertical scrollbar */
+#groupListView .scroll-bar:vertical {
+    -fx-opacity: 0;
+    -fx-pref-width: 0;
+}
+
+.cool-button {
+    -fx-background-color: linear-gradient(to bottom, #B388EB, #8661C1);
+    -fx-background-radius: 20;
+    -fx-border-radius: 20;
+    -fx-border-color: #FFFFFF;
+    -fx-border-width: 1.5;
+    -fx-text-fill: white;
+    -fx-font-size: 14px;
+    -fx-font-weight: bold;
+    -fx-padding: 8 16;
+    -fx-cursor: hand;
+    -fx-effect: dropshadow(gaussian, rgba(0, 0, 0, 0.3), 5, 0.3, 0, 2);
+}
+
+.cool-button:hover {
+    -fx-background-color: linear-gradient(to bottom, #C2A2F0, #9B7FD8);
+    -fx-effect: dropshadow(gaussian, rgba(0, 0, 0, 0.4), 6, 0.4, 0, 3);
+}
+
+.cool-button:pressed {
+    -fx-background-color: linear-gradient(to bottom, #8661C1, #6B47A1);
+    -fx-effect: none;
+    -fx-translate-y: 2px;
+}
+
+.sidebar-button {
+    -fx-background-color: transparent;
+    -fx-background-radius: 50%;
+    -fx-border-radius: 50%;
+    -fx-border-color: transparent;
+    -fx-padding: 10;
+    -fx-cursor: hand;
+    -fx-effect: dropshadow(gaussian, rgba(0, 0, 0, 0.2), 4, 0.3, 0, 2);
+}
+
+.sidebar-button:hover {
+    -fx-background-color: rgba(255, 255, 255, 0.2);
+    -fx-border-color: rgba(255, 255, 255, 0.5);
+}
+
+.sidebar-button:pressed {
+    -fx-background-color: rgba(255, 255, 255, 0.3);
+    -fx-border-color: rgba(255, 255, 255, 0.7);
+    -fx-effect: none;
+    -fx-translate-y: 2px;
+}
+
+.stackPane {
+    -fx-background-image: url("/images/Squiggle+Assets-04.png"); /* Adjust the path */
+    -fx-background-size: cover; /* Cover the entire StackPane */
+    -fx-background-position: center;
+}
+

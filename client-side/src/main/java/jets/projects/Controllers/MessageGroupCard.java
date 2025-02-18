@@ -12,11 +12,7 @@ import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
 import javafx.scene.shape.Circle;
 import javafx.stage.FileChooser;
-import jets.projects.Services.Request.ClientContactMessageService;
 import jets.projects.Services.Request.ClientGroupMessageService;
-import jets.projects.entities.ContactMessage;
-import javafx.concurrent.Task;
-import javafx.application.Platform;
 import jets.projects.entities.GroupMessage;
 import jets.projects.entity_info.GroupMemberInfo;
 
@@ -25,6 +21,8 @@ import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.time.format.DateTimeFormatter;
+import javafx.concurrent.Task;
+import javafx.application.Platform;
 
 public class MessageGroupCard extends ListCell<GroupMessage> {
     private HBox content;
@@ -38,7 +36,6 @@ public class MessageGroupCard extends ListCell<GroupMessage> {
     private ClientGroupMessageService groupMessageService;
 
     public MessageGroupCard() {
-
         clip = new Circle(20, 20, 20);
         profilePic = new ImageView();
         profilePic.setFitWidth(40);
@@ -46,7 +43,7 @@ public class MessageGroupCard extends ListCell<GroupMessage> {
         profilePic.setPreserveRatio(true);
 
         senderName = new Label();
-        senderName.setStyle("-fx-font-weight: bold; -fx-text-fill: #2a2a2a;");
+        senderName.setStyle("-fx-font-weight: bold; -fx-text-fill: #0078D7;");
 
         messageContent = new Label();
         messageContent.setWrapText(true);
@@ -80,27 +77,21 @@ public class MessageGroupCard extends ListCell<GroupMessage> {
             Image profileImage;
 
             if (message.getSenderID() == myID) {
-                // Sent messages (show my profile)
                 displayName = DataCenter.getInstance().getMyProfile().getDisplayName();
-                if (DataCenter.getInstance().getMyProfile().getPic() != null) {
-                    profileImage = new Image(new ByteArrayInputStream(DataCenter.getInstance().getMyProfile().getPic()));
-                } else {
-                    profileImage = new Image(getClass().getResource("/images/blank-profile.png").toExternalForm());
-                }
+                profileImage = (DataCenter.getInstance().getMyProfile().getPic() != null)
+                        ? new Image(new ByteArrayInputStream(DataCenter.getInstance().getMyProfile().getPic()))
+                        : new Image(getClass().getResource("/images/blank-profile.png").toExternalForm());
             } else {
-                // Received messages (show sender profile)
                 int contactID = message.getSenderID();
                 ObservableList<GroupMemberInfo> list = DataCenter.getInstance().getGroupMembersMap().get(message.getGroupID());
                 GroupMemberInfo groupMemberInfo = list.stream().filter(member -> member.getMember().getMemberID() == contactID).findFirst().orElse(null);
 
-                if(groupMemberInfo != null){
+                if (groupMemberInfo != null) {
                     displayName = groupMemberInfo.getName();
-                    if(groupMemberInfo.getPic() != null)
-                        profileImage = new Image(new ByteArrayInputStream(groupMemberInfo.getPic()));
-                    else{
-                        profileImage = new Image(getClass().getResource("/images/blank-profile.png").toExternalForm());
-                    }
-                }else{
+                    profileImage = (groupMemberInfo.getPic() != null)
+                            ? new Image(new ByteArrayInputStream(groupMemberInfo.getPic()))
+                            : new Image(getClass().getResource("/images/blank-profile.png").toExternalForm());
+                } else {
                     displayName = "Unknown Sender";
                     profileImage = new Image(getClass().getResource("/images/blank-profile.png").toExternalForm());
                 }
@@ -111,24 +102,19 @@ public class MessageGroupCard extends ListCell<GroupMessage> {
             profilePic.setImage(profileImage);
             timestamp.setText(message.getSentAt().format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm")));
 
-            // Check if message contains a file
             if (message.getContainsFile()) {
-                messageContent.setText(message.getContent()); // File name
+                messageContent.setText(message.getContent());
                 messageContent.setStyle("-fx-background-color: #E0E0E0; -fx-padding: 8px; -fx-background-radius: 8px;");
                 messageContent.setGraphic(fileIcon);
                 groupMessageService = new ClientGroupMessageService();
-
-                // Enable file download on click
                 messageContent.setOnMouseClicked(event -> downloadFile(message));
             } else {
-                // Display normal text message
                 messageContent.setText(message.getContent());
                 messageContent.setStyle("-fx-background-color: lightgray; -fx-padding: 8px; -fx-background-radius: 8px;");
                 messageContent.setGraphic(null);
                 messageContent.setOnMouseClicked(null);
             }
 
-            // Adjust alignment
             content.getChildren().clear();
             if (message.getSenderID() == myID) {
                 content.setAlignment(Pos.CENTER_RIGHT);
@@ -158,10 +144,9 @@ public class MessageGroupCard extends ListCell<GroupMessage> {
         downloadTask.setOnSucceeded(event -> {
             byte[] fileData = downloadTask.getValue();
             if (fileData == null) {
-                return; // Server error already handled
+                return;
             }
 
-            // File chooser must be run on JavaFX Application Thread
             Platform.runLater(() -> {
                 FileChooser fileChooser = new FileChooser();
                 fileChooser.setTitle("Save File");
@@ -179,12 +164,7 @@ public class MessageGroupCard extends ListCell<GroupMessage> {
             });
         });
 
-        downloadTask.setOnFailed(event -> {
-            System.out.println("File download failed.");
-        });
-
-        // Run the task on a background thread
+        downloadTask.setOnFailed(event -> System.out.println("File download failed."));
         new Thread(downloadTask).start();
     }
-
 }

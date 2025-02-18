@@ -11,11 +11,15 @@
 <?import javafx.scene.layout.HBox?>
 <?import javafx.scene.layout.VBox?>
 <?import javafx.scene.shape.Circle?>
+<?import javafx.scene.text.Font?>
 
-<VBox alignment="TOP_CENTER" maxHeight="400.0" maxWidth="600.0" minHeight="-Infinity" minWidth="-Infinity" prefHeight="400.0" prefWidth="600.0" spacing="5.0" styleClass="popup" stylesheets="@../styles/mainStyles.css" xmlns="http://javafx.com/javafx/9.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="jets.projects.Controllers.GroupInfoController">
+<VBox alignment="TOP_CENTER" maxHeight="400.0" maxWidth="600.0" minHeight="-Infinity" minWidth="-Infinity" prefHeight="400.0" prefWidth="600.0" spacing="5.0" styleClass="sideBar" stylesheets="@../styles/mainStyles.css" xmlns="http://javafx.com/javafx/9.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="jets.projects.Controllers.GroupInfoController">
    <children>
       <Circle fx:id="groupIcon" fill="WHITE" radius="50.0" stroke="BLACK" strokeType="INSIDE" />
-      <Label fx:id="groupName" styleClass="title" stylesheets="@../styles/mainStyles.css" text="A New Group" />
+      <Label fx:id="groupName" stylesheets="@../styles/mainStyles.css" text="A New Group">
+         <font>
+            <Font name="System Bold" size="18.0" />
+         </font></Label>
       <Label fx:id="description" styleClass="smallText" stylesheets="@../styles/mainStyles.css" text="description" VBox.vgrow="ALWAYS" />
       <Separator prefWidth="200.0" />
       <HBox alignment="CENTER_LEFT" prefHeight="22.0" prefWidth="560.0" spacing="30.0">

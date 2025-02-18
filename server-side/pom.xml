@@ -37,7 +37,7 @@
 				<groupId>org.codehaus.mojo</groupId>
 				<artifactId>exec-maven-plugin</artifactId>
 				<configuration>
-					<mainClass>jets.projects.App</mainClass>
+					<mainClass>jets.projects.ServerApp</mainClass>
 					<cleanupDaemonThreads>false</cleanupDaemonThreads>
 				</configuration>
 			</plugin>
@@ -55,7 +55,7 @@
                             <transformers>
                                 <transformer implementation=
                                         "org.apache.maven.plugins.shade.resource.ManifestResourceTransformer">
-                                    <mainClass>jets.projects.App</mainClass>
+                                    <mainClass>jets.projects.ServerApp</mainClass>
                                 </transformer>
                             </transformers>
                         </configuration>

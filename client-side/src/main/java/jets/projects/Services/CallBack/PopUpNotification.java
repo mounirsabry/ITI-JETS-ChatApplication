@@ -44,15 +44,9 @@ public class PopUpNotification {
         popupStage.setAlwaysOnTop(true); // Ensure the pop-up is always on top
 
         // Load the logo image from resources
-        String logoPath = "/images/logo.png"; // Correct path to the logo image
+        String logoPath = "/images/small-logo.png"; // Correct path to the logo image
         try {
-            System.out.println("Loading image from: " + logoPath);
             Image logoImage = new Image(PopUpNotification.class.getResource(logoPath).toExternalForm());
-            if (logoImage.isError()) {
-                System.err.println("Failed to load logo image.");
-            } else {
-                System.out.println("Logo image loaded successfully.");
-            }
 
             ImageView logoView = new ImageView(logoImage);
             logoView.setFitHeight(40); // Set logo height
@@ -95,6 +89,7 @@ public class PopUpNotification {
             lastY.updateAndGet(y -> y - (NOTIFICATION_HEIGHT + PADDING));
 
             // Show the pop-up
+
             popupStage.show();
 
             // Fade-in animation

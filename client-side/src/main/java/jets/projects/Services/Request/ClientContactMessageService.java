@@ -1,6 +1,7 @@
 package jets.projects.Services.Request;
 
 import javafx.application.Platform;
+import jets.projects.Classes.ExceptionMessages;
 import jets.projects.ClientApp;
 import jets.projects.Controllers.ClientAlerts;
 import jets.projects.Services.ServerConnectivityService;
@@ -78,7 +79,11 @@ public class ClientContactMessageService {
             }
 
         } catch (RemoteException e) {
-            ClientAlerts.invokeErrorAlert("Send Contact Message Error", e.getMessage());
+            if(e.getMessage().endsWith(ExceptionMessages.USER_TIMEOUT)){
+                ClientAlerts.invokeInformationAlert("Wasla", "Server is down, please login later.");
+            }else{
+                ClientAlerts.invokeErrorAlert("Send Contact Message Error", e.getMessage());
+            }
             return 0;
         }
     }

@@ -1,4 +1,5 @@
 package jets.projects.Controllers;
+import javafx.beans.property.SimpleIntegerProperty;
 import javafx.collections.FXCollections;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
@@ -42,11 +43,14 @@ public class InvitationCardController {
     void handleAcceptButton(ActionEvent event) {
     ContactInfo contactInfo = invitationService.acceptContactInvitation(invitation.getInvitationID());
     if (contactInfo != null) {
-            DataCenter.getInstance().getContactList().add(contactInfo);
-            DataCenter.getInstance().getContactInfoMap().putIfAbsent(invitation.getSenderID(),contactInfo);
-            DataCenter.getInstance().getContactInvitationList().removeIf(inv -> inv.getInvitation().getInvitationID() == invitation.getInvitationID());
-            DataCenter.getInstance().getContactMessagesMap().put(contactInfo.getContact().getSecondID()
-                    , FXCollections.synchronizedObservableList(FXCollections.observableArrayList(new ArrayList<>())));
+        DataCenter.getInstance().getContactMessagesMap().put(contactInfo.getContact().getSecondID()
+                , FXCollections.synchronizedObservableList(FXCollections.observableArrayList(new ArrayList<>())));
+        DataCenter.getInstance().getContactInfoMap().putIfAbsent(invitation.getSenderID(),contactInfo);
+        DataCenter.getInstance().getContactList().add(contactInfo);
+
+        DataCenter.getInstance().getContactInvitationList().removeIf(inv -> inv.getInvitation().getInvitationID() == invitation.getInvitationID());
+
+        DataCenter.getInstance().getUnreadContactMessages().putIfAbsent(invitation.getSenderID(), new SimpleIntegerProperty());
         }
     }
     @FXML

@@ -192,4 +192,22 @@ public class AnnouncementDao {
         // TODO Auto-generated method stub
         throw new UnsupportedOperationException("Unimplemented method 'getUnreadAnnouncements'");
     }
+
+    public RequestResult<Boolean> markAnnouncementsAsRead(int userID) {
+        String query = "UPDATE announcementseen"
+                + " SET is_read = TRUE"
+                + " WHERE user_ID = ?"
+                + " AND is_read = FALSE;";
+
+        try (Connection connection = ConnectionManager.getConnection();
+             PreparedStatement stmt = connection.prepareStatement(query);) {
+            stmt.setInt(1, userID);
+            stmt.executeUpdate();
+
+            return new RequestResult<>(true, null);
+        } catch (SQLException ex) {
+            return new RequestResult<>(null, "DB Error: "
+                    + ex.getMessage());
+        }
+    }
 }

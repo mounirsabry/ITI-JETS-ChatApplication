@@ -132,8 +132,6 @@ public class ClientAPIImpl extends UnicastRemoteObject implements ClientAPI {
 
     @Override
     public void groupMemberLeft(int groupID, int memberID) throws RemoteException{
-        Platform.runLater(()->{
-            ClientAlerts.invokeInformationAlert("From server", "member: " + memberID + " , has left the group");
-        });
+        callBackGroupService.groupMemberLeft(groupID, memberID);
     }
 }

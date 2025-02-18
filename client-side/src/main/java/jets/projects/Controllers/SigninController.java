@@ -50,7 +50,7 @@ public class SigninController {
             
             boolean isLogin = clientAuthenticationService.login(phoneNumber, password);
             if (isLogin == false) {
-                ClientAlerts.invokeErrorAlert("Error", "Could not login from the saved session.");
+                //ClientAlerts.invokeErrorAlert("Error", "Could not login from the saved session.");
                 return;
             }
             sessionSaver.save(savedSession);

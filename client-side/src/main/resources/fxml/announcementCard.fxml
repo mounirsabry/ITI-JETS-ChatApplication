@@ -9,30 +9,33 @@
 <?import javafx.scene.text.Font?>
 <?import javafx.scene.text.Text?>
 
-
-<AnchorPane xmlns="http://javafx.com/javafx/9.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="jets.projects.Controllers.AnnouncementCardController">
+<AnchorPane maxHeight="150.0" stylesheets="@../styles/mainStyles.css" xmlns="http://javafx.com/javafx/9.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="jets.projects.Controllers.AnnouncementCardController">
    <children>
-      <HBox fx:id="announcementHbox" alignment="CENTER_LEFT" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="150.0" prefWidth="600.0" spacing="10.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
+      <HBox fx:id="announcementHbox" alignment="CENTER_LEFT" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="150.0" prefWidth="550.0" spacing="10.0" styleClass="card" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
          <children>
-            <VBox fx:id="announcementVbox" prefHeight="148.0" prefWidth="508.0" spacing="5.0" HBox.hgrow="ALWAYS">
+            <VBox fx:id="announcementVbox" maxWidth="400.0" prefHeight="149.0" prefWidth="400.0" spacing="5.0" HBox.hgrow="ALWAYS">
                <children>
-                  <Label fx:id="title" styleClass="subtitle" stylesheets="@../styles/mainStyles.css" text="Title" />
-                  <Text fx:id="content" fill="#003249" strokeType="OUTSIDE" strokeWidth="0.0" text="Content" wrappingWidth="490.4511833190918" VBox.vgrow="ALWAYS">
+                  <Label fx:id="title" prefHeight="34.0" prefWidth="295.0" stylesheets="@../styles/mainStyles.css" text="Title" textFill="#c41fdd">
                      <font>
-                        <Font size="14.0" />
+                        <Font size="23.0" />
+                     </font></Label>
+                  <Text fx:id="content" fill="#003249" strokeType="OUTSIDE" strokeWidth="0.0" text="Content" wrappingWidth="434.4512138366699" VBox.vgrow="ALWAYS">
+                     <font>
+                        <Font size="18.0" />
                      </font>
                   </Text>
+                  <Label fx:id="sent_at" text="Label" />
                </children>
                <padding>
                   <Insets left="10.0" top="10.0" />
                </padding>
             </VBox>
-            <Button fx:id="deleteButton" mnemonicParsing="false" onAction="#handleDeleteButton" styleClass="primaryButton" stylesheets="@../styles/mainStyles.css" text="Delete">
+            <Button fx:id="deleteButton" mnemonicParsing="false" onAction="#handleDeleteButton" prefHeight="26.0" prefWidth="76.0" styleClass="primaryButton" stylesheets="@../styles/mainStyles.css" text="Delete">
                <opaqueInsets>
                   <Insets left="60.0" />
                </opaqueInsets>
                <HBox.margin>
-                  <Insets />
+                  <Insets right="30.0" />
                </HBox.margin>
             </Button>
          </children>

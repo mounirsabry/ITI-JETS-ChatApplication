@@ -1,8 +1,11 @@
 package jets.projects;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
+import javafx.scene.image.Image;
 import javafx.stage.Stage;
 import jets.projects.Controllers.*;
+import jets.projects.Services.CallBack.CallBackNotificationService;
+import jets.projects.Services.CallBack.CallBackUpdateService;
 import jets.projects.Services.Request.ClientAuthenticationService;
 import jets.projects.Services.ServerConnectivityService;
 
@@ -36,6 +39,9 @@ public class Director {
         this.homeScreenController = homeScreenController;
         this.loadingParent = loadingParent;
         this.loadingController = loadingController;
+
+        CallBackNotificationService.homeScreenController = homeScreenController;
+        CallBackUpdateService.homeScreenController = homeScreenController;
     }
 
     public void startWorking() {
@@ -57,7 +63,9 @@ public class Director {
             clientAuthenticationService.logout();
             System.exit(0);
         });
-       stage.show();
+        stage.getIcons().add(new Image(getClass().getResource("/images/small-logo.png").toExternalForm()));
+        stage.setTitle("Wasla");
+        stage.show();
     }
 
     public void signin(){

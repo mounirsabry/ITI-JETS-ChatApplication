@@ -59,4 +59,25 @@ public class AnnouncementsManager {
         
         return announcementDao.getUnreadAnnouncements(token.getUserID());
     }
+
+    public RequestResult<Boolean> markAnnouncementsAsRead(ClientToken token) {
+        var validationResult = tokenValidator.checkClientToken(token);
+        if (validationResult.getErrorMessage() != null) {
+            return new RequestResult<>(null,
+                    validationResult.getErrorMessage());
+        }
+        boolean isTokenValid = validationResult.getResponseData();
+        if (!isTokenValid) {
+            return new RequestResult<>(null,
+                    ExceptionMessages.INVALID_TOKEN);
+        }
+
+        if (!OnlineTracker.isOnline(token.getUserID())) {
+            return new RequestResult<>(null,
+                    ExceptionMessages.USER_TIMEOUT);
+        }
+
+        return announcementDao.markAnnouncementsAsRead(
+                token.getUserID());
+    }
 }

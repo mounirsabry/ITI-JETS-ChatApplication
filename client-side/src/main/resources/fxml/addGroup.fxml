@@ -15,7 +15,7 @@
 <?import javafx.scene.shape.Circle?>
 <?import javafx.scene.text.Font?>
 
-<BorderPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="400.0" prefWidth="600.0" styleClass="popup" stylesheets="@../styles/mainStyles.css" xmlns="http://javafx.com/javafx/9.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="jets.projects.Controllers.AddGroupController">
+<BorderPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="400.0" prefWidth="600.0" styleClass="sideBar" stylesheets="@../styles/mainStyles.css" xmlns="http://javafx.com/javafx/9.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="jets.projects.Controllers.AddGroupController">
    <center>
       <GridPane BorderPane.alignment="CENTER">
          <columnConstraints>
@@ -49,14 +49,14 @@
             <Label styleClass="subtitle" stylesheets="@../styles/mainStyles.css" text="Description" GridPane.rowIndex="2" />
             <VBox fx:id="groupIcon" alignment="CENTER" prefHeight="107.0" prefWidth="121.0" GridPane.columnIndex="2" GridPane.halignment="CENTER" GridPane.hgrow="ALWAYS" GridPane.valignment="CENTER" GridPane.vgrow="ALWAYS">
                <children>
-                  <Circle fx:id="groupPicture" fill="DODGERBLUE" radius="32.0" stroke="BLACK" strokeType="INSIDE">
+                  <Circle fx:id="groupPicture" fill="DODGERBLUE" radius="25.0" stroke="BLACK" strokeType="INSIDE">
                      <VBox.margin>
-                        <Insets top="-10.0" />
+                        <Insets top="10.0" />
                      </VBox.margin>
                   </Circle>
-                  <Button fx:id="chooseGroupIconButton" mnemonicParsing="false" onAction="#handleChooseGroupIcon" prefHeight="23.0" prefWidth="100.0" style="-fx-background-color: transparent;" text="Add Group Icon" textFill="#939191">
+                  <Button fx:id="chooseGroupIconButton" mnemonicParsing="false" onAction="#handleChooseGroupIcon" prefHeight="23.0" prefWidth="100.0" style="-fx-background-color: transparent;" text="Add Group Icon" textFill="#310b0b">
                      <font>
-                        <Font size="10.0" />
+                        <Font size="11.0" />
                      </font>
                   </Button>
                </children>

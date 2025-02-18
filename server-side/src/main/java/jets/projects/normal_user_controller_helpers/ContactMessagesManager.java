@@ -104,12 +104,12 @@ public class ContactMessagesManager {
         
         var isContactResult = contactsDao.isContacts(token.getUserID(),
                 contactID);
-        if (isContactResult.getErrorMessage() != null) {
+        if (isContactResult.getErrorMessage() != null && token.getUserID()!=contactID) {
             return new RequestResult<>(null,
                     isContactResult.getErrorMessage());
         }
         boolean isContacts = isContactResult.getResponseData();
-        if (!isContacts) {
+        if (!isContacts && token.getUserID()!=contactID) {
             return new RequestResult<>(null,
                     ExceptionMessages.NOT_CONTACTS);
         }
