@@ -5,7 +5,8 @@ module jets.projects {
     requires javafx.graphics;
     requires java.rmi;
     requires jakarta.xml.bind;
-    
+    requires java.desktop;
+
     exports jets.projects;
     exports jets.projects.Controllers;    
     opens jets.projects to javafx.fxml;

@@ -1,6 +1,7 @@
 package jets.projects.Controllers;
 
 
+import datastore.DataCenter;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.scene.control.Button;
@@ -86,9 +87,8 @@ public class SettingsController {
             NormalUserStatus newStatus = NormalUserStatus.valueOf(selectedStatus);
             Boolean result =profileService.setOnlineStatusABoolean(newStatus);
             if(result){
-                ClientAlerts.invokeInformationAlert("Update", "Successfully");
-
-
+                DataCenter.getInstance().setMyStatus(newStatus);
+                //ClientAlerts.invokeInformationAlert("Update", "Successfully");
             }
         
 

@@ -7,13 +7,13 @@ INSERT INTO NormalUser
 (user_ID, display_name, phone_number, email, pic, password,
 gender, country, birth_date, created_at, status, bio, is_admin_created,
 is_password_valid) VALUES
-(0, 'Mounir', '1111', 'mounir@email.com', NULL, 'mounir', 'MALE',
+(0, 'Mounir', '01080', 'mounir@email.com', NULL, '01080', 'MALE',
 'EGYPT', NULL, DEFAULT, 'OFFLINE', '', FALSE, TRUE),
-(0, 'Hashim', '2222', 'hashim@email.com', NULL, 'hashim', 'MALE',
+(0, 'Hashim', '01090', 'hashim@email.com', NULL, '01090', 'MALE',
 'EGYPT', NULL, DEFAULT, 'OFFLINE', '', FALSE, TRUE),
-(0, 'Salma', '3333', 'salma@email.com', NULL, 'salma', 'FEMALE',
+(0, 'Salma', '01070', 'salma@email.com', NULL, '01070', 'FEMALE',
 'EGYPT', NULL, DEFAULT, 'OFFLINE', '', FALSE, TRUE),
-(0, 'Mariam', '4444', 'mariam@email.com', NULL, 'mariam', 'FEMALE',
+(0, 'Mariam', '01060', 'mariam@email.com', NULL, '01060', 'FEMALE',
 'EGYPT', NULL, DEFAULT, 'OFFLINE', '', FALSE, TRUE),
 (0, 'User1', '5555', 'user1@email.com', NULL, 'user1', 'MALE',
 'EGYPT', NULL, DEFAULT, 'OFFLINE', '', FALSE, TRUE),
@@ -51,7 +51,7 @@ INSERT INTO ContactMessage VALUES
 (0, 4, 3, DEFAULT, 'Hello Salma', FALSE, FALSE, NULL);
 
 INSERT INTO UsersGroup VALUES
-(0, 'G1', 'Some basic description for the dev group.',
+(0, 'Group1', 'Some basic description for the dev group.',
 1, NULL, DEFAULT);
 
 INSERT INTO UsersGroupMember VALUES

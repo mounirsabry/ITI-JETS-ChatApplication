@@ -147,4 +147,15 @@ public class DataCenter {
     public SimpleIntegerProperty unseenNotificationsCountProperty() { return unseenNotificationsCount; }
 
     public SimpleIntegerProperty unseenAnnouncementsCountProperty() {return unseenAnnouncementsCount; }
+
+    private final SimpleIntegerProperty totalUnreadMessages = new SimpleIntegerProperty(0);
+
+    public SimpleIntegerProperty getTotalUnreadMessages() {
+        return totalUnreadMessages;
+    }
+    private final SimpleIntegerProperty invitationsCount = new SimpleIntegerProperty(0);
+
+    public SimpleIntegerProperty getInvitationsCount() {
+        return invitationsCount;
+    }
 }

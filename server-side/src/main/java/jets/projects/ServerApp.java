@@ -6,7 +6,7 @@ import jets.projects.db_connections.ConnectionManager;
 import jets.projects.shared_ds.OnlineNormalUserTable;
 import jets.projects.top_controllers.AdminController;
 
-public class App {
+public class ServerApp {
     @SuppressWarnings("SleepWhileInLoop")
     public static void main(String[] args) {
         // Initialize the connection manager with the config from the file.

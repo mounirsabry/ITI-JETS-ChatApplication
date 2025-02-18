@@ -124,7 +124,7 @@ public class EditProfileController {
               DataCenter.getInstance().getMyProfile().setDisplayName(name);
               DataCenter.getInstance().getMyProfile().setBio(bio);
               DataCenter.getInstance().getMyProfile().setBirthDate(birthDate);
-                  ClientAlerts.invokeInformationAlert("Saved","Edit Successfully");
+                  //ClientAlerts.invokeInformationAlert("Saved","Edit Successfully");
                   homeScreenController.updateProfile();
           }
           else{

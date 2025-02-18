@@ -16,7 +16,6 @@ public class CallBackContactMessageService {
     DataCenter dataCenter = DataCenter.getInstance();
 
     public void contactMessageReceived(ContactMessage message){
-        System.out.println("7 "+message);
         int myID = dataCenter.getMyProfile().getUserID();
         if(message.getReceiverID() != myID){
             Platform.runLater(()->{
@@ -24,19 +23,12 @@ public class CallBackContactMessageService {
             });
             return;
         }
-        int senderID = message.getSenderID();
 
-        Map<Integer, ObservableList<ContactMessage>> contactMessagesMap = dataCenter.getContactMessagesMap();
-
-        ObservableList<ContactMessage> contactMessages = contactMessagesMap.get(
-                senderID);
-        IntegerProperty n = DataCenter.getInstance().getUnreadContactMessages().get(message.getSenderID());
-        n.set(n.getValue()+1);
         String name = dataCenter.getContactInfoMap().get(message.getSenderID()).getName();
         Platform.runLater(()->{
-
+            System.out.println(message);
             PopUpNotification.showNotification(name +" has sent you a message");
-            DataCenter.getInstance().getContactMessagesMap().get(message.getSenderID()).add(message);
+            dataCenter.getContactMessagesMap().get(message.getSenderID()).add(message);
         });
     }
 }

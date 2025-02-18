@@ -5,20 +5,24 @@
 <?import javafx.scene.control.ListView?>
 <?import javafx.scene.layout.BorderPane?>
 <?import javafx.scene.layout.HBox?>
+<?import javafx.scene.text.Font?>
 
-<BorderPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="400.0" prefWidth="600.0" styleClass="popup" stylesheets="@../styles/mainStyles.css" xmlns="http://javafx.com/javafx/9.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="jets.projects.Controllers.NotificationsController">
+<BorderPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="400.0" prefWidth="600.0" styleClass="sideBar" stylesheets="@../styles/homeScreenStyles.css" xmlns="http://javafx.com/javafx/9.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="jets.projects.Controllers.NotificationsController">
    <top>
       <HBox>
          <children>
-            <Label styleClass="title" stylesheets="@../styles/mainStyles.css" text="Notifications">
+            <Label stylesheets="@../styles/mainStyles.css" text="Notifications" textFill="WHITE">
                <HBox.margin>
                   <Insets left="10.0" />
                </HBox.margin>
+               <font>
+                  <Font size="26.0" />
+               </font>
             </Label>
          </children>
       </HBox>
    </top>
    <center>
-      <ListView fx:id="notificationsList" prefHeight="200.0" prefWidth="200.0" BorderPane.alignment="CENTER" />
+      <ListView fx:id="notificationsList" prefHeight="200.0" prefWidth="200.0" styleClass="contactMessagesListView" stylesheets="@../styles/mainStyles.css" BorderPane.alignment="CENTER" />
    </center>
 </BorderPane>

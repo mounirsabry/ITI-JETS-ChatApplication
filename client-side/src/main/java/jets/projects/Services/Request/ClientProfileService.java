@@ -48,7 +48,7 @@ public class ClientProfileService {
         ClientToken myToken = ServerConnectivityService.getMyToken();
         try{
             if(serverAPI.editProfile(myToken, displayName, birthDate, bio, profilePic)){
-                ClientAlerts.invokeInformationAlert("Edit Profile", "Profile edited successfully");
+                //ClientAlerts.invokeInformationAlert("Edit Profile", "Profile edited successfully");
                 return true;
             }
             ClientAlerts.invokeErrorAlert("Profile Editing Error", "Non expecting error");
@@ -67,7 +67,7 @@ public class ClientProfileService {
         ClientToken myToken = ServerConnectivityService.getMyToken();
         try{
             if(serverAPI.changePassword(myToken, oldPassword, newPassword)){
-                ClientAlerts.invokeInformationAlert("Password Editing", "Password changed successfully");
+                //ClientAlerts.invokeInformationAlert("Password Editing", "Password changed successfully");
                 return true;
             }
             ClientAlerts.invokeErrorAlert("Password Editing Error", "Non expecting error");
@@ -102,7 +102,7 @@ public class ClientProfileService {
         ClientToken myToken = ServerConnectivityService.getMyToken();
         try {
             if (serverAPI.setOnlineStatus(myToken, onlineStatus)) {
-                ClientAlerts.invokeInformationAlert("Set Online Status", "Status updated successfully");
+                //ClientAlerts.invokeInformationAlert("Set Online Status", "Status updated successfully");
                 return true;
             }
             ClientAlerts.invokeErrorAlert("Set Online Status Error", "Non expecting error occurred");

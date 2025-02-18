@@ -23,6 +23,8 @@ import java.util.List;
 import datastore.DataCenter;
 import javafx.collections.FXCollections;
 import javafx.event.ActionEvent;
+import jets.projects.entities.GroupMember;
+import jets.projects.entity_info.GroupMemberInfo;
 
 public class AddGroupController {
     private byte[] selectedImageBytes = null;
@@ -89,13 +91,18 @@ public class AddGroupController {
             ClientAlerts.invokeInformationAlert("Create Group" , 
                     "Created Group Successfully");
             newGroup.setGroupID(groupID);
-            DataCenter.getInstance().getGroupList().add(newGroup);
+
             DataCenter.getInstance().getGroupInfoMap().put(
                     groupID, newGroup);
             DataCenter.getInstance().getGroupMembersMap().put(groupID, 
-                    FXCollections.observableArrayList(new ArrayList<>()));
-            DataCenter.getInstance().getGroupMessagesMap().put(groupID, 
-                    FXCollections.observableArrayList(new ArrayList<>()));
+                    FXCollections.synchronizedObservableList(FXCollections.observableArrayList(new ArrayList<>())));
+            GroupMember groupMember = new GroupMember(groupID, loggedinUserID);
+            DataCenter.getInstance().getGroupMembersMap().get(groupID).add(
+              new GroupMemberInfo(groupMember, DataCenter.getInstance().getMyProfile().getDisplayName()
+                      ,DataCenter.getInstance().getMyProfile().getPic()));
+            DataCenter.getInstance().getGroupMessagesMap().put(groupID
+            ,FXCollections.synchronizedObservableList(FXCollections.observableArrayList(new ArrayList<>())));
+            DataCenter.getInstance().getGroupList().add(newGroup);
         } else {
             ClientAlerts.invokeErrorAlert("Create Group" , "Failed to create group");
         }
