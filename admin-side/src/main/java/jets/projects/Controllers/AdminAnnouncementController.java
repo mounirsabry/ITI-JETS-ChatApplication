@@ -9,6 +9,7 @@ import javafx.stage.Stage;
 import jets.projects.entities.Announcement;
 
 import java.time.LocalDateTime;
+import java.time.ZoneId;
 import java.util.Date;
 
 public class AdminAnnouncementController {
@@ -46,6 +47,18 @@ public class AdminAnnouncementController {
         tableView.setItems(announcements);
     }
     public void addAnnouncement(Announcement announcement) {
+        if(announcement.getSentAt() == null){
+            Date date = new Date();
+
+            // Convert to LocalDateTime
+            LocalDateTime localDateTime = date.toInstant()
+                    .atZone(ZoneId.systemDefault()) // Use system default time zone
+                    .toLocalDateTime();
+            announcement.setSentAt(localDateTime);
+        }
+        if(announcement.getAnnouncementID() == -1){
+            announcement.setAnnouncementID(announcements.getLast().getAnnouncementID()+1);
+        }
         announcements.add(announcement);
     }
 
@@ -64,6 +77,8 @@ public class AdminAnnouncementController {
             newAnnouncement.setHeader(header);
             newAnnouncement.setContent(content);
             director.addNewAnnouncement(newAnnouncement);
+            titleField.clear();
+            contentField.clear();
         }
     }
 

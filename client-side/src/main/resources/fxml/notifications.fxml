@@ -11,7 +11,7 @@
    <top>
       <HBox>
          <children>
-            <Label stylesheets="@../styles/mainStyles.css" text="Notifications">
+            <Label stylesheets="@../styles/mainStyles.css" text="Notifications" textFill="WHITE">
                <HBox.margin>
                   <Insets left="10.0" />
                </HBox.margin>

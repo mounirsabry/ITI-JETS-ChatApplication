@@ -44,14 +44,17 @@ public class NotificationCardController {
     void handleDeleteButton(ActionEvent event) {
        ClientNotificationService notificationService = new ClientNotificationService();
        int notificationID = currentItem.getNotificationID();
-        boolean markedAsRead = notificationService.deleteNotification(notificationID);
+       if(!(currentItem.getType() == NotificationType.USER_STATUS)){
+           boolean markedAsRead = notificationService.deleteNotification(notificationID);
+           if (!markedAsRead) {
+               ClientAlerts.invokeErrorAlert("Error", "Failed To Delete Notification");
+           }else{
+               DataCenter.getInstance().getNotificationList().remove(currentItem);
 
-       DataCenter.getInstance().getNotificationList().remove(currentItem);
-
-       if (!markedAsRead) {
-        ClientAlerts.invokeErrorAlert("Error", "Failed To Delete Notification");
-       } 
-
+           }
+       }else{
+           DataCenter.getInstance().getNotificationList().remove(currentItem);
+       }
     }
 
 }

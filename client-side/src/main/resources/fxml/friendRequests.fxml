@@ -11,12 +11,12 @@
    <top>
       <VBox alignment="CENTER_LEFT" prefHeight="59.0" prefWidth="600.0" BorderPane.alignment="CENTER">
          <children>
-            <Label prefHeight="18.0" prefWidth="122.0" text="Invitations">
+            <Label prefHeight="18.0" prefWidth="122.0" text="Invitations" textFill="WHITE">
                <VBox.margin>
                   <Insets left="10.0" />
                </VBox.margin>
                <font>
-                  <Font size="22.0" />
+                  <Font size="26.0" />
                </font>
             </Label>
          </children>
